@@ -124,7 +124,7 @@ const App: React.FC<AppProps> = ({ data }) => {
               setselectedFolder={setselectedFolder}
             />
             <Content
-              currentParent={currentParent}
+              selectedFolder={selectedFolder}
               bookmarksOnView={bookmarksOnView}
             />
           </div>

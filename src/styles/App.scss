@@ -321,7 +321,6 @@ body {
       padding: 4px 8px;
       height: 26px;
       position: relative;
-      left: 100px;
       color: white;
       &:focus {
         outline: none !important;
@@ -441,22 +440,6 @@ body {
     overflow-y: auto;
     width: 100%;
     position: relative;
-
-    .ext-content-footer {
-      position: fixed;
-      bottom: 2px;
-      left: 241px;
-      height: 24px;
-      width: 100%;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      padding-left: 240px;
-      background-color: #1a1b2c;
-      a {
-        color: rgba(210, 211, 224, 0.474);
-      }
-    }
 
     .ext-content-nobookmark {
       display: flex;
