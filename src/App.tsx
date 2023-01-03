@@ -15,9 +15,8 @@ const App: React.FC<AppProps> = ({ data }) => {
   // states
   let [folders, setfolders] = React.useState<any>([]);
   let [bookmarks, setbookmarks] = React.useState<any>([]);
-  const [nestedfolders, setnestedfolders] = React.useState<any>([]);
   const [selectedFolder, setselectedFolder] = React.useState<any>(null);
-  const [viewingBookmarks, setviewingBookmarks] = React.useState<any>([]);
+  const [bookmarksOnView, setbookmarksOnView] = React.useState<any>([]);
   const [foldersToDisplay, setfoldersToDisplay] = React.useState<any>(null);
   const [currentParent, setcurrentParent] = React.useState<any>(null);
 
@@ -67,15 +66,15 @@ const App: React.FC<AppProps> = ({ data }) => {
     return null;
   };
 
-  const showViewingBookmarks = (id: string) => {
+  const showbookmarksOnView = (id: string) => {
     if (id === "0") {
-      setviewingBookmarks(bookmarks);
+      setbookmarksOnView(bookmarks);
     } else {
       const filteredBookmarks = bookmarks.filter(
         (bookmark: { parentId: string }) =>
           parseInt(bookmark.parentId) === parseInt(selectedFolder?.id)
       );
-      setviewingBookmarks(filteredBookmarks);
+      setbookmarksOnView(filteredBookmarks);
     }
   };
 
@@ -95,8 +94,12 @@ const App: React.FC<AppProps> = ({ data }) => {
     });
     setfolders(temp_nested_folders);
     setselectedFolder(selectedFolder ? selectedFolder : folders?.[0]);
-    showViewingBookmarks(selectedFolder?.id);
+    showbookmarksOnView(selectedFolder?.id);
   };
+
+  React.useEffect(() => {
+    showbookmarksOnView(selectedFolder?.id);
+  }, [selectedFolder]);
 
   // use effects
   React.useEffect(() => {
@@ -120,7 +123,10 @@ const App: React.FC<AppProps> = ({ data }) => {
               setcurrentParent={setcurrentParent}
               setselectedFolder={setselectedFolder}
             />
-            <Content />
+            <Content
+              currentParent={currentParent}
+              bookmarksOnView={bookmarksOnView}
+            />
           </div>
         </div>
       </div>

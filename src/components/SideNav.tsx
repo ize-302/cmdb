@@ -12,6 +12,17 @@ interface SideNavProps {
   currentParent: any;
 }
 
+const displayGreeting = () => {
+  const myDate = new Date();
+  const hrs = myDate.getHours();
+  let greet;
+
+  if (hrs < 12) greet = "Good Morning";
+  else if (hrs >= 12 && hrs <= 17) greet = "Good Afternoon";
+  else if (hrs >= 17 && hrs <= 24) greet = "Good Evening";
+  return greet;
+};
+
 export const SideNav: React.FC<SideNavProps> = ({
   folders,
   setselectedFolder,
@@ -64,7 +75,7 @@ export const SideNav: React.FC<SideNavProps> = ({
           {currentParent?.title}
         </div>
       ) : (
-        <div className="greetings">Good afternnon</div>
+        <div className="greetings">{displayGreeting()}</div>
       )}
       <div className="ext-sidenav-list">
         {foldersToDisplay?.map(
