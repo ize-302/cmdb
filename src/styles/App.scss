@@ -208,8 +208,8 @@ body {
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     border-radius: 8px;
-    max-height: calc(90vh - 80px);
-    max-width: 960px;
+    max-height: calc(90vh - 45px);
+    max-width: 970px;
     width: 90vw;
     height: 100%;
     outline: none;
@@ -476,7 +476,14 @@ body {
         svg {
           width: 20px;
         }
+        &:hover {
+          .ext-content-bookmark-item_title {
+            color: white;
+            cursor: pointer;
+          }
+        }
         .ext-content-bookmark-item_title {
+          transition-duration: 0.3s;
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow-x: hidden;
