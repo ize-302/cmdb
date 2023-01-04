@@ -6,12 +6,12 @@ import {
 
 interface ContentProps {
   bookmarksOnView: any[];
-  currentParent: any;
+  selectedFolder: any;
 }
 
 export const Content: React.FC<ContentProps> = ({
   bookmarksOnView,
-  currentParent,
+  selectedFolder,
 }) => {
   return (
     <div className="ext-content">
@@ -23,12 +23,14 @@ export const Content: React.FC<ContentProps> = ({
       ) : (
         <div className="ext-content-bookmarklist">
           <b className="ext-content-bookmarkheader">
-            {currentParent?.title || "All bookmarks"}
+            {selectedFolder?.title || "Recently added"}
           </b>
           {bookmarksOnView.map((bookmark, index) => (
             <div key={index} className="ext-content-bookmark-item">
               <div className="ext-content-bookmark-item_title">
-                <img src={bookmark.favicon} />
+                <img
+                  src={`http://www.google.com/s2/favicons?domain=${bookmark.url}`}
+                />
                 {bookmark.title}
               </div>
               <div>
@@ -38,11 +40,6 @@ export const Content: React.FC<ContentProps> = ({
           ))}
         </div>
       )}
-      <div className="ext-content-footer">
-        <a href="https://github.com/ize-302" target="_blank">
-          Built with ❤️ by Adavize
-        </a>
-      </div>
     </div>
   );
 };

@@ -208,8 +208,8 @@ body {
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     border-radius: 8px;
-    max-height: calc(90vh - 80px);
-    max-width: 960px;
+    max-height: calc(90vh - 45px);
+    max-width: 970px;
     width: 90vw;
     height: 100%;
     outline: none;
@@ -321,7 +321,6 @@ body {
       padding: 4px 8px;
       height: 26px;
       position: relative;
-      left: 100px;
       color: white;
       &:focus {
         outline: none !important;
@@ -442,22 +441,6 @@ body {
     width: 100%;
     position: relative;
 
-    .ext-content-footer {
-      position: fixed;
-      bottom: 2px;
-      left: 241px;
-      height: 24px;
-      width: 100%;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      padding-left: 240px;
-      background-color: #1a1b2c;
-      a {
-        color: rgba(210, 211, 224, 0.474);
-      }
-    }
-
     .ext-content-nobookmark {
       display: flex;
       flex-direction: column;
@@ -493,7 +476,14 @@ body {
         svg {
           width: 20px;
         }
+        &:hover {
+          .ext-content-bookmark-item_title {
+            color: white;
+            cursor: pointer;
+          }
+        }
         .ext-content-bookmark-item_title {
+          transition-duration: 0.3s;
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow-x: hidden;

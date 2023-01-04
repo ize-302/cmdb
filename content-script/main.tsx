@@ -30,7 +30,12 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         html.style.overflow = "hidden";
       }
       let root = createRoot(document.getElementById("root") as HTMLElement);
-      root.render(<App data={msg.bookmarkdata} />);
+      root.render(
+        <App
+          bookmarkdata={msg.bookmarkdata}
+          recentbookmardata={msg.recentbookmarkdata}
+        />
+      );
 
       if (ext_container_elem) {
         ext_container_elem.classList.add("ext-container-show");
