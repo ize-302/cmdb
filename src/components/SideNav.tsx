@@ -10,6 +10,7 @@ interface SideNavProps {
   setfoldersToDisplay: (payload: any) => void;
   setcurrentParent: (payload: any) => void;
   currentParent: any;
+  RECENTLY_ADDED: string;
 }
 
 const displayGreeting = () => {
@@ -31,6 +32,7 @@ export const SideNav: React.FC<SideNavProps> = ({
   setfoldersToDisplay,
   currentParent,
   setcurrentParent,
+  RECENTLY_ADDED,
 }) => {
   const fetchFoldersToDisplay = (id: string) => {
     return folders?.filter((folder) => folder.parentId === id);
@@ -78,6 +80,34 @@ export const SideNav: React.FC<SideNavProps> = ({
         <div className="greetings">{displayGreeting()}</div>
       )}
       <div className="ext-sidenav-list">
+        {currentParent?.id === "0" && (
+          <div>
+            <input
+              type="radio"
+              name="items"
+              checked={selectedFolder?.id === RECENTLY_ADDED}
+              id={RECENTLY_ADDED}
+              value={RECENTLY_ADDED}
+              readOnly
+            />
+            <label
+              htmlFor="Recently added"
+              className="ext-sidenav-item"
+              onClick={() =>
+                handleFolderNavigation({
+                  children: [],
+                  hasBookmarks: true,
+                  id: RECENTLY_ADDED,
+                  parentId: "0",
+                  title: "Recently added",
+                })
+              }
+            >
+              {currentParent?.id === "0" ? <BookmarkIcon /> : <FolderIcon />}
+              Recently added
+            </label>
+          </div>
+        )}
         {foldersToDisplay?.map(
           (folder: any, index: React.Key | null | undefined) => (
             <div key={index}>

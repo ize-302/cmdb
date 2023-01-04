@@ -8,14 +8,18 @@ import { SideNav } from "./components/SideNav";
 import { TopNav } from "./components/TopNav";
 
 interface AppProps {
-  data: any;
+  bookmarkdata: any;
+  recentbookmardata: any;
 }
 
-const App: React.FC<AppProps> = ({ data }) => {
+const App: React.FC<AppProps> = ({ bookmarkdata, recentbookmardata }) => {
   // states
+  const RECENTLY_ADDED = "recently_added";
   let [folders, setfolders] = React.useState<any>([]);
   let [bookmarks, setbookmarks] = React.useState<any>([]);
-  const [selectedFolder, setselectedFolder] = React.useState<any>(null);
+  const [selectedFolder, setselectedFolder] = React.useState<any>({
+    id: RECENTLY_ADDED,
+  });
   const [bookmarksOnView, setbookmarksOnView] = React.useState<any>([]);
   const [foldersToDisplay, setfoldersToDisplay] = React.useState<any>(null);
   const [currentParent, setcurrentParent] = React.useState<any>(null);
@@ -38,10 +42,7 @@ const App: React.FC<AppProps> = ({ data }) => {
       folders = newFolders;
       node.children.forEach((child) => separateFolderFromBookmarks(child));
     } else {
-      // generate favicon for a node
-      let favicon =
-        "https://s2.googleusercontent.com/s2/favicons?domain_url=" + node.url;
-      newBookmarks.push({ ...node, favicon });
+      newBookmarks.push(node);
       bookmarks = newBookmarks;
     }
     setfolders(folders);
@@ -69,6 +70,8 @@ const App: React.FC<AppProps> = ({ data }) => {
   const showbookmarksOnView = (id: string) => {
     if (id === "0") {
       setbookmarksOnView(bookmarks);
+    } else if (id === RECENTLY_ADDED) {
+      setbookmarksOnView(recentbookmardata);
     } else {
       const filteredBookmarks = bookmarks.filter(
         (bookmark: { parentId: string }) =>
@@ -79,7 +82,6 @@ const App: React.FC<AppProps> = ({ data }) => {
   };
 
   const handleNestingFolders = () => {
-    // console.log(folders);
     const temp_nested_folders: object[] = [];
     // iterate over folders
     folders.forEach((folder: { parentId: string; id: string }) => {
@@ -92,7 +94,7 @@ const App: React.FC<AppProps> = ({ data }) => {
         hasChildren: hasChildren ? true : false,
       });
     });
-    setfolders(temp_nested_folders);
+    setfolders([...temp_nested_folders]);
     setselectedFolder(selectedFolder ? selectedFolder : folders?.[0]);
     showbookmarksOnView(selectedFolder?.id);
   };
@@ -103,7 +105,7 @@ const App: React.FC<AppProps> = ({ data }) => {
 
   // use effects
   React.useEffect(() => {
-    separateFolderFromBookmarks(data);
+    separateFolderFromBookmarks(bookmarkdata);
     handleNestingFolders();
   }, []);
 
@@ -122,6 +124,7 @@ const App: React.FC<AppProps> = ({ data }) => {
               currentParent={currentParent}
               setcurrentParent={setcurrentParent}
               setselectedFolder={setselectedFolder}
+              RECENTLY_ADDED={RECENTLY_ADDED}
             />
             <Content
               selectedFolder={selectedFolder}
