@@ -17,7 +17,7 @@ export const Content: React.FC<ContentProps> = ({
     <div className="ext-content">
       {bookmarksOnView.length === 0 ? (
         <div className="ext-content-nobookmark">
-          <ExclamationCircleIcon />
+          <ExclamationCircleIcon width="34" opacity={0.4} />
           <p>Nothing to see here!</p>
         </div>
       ) : (
@@ -34,7 +34,7 @@ export const Content: React.FC<ContentProps> = ({
                 {bookmark.title}
               </div>
               <div>
-                <EllipsisVerticalIcon />
+                <EllipsisVerticalIcon width="18" />
               </div>
             </div>
           ))}

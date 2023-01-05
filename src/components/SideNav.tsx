@@ -73,7 +73,7 @@ export const SideNav: React.FC<SideNavProps> = ({
     <div className="ext-sidenav">
       {currentParent?.id !== "0" ? (
         <div className="ext-go-back" onClick={() => handleGoback()}>
-          <ChevronLeftIcon />
+          <ChevronLeftIcon width="14" />
           {currentParent?.title}
         </div>
       ) : (
@@ -103,7 +103,11 @@ export const SideNav: React.FC<SideNavProps> = ({
                 })
               }
             >
-              {currentParent?.id === "0" ? <BookmarkIcon /> : <FolderIcon />}
+              {currentParent?.id === "0" ? (
+                <BookmarkIcon opacity={0.4} width="14" />
+              ) : (
+                <FolderIcon opacity={0.4} width="14" />
+              )}
               Recently added
             </label>
           </div>
@@ -124,7 +128,11 @@ export const SideNav: React.FC<SideNavProps> = ({
                 className="ext-sidenav-item"
                 onClick={() => folder && handleFolderNavigation(folder)}
               >
-                {currentParent?.id === "0" ? <BookmarkIcon /> : <FolderIcon />}
+                {currentParent?.id === "0" ? (
+                  <BookmarkIcon opacity={0.4} width="14" />
+                ) : (
+                  <FolderIcon opacity={0.4} width="14" />
+                )}
                 {folder.title}
               </label>
             </div>

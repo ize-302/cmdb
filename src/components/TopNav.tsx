@@ -19,13 +19,13 @@ export const TopNav = () => {
   return (
     <div className="ext-heading">
       <span className="ext-logo">
-        <BookmarkIcon /> BKMRK.
+        <BookmarkIcon width="16" /> BKMRK.
       </span>
       <div>
         <input id="ext-search" placeholder="Search..." />
       </div>
       <button onClick={() => handleClose()}>
-        <XMarkIcon />
+        <XMarkIcon opacity={0.7} color="black" width="12" />
       </button>
     </div>
   );

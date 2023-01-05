@@ -200,23 +200,55 @@ body {
   }
 
   .ext-container-border {
-    background-image: linear-gradient(
-      0deg,
-      rgba(255, 255, 255, 0.1) 14.6%,
-      rgba(255, 255, 255, 0.3) 104.7%
-    );
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    border-radius: 8px;
+    position: relative;
+    z-index: 0;
     max-height: calc(90vh - 45px);
     max-width: 970px;
     width: 90vw;
     height: 100%;
-    outline: none;
-    visibility: visible;
-    color: white;
-    padding: 1px;
+    border-radius: 10px;
     overflow: hidden;
+    padding: 1px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      z-index: -2;
+      left: -50%;
+      top: -50%;
+      width: 200%;
+      height: 200%;
+      animation: rotate 10s linear infinite;
+      background-color: #1a232a;
+      background-repeat: no-repeat;
+      background-position: 0 0;
+      background-image: conic-gradient(
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent 30%
+      );
+    }
+
+    &::after {
+      content: "";
+      left: -50%;
+      top: -50%;
+      width: 200%;
+      height: 200%;
+      position: absolute;
+      z-index: -2;
+      background-image: linear-gradient(
+        to bottom,
+        rgba(95, 106, 210, 0.2),
+        transparent
+      );
+    }
+  }
+
+  @keyframes rotate {
+    100% {
+      transform: rotate(360deg);
+    }
   }
 
   .ext-container {
@@ -292,9 +324,6 @@ body {
       display: flex;
       align-items: center;
       gap: 3px;
-      svg {
-        width: 16px;
-      }
     }
 
     button {
@@ -306,11 +335,6 @@ body {
       background-color: #f87171;
       display: grid;
       place-items: center;
-      svg {
-        width: 12px;
-        opacity: 0.7;
-        color: black;
-      }
     }
 
     input#ext-search {
@@ -370,9 +394,6 @@ body {
     &:hover {
       opacity: 0.6;
     }
-    svg {
-      width: 14px;
-    }
   }
 
   .ext-sidenav-list {
@@ -419,10 +440,6 @@ body {
           opacity: 1;
         }
       }
-      svg {
-        width: 14px;
-        opacity: 0.4;
-      }
     }
     input[type="radio"] {
       display: none;
@@ -451,10 +468,6 @@ body {
       height: 100%;
       text-align: center;
       color: rgb(210, 211, 224);
-      svg {
-        opacity: 0.4;
-        width: 34px;
-      }
     }
 
     .ext-content-bookmarklist {
@@ -473,9 +486,6 @@ body {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        svg {
-          width: 20px;
-        }
         &:hover {
           .ext-content-bookmark-item_title {
             color: white;
@@ -487,7 +497,8 @@ body {
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow-x: hidden;
-          max-width: 500px;
+          max-width: 600px;
+          width: 100%;
           display: flex;
           gap: 10px;
           align-items: center;
