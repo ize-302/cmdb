@@ -218,7 +218,7 @@ body {
       top: -50%;
       width: 200%;
       height: 200%;
-      animation: rotate 10s linear infinite;
+      animation: rotate 20s linear infinite;
       background-color: #1a232a;
       background-repeat: no-repeat;
       background-position: 0 0;
@@ -252,10 +252,8 @@ body {
   }
 
   .ext-container {
-    background: #1a1b2c;
     height: 100%;
     width: 100%;
-    border-radius: 8px;
   }
 
   .ext-container-show {
@@ -305,7 +303,10 @@ body {
   }
 
   .ext-heading {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    background: #1a1b2c;
+    border-top-right-radius: 9px;
+    border-top-left-radius: 9px;
+    margin-bottom: 1px;
     padding: 5px 20px;
     font-size: 13px;
     letter-spacing: 1px;
@@ -318,7 +319,7 @@ body {
 
   .ext-heading {
     .ext-logo {
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 400;
       color: white;
       display: flex;
@@ -358,14 +359,16 @@ body {
   /*  */
   .ext-body {
     display: flex;
-    height: 95%;
+    height: 95.5%;
   }
 
   .ext-sidenav {
-    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    margin-right: 1px;
+    background: #1a1b2c;
     min-width: 240px;
     padding: 0px 10px;
     overflow-y: auto;
+    border-bottom-left-radius: 9px;
   }
 
   .greetings {
@@ -457,6 +460,8 @@ body {
     overflow-y: auto;
     width: 100%;
     position: relative;
+    background: #1a1b2c;
+    border-bottom-right-radius: 9px;
 
     .ext-content-nobookmark {
       display: flex;
@@ -471,22 +476,36 @@ body {
     }
 
     .ext-content-bookmarklist {
-      padding: 20px 16px 32px 24px;
+      padding: 18px 10px 32px 10px;
       font-size: 13px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 4px;
 
       .ext-content-bookmarkheader {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        padding-bottom: 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        padding: 0 10px 10px 10px;
+        margin-bottom: 4px;
+      }
+
+      @for $i from 1 through 40 {
+        .ext-content-bookmark-item:nth-child(#{$i}n) {
+          animation-delay: #{$i * 0.05}s;
+        }
       }
 
       .ext-content-bookmark-item {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        animation: FadeIn 0.3s linear forwards;
+        animation-fill-mode: both;
+        position: relative;
+        padding: 6px 12px;
+        border-radius: 4px;
         &:hover {
+          background: #2c2d42;
           .ext-content-bookmark-item_title {
             color: white;
             cursor: pointer;
@@ -503,6 +522,16 @@ body {
           gap: 10px;
           align-items: center;
           color: rgb(210, 211, 224);
+        }
+      }
+      // keyframes
+      @keyframes FadeIn {
+        0% {
+          opacity: 0;
+          bottom: -10px;
+        }
+        100% {
+          bottom: 0;
         }
       }
     }

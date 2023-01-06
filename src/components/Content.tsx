@@ -34,7 +34,7 @@ export const Content: React.FC<ContentProps> = ({
                 {bookmark.title}
               </div>
               <div>
-                <EllipsisVerticalIcon width="18" />
+                <EllipsisVerticalIcon color="white" width="18" />
               </div>
             </div>
           ))}

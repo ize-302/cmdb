@@ -10,9 +10,14 @@ import { TopNav } from "./components/TopNav";
 interface AppProps {
   bookmarkdata: any;
   recentbookmardata: any;
+  handleSearch: (str: string) => void;
 }
 
-const App: React.FC<AppProps> = ({ bookmarkdata, recentbookmardata }) => {
+const App: React.FC<AppProps> = ({
+  bookmarkdata,
+  recentbookmardata,
+  handleSearch,
+}) => {
   // states
   const RECENTLY_ADDED = "recently_added";
   let [folders, setfolders] = React.useState<any>([]);
@@ -114,7 +119,7 @@ const App: React.FC<AppProps> = ({ bookmarkdata, recentbookmardata }) => {
       <div className="ext-shadow" />
       <div className="ext-container-border ext-container-show">
         <div className="ext-container">
-          <TopNav />
+          <TopNav handleSearch={handleSearch} />
           <div className="ext-body">
             <SideNav
               folders={folders}
