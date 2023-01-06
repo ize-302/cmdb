@@ -1,7 +1,12 @@
 import React from "react";
 import { BookmarkIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { ShareIcon, Bars2Icon } from "@heroicons/react/24/solid";
 
-export const TopNav = () => {
+interface TopNavProps {
+  handleSearch: (str: string) => void;
+}
+
+export const TopNav: React.FC<TopNavProps> = ({ handleSearch }) => {
   const handleClose = () => {
     const html = document.querySelector("html");
     if (html) html.style.overflow = "auto";
@@ -18,14 +23,16 @@ export const TopNav = () => {
   };
   return (
     <div className="ext-heading">
-      <span className="ext-logo">
-        <BookmarkIcon /> BKMRK.
-      </span>
+      <div className="ext-logo">⌘B</div>
       <div>
-        <input id="ext-search" placeholder="Search..." />
+        <input
+          id="ext-search"
+          placeholder="Search..."
+          onChange={(e) => handleSearch(e.target.value)}
+        />
       </div>
-      <button onClick={() => handleClose()}>
-        <XMarkIcon />
+      <button>
+        <Bars2Icon color="white" width="20" />
       </button>
     </div>
   );

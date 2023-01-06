@@ -10,6 +10,12 @@ let show = false;
 // Also control when the content script is injected from the manifest.json:
 // https://developer.chrome.com/docs/extensions/mv3/content_scripts/#run_time
 
+const handleSearch = (str: string) => {
+  chrome.runtime.sendMessage(str, function (response) {
+    console.log("response ==>", response);
+  });
+};
+
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
   if (msg.bookmarkdata) {
     show = !show;
@@ -34,6 +40,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         <App
           bookmarkdata={msg.bookmarkdata}
           recentbookmardata={msg.recentbookmarkdata}
+          handleSearch={handleSearch}
         />
       );
 
