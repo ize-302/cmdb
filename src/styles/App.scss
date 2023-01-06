@@ -328,14 +328,9 @@ body {
     }
 
     button {
-      height: 14px;
-      width: 14px;
       padding: 0;
-      border-radius: 100%;
       border: none;
-      background-color: #f87171;
-      display: grid;
-      place-items: center;
+      height: 16px;
     }
 
     input#ext-search {

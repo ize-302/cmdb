@@ -28,11 +28,6 @@ chrome.runtime.onMessage.addListener(async function (
   sender,
   sendResponse
 ) {
-  // close extension on click outside
-  if (message === "toggleExtension") {
-    toggleExtension(sender.tab.id);
-  }
-  console.log(sender);
   sendResponse({ data: { sender, message } });
   return true;
 });

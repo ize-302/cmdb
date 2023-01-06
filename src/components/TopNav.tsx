@@ -1,5 +1,6 @@
 import React from "react";
 import { BookmarkIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { ShareIcon, Bars2Icon } from "@heroicons/react/24/solid";
 
 interface TopNavProps {
   handleSearch: (str: string) => void;
@@ -30,8 +31,8 @@ export const TopNav: React.FC<TopNavProps> = ({ handleSearch }) => {
           onChange={(e) => handleSearch(e.target.value)}
         />
       </div>
-      <button onClick={() => handleClose()}>
-        <XMarkIcon opacity={0.7} color="black" width="12" />
+      <button>
+        <Bars2Icon color="white" width="20" />
       </button>
     </div>
   );
