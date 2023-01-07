@@ -11,12 +11,14 @@ interface AppProps {
   bookmarkdata: any;
   recentbookmardata: any;
   handleSearch: (str: string) => void;
+  searchresult: any[];
 }
 
 const App: React.FC<AppProps> = ({
   bookmarkdata,
   recentbookmardata,
   handleSearch,
+  searchresult,
 }) => {
   // states
   const RECENTLY_ADDED = "recently_added";

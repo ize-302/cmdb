@@ -17,7 +17,7 @@
   "background": {
     "service_worker": "background/index.ts"
   },
-  "permissions": ["activeTab", "bookmarks"],
+  "permissions": ["activeTab", "bookmarks", "tabs"],
   "commands": {
     "run-foo": {
       "suggested_key": {
