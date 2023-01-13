@@ -1,25 +1,22 @@
-/// <reference types="chrome" />
-/// <reference types="vite-plugin-svgr/client" />
+/*global chrome*/
 
 import React from "react";
 import "./styles/App.scss";
 import { Content } from "./components/Content";
 import { SideNav } from "./components/SideNav";
 import { TopNav } from "./components/TopNav";
+// import cheerio from "cheerio";
+// import axios from "axios";
 
 interface AppProps {
   bookmarkdata: any;
   recentbookmardata: any;
-  handleSearch: (str: string) => void;
 }
 
-const App: React.FC<AppProps> = ({
-  bookmarkdata,
-  recentbookmardata,
-  handleSearch,
-}) => {
+const App: React.FC<AppProps> = ({ bookmarkdata, recentbookmardata }) => {
   // states
   const RECENTLY_ADDED = "recently_added";
+  const SEARCH_RESULT = "search_result";
   let [folders, setfolders] = React.useState<any>([]);
   let [bookmarks, setbookmarks] = React.useState<any>([]);
   const [selectedFolder, setselectedFolder] = React.useState<any>({
@@ -54,22 +51,11 @@ const App: React.FC<AppProps> = ({
     setbookmarks(bookmarks);
   };
 
-  const deepSearch = (
-    object: { [x: string]: any; hasOwnProperty?: any },
-    key: string,
-    predicate: { (k: any, v: any): boolean; (arg0: any, arg1: any): boolean }
-  ) => {
-    if (object.hasOwnProperty(key) && predicate(key, object[key]) === true)
-      return object;
-
-    for (let i = 0; i < Object.keys(object).length; i++) {
-      let value = object[Object.keys(object)[i]];
-      if (typeof value === "object" && value != null) {
-        let o: any = deepSearch(object[Object.keys(object)[i]], key, predicate);
-        if (o != null) return o;
-      }
-    }
-    return null;
+  const handleSearch = (str: string) => {
+    chrome.runtime.sendMessage(str, (result) => {
+      setselectedFolder({ id: SEARCH_RESULT, title: "Search result" });
+      setbookmarksOnView(result);
+    });
   };
 
   const showbookmarksOnView = (id: string) => {
@@ -77,6 +63,10 @@ const App: React.FC<AppProps> = ({
       setbookmarksOnView(bookmarks);
     } else if (id === RECENTLY_ADDED) {
       setbookmarksOnView(recentbookmardata);
+    } else if (id === SEARCH_RESULT) {
+      if (bookmarksOnView.length === 0) {
+        //
+      }
     } else {
       const filteredBookmarks = bookmarks.filter(
         (bookmark: { parentId: string }) =>
@@ -90,13 +80,14 @@ const App: React.FC<AppProps> = ({
     const temp_nested_folders: object[] = [];
     // iterate over folders
     folders.forEach((folder: { parentId: string; id: string }) => {
+      console.log(folders);
       // check if folder has children
-      const hasChildren = folders.find(
+      const hasChildren = folders?.find(
         (child: { parentId: any }) => child.parentId === folder.id
       );
       temp_nested_folders.push({
         ...folder,
-        hasChildren: hasChildren ? true : false,
+        // hasChildren: hasChildren ? true : false,
       });
     });
     setfolders([...temp_nested_folders]);
@@ -104,8 +95,26 @@ const App: React.FC<AppProps> = ({
     showbookmarksOnView(selectedFolder?.id);
   };
 
+  const handleSaveUrl = () => {
+    // const url = window.location.href;
+    // const parentId = currentParent?.id;
+    // try {
+    //   axios.get(url).then((response) => {
+    //     var $ = cheerio.load(response.data);
+    //     var title = $("title").text();
+    //     console.log(url, title, parentId);
+    //     chrome.runtime.sendMessage({ title, url }, (response) => {
+    //       //
+    //     });
+    //   });
+    // } catch (error) {
+    //   console.log("outer", error);
+    // }
+  };
+
   React.useEffect(() => {
     showbookmarksOnView(selectedFolder?.id);
+    console.log(selectedFolder);
   }, [selectedFolder]);
 
   // use effects
@@ -119,7 +128,7 @@ const App: React.FC<AppProps> = ({
       <div className="ext-shadow" />
       <div className="ext-container-border ext-container-show">
         <div className="ext-container">
-          <TopNav handleSearch={handleSearch} />
+          <TopNav handleSearch={handleSearch} handleSaveUrl={handleSaveUrl} />
           <div className="ext-body">
             <SideNav
               folders={folders}
