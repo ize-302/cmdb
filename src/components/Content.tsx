@@ -15,7 +15,7 @@ export const Content: React.FC<ContentProps> = ({
 }) => {
   return (
     <div className="ext-content">
-      {bookmarksOnView.length === 0 ? (
+      {bookmarksOnView?.length === 0 ? (
         <div className="ext-content-nobookmark">
           <ExclamationCircleIcon width="34" opacity={0.4} />
           <p>Nothing to see here!</p>
@@ -25,7 +25,7 @@ export const Content: React.FC<ContentProps> = ({
           <b className="ext-content-bookmarkheader">
             {selectedFolder?.title || "Recently added"}
           </b>
-          {bookmarksOnView.map((bookmark, index) => (
+          {bookmarksOnView?.map((bookmark, index) => (
             <div key={index} className="ext-content-bookmark-item">
               <div className="ext-content-bookmark-item_title">
                 <img

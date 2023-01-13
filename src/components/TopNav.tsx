@@ -1,12 +1,16 @@
 import React from "react";
 import { BookmarkIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { ShareIcon, Bars2Icon } from "@heroicons/react/24/solid";
+import { ShareIcon, Bars2Icon, CheckIcon } from "@heroicons/react/24/solid";
 
 interface TopNavProps {
   handleSearch: (str: string) => void;
+  handleSaveUrl: () => void;
 }
 
-export const TopNav: React.FC<TopNavProps> = ({ handleSearch }) => {
+export const TopNav: React.FC<TopNavProps> = ({
+  handleSearch,
+  handleSaveUrl,
+}) => {
   const handleClose = () => {
     const html = document.querySelector("html");
     if (html) html.style.overflow = "auto";
@@ -23,17 +27,26 @@ export const TopNav: React.FC<TopNavProps> = ({ handleSearch }) => {
   };
   return (
     <div className="ext-heading">
-      <div className="ext-logo">⌘B</div>
-      <div>
+      <div className="ext-heading-child ext-logo">⌘B</div>
+      <div className="ext-heading-child">
         <input
           id="ext-search"
           placeholder="Search..."
           onChange={(e) => handleSearch(e.target.value)}
         />
       </div>
-      <button>
-        <Bars2Icon color="white" width="20" />
-      </button>
+      <div className="ext-heading-child ext-heading-child__left">
+        <button className="save-url" onClick={() => handleSaveUrl()}>
+          Save URL
+        </button>
+        {/* <button className="save-url">
+          Saved <CheckIcon width="12" />
+        </button> */}
+
+        <button>
+          <Bars2Icon color="white" width="20" />
+        </button>
+      </div>
     </div>
   );
 };

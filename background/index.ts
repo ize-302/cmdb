@@ -25,5 +25,13 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   chrome.bookmarks.search(message, function (result) {
     sendResponse(result);
   });
+
+  // handle create
+  chrome.bookmarks.create(
+    { title: message.title, url: message.url, parentId: message.parentId },
+    (response) => {
+      sendResponse(response);
+    }
+  );
   return true;
 });

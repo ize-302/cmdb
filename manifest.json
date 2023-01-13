@@ -15,9 +15,10 @@
     }
   ],
   "background": {
-    "service_worker": "background/index.ts"
+    "service_worker": "background/index.ts",
+    "persistent": false
   },
-  "permissions": ["activeTab", "bookmarks", "tabs"],
+  "permissions": ["activeTab", "tabs", "bookmarks", "notifications"],
   "commands": {
     "run-foo": {
       "suggested_key": {

@@ -2,7 +2,6 @@ import { createRoot } from "react-dom/client";
 import App from "../src/App";
 
 let show = false;
-let searchresult: any[] = [];
 
 // Make sure the element that you want to mount the app to has loaded. You can
 // also use `append` or insert the app using another method:
@@ -12,13 +11,6 @@ let searchresult: any[] = [];
 // https://developer.chrome.com/docs/extensions/mv3/content_scripts/#run_time
 
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-  const handleSearch = async (str: string) => {
-    await chrome.runtime.sendMessage(str, (result) => {
-      searchresult = result;
-    });
-    console.log(searchresult);
-  };
-
   if (msg.bookmarkdata) {
     show = !show;
 
@@ -42,8 +34,6 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         <App
           bookmarkdata={msg.bookmarkdata}
           recentbookmardata={msg.recentbookmarkdata}
-          handleSearch={handleSearch}
-          searchresult={searchresult}
         />
       );
 
