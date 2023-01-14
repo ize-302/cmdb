@@ -14,20 +14,20 @@ export const Content: React.FC<ContentProps> = ({
   selectedFolder,
 }) => {
   return (
-    <div className="ext-content">
+    <div className="cmdb-app-content">
       {bookmarksOnView?.length === 0 ? (
-        <div className="ext-content-nobookmark">
+        <div className="cmdb-app-content-nobookmark">
           <ExclamationCircleIcon width="34" opacity={0.4} />
           <p>Nothing to see here!</p>
         </div>
       ) : (
-        <div className="ext-content-bookmarklist">
-          <b className="ext-content-bookmarkheader">
+        <div className="cmdb-app-content-bookmarklist">
+          <b className="cmdb-app-content-bookmarkheader">
             {selectedFolder?.title || "Recently added"}
           </b>
           {bookmarksOnView?.map((bookmark, index) => (
-            <div key={index} className="ext-content-bookmark-item">
-              <div className="ext-content-bookmark-item_title">
+            <div key={index} className="cmdb-app-content-bookmark-item">
+              <div className="cmdb-app-content-bookmark-item_title">
                 <img
                   src={`http://www.google.com/s2/favicons?domain=${bookmark.url}`}
                 />

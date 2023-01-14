@@ -1,16 +1,16 @@
-*,
-::after,
-::before {
-  box-sizing: border-box;
-}
+#cmdb-app-space {
+  *,
+  ::after,
+  ::before {
+    box-sizing: border-box;
+  }
 
-body {
-  margin: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  body {
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-.App {
   position: fixed;
   z-index: 9999999999;
   top: 0;
@@ -179,7 +179,7 @@ body {
   }
   // end reset
 
-  .ext-shadow {
+  .cmdb-app-shadow {
     position: fixed;
     top: 0;
     width: 50vw;
@@ -199,7 +199,7 @@ body {
     overflow: hidden;
   }
 
-  .ext-container-border {
+  .cmdb-app-container-border {
     position: relative;
     z-index: 0;
     max-height: calc(90vh - 45px);
@@ -251,12 +251,12 @@ body {
     }
   }
 
-  .ext-container {
+  .cmdb-app-container {
     height: 100%;
     width: 100%;
   }
 
-  .ext-container-show {
+  .cmdb-app-container-show {
     animation-name: fadein;
     animation-duration: 0.1s;
     animation-timing-function: ease-out;
@@ -279,7 +279,7 @@ body {
     }
   }
 
-  .ext-container-hide {
+  .cmdb-app-container-hide {
     animation-name: fadeout;
     animation-duration: 0.3s;
     animation-timing-function: ease-out;
@@ -302,7 +302,7 @@ body {
     }
   }
 
-  .ext-heading {
+  .cmdb-app-heading {
     background: #1a1b2c;
     border-top-right-radius: 9px;
     border-top-left-radius: 9px;
@@ -316,7 +316,7 @@ body {
     align-items: center;
     /* height: 5%; */
 
-    .ext-heading-child {
+    .cmdb-app-heading-child {
       width: 30%;
       display: flex;
       align-items: center;
@@ -340,8 +340,8 @@ body {
     }
   }
 
-  .ext-heading {
-    .ext-logo {
+  .cmdb-app-heading {
+    .cmdb-app-logo {
       font-size: 15px;
       font-weight: 400;
       color: white;
@@ -356,7 +356,7 @@ body {
       height: 16px;
     }
 
-    input#ext-search {
+    input#cmdb-app-search {
       background-color: #2c2d3c;
       border: none;
       border-radius: 4px;
@@ -375,12 +375,12 @@ body {
   }
 
   /*  */
-  .ext-body {
+  .cmdb-app-body {
     display: flex;
-    height: 95.5%;
+    height: 95.6%;
   }
 
-  .ext-sidenav {
+  .cmdb-app-sidenav {
     margin-right: 1px;
     background: #1a1b2c;
     min-width: 240px;
@@ -398,7 +398,7 @@ body {
     opacity: 0.4;
   }
 
-  .ext-go-back {
+  .cmdb-app-go-back {
     color: white;
     margin: 20px 0 10px 6px;
     font-size: 14px;
@@ -417,7 +417,7 @@ body {
     }
   }
 
-  .ext-sidenav-list {
+  .cmdb-app-sidenav-list {
     display: flex;
     flex-direction: column;
     gap: 2px;
@@ -444,7 +444,7 @@ body {
         left: 0;
       }
     }
-    .ext-sidenav-item {
+    .cmdb-app-sidenav-item {
       cursor: pointer;
       padding: 10px;
       border-radius: 4px;
@@ -474,14 +474,14 @@ body {
     }
   }
 
-  .ext-content {
+  .cmdb-app-content {
     overflow-y: auto;
     width: 100%;
     position: relative;
     background: #1a1b2c;
     border-bottom-right-radius: 9px;
 
-    .ext-content-nobookmark {
+    .cmdb-app-content-nobookmark {
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -493,14 +493,14 @@ body {
       color: rgb(210, 211, 224);
     }
 
-    .ext-content-bookmarklist {
+    .cmdb-app-content-bookmarklist {
       padding: 18px 10px 32px 10px;
       font-size: 13px;
       display: flex;
       flex-direction: column;
       gap: 4px;
 
-      .ext-content-bookmarkheader {
+      .cmdb-app-content-bookmarkheader {
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         color: white;
         padding: 0 10px 10px 10px;
@@ -508,12 +508,12 @@ body {
       }
 
       @for $i from 1 through 40 {
-        .ext-content-bookmark-item:nth-child(#{$i}n) {
+        .cmdb-app-content-bookmark-item:nth-child(#{$i}n) {
           animation-delay: #{$i * 0.05}s;
         }
       }
 
-      .ext-content-bookmark-item {
+      .cmdb-app-content-bookmark-item {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -524,12 +524,12 @@ body {
         border-radius: 4px;
         &:hover {
           background: #2c2d42;
-          .ext-content-bookmark-item_title {
+          .cmdb-app-content-bookmark-item_title {
             color: white;
             cursor: pointer;
           }
         }
-        .ext-content-bookmark-item_title {
+        .cmdb-app-content-bookmark-item_title {
           transition-duration: 0.3s;
           text-overflow: ellipsis;
           white-space: nowrap;

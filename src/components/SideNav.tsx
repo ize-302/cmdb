@@ -70,16 +70,16 @@ export const SideNav: React.FC<SideNavProps> = ({
   }, [folders]);
 
   return (
-    <div className="ext-sidenav">
+    <div className="cmdb-app-sidenav">
       {currentParent?.id !== "0" ? (
-        <div className="ext-go-back" onClick={() => handleGoback()}>
+        <div className="cmdb-app-go-back" onClick={() => handleGoback()}>
           <ChevronLeftIcon width="14" />
           {currentParent?.title}
         </div>
       ) : (
         <div className="greetings">{displayGreeting()}</div>
       )}
-      <div className="ext-sidenav-list">
+      <div className="cmdb-app-sidenav-list">
         {currentParent?.id === "0" && (
           <div>
             <input
@@ -92,7 +92,7 @@ export const SideNav: React.FC<SideNavProps> = ({
             />
             <label
               htmlFor="Recently added"
-              className="ext-sidenav-item"
+              className="cmdb-app-sidenav-item"
               onClick={() =>
                 handleFolderNavigation({
                   children: [],
@@ -125,7 +125,7 @@ export const SideNav: React.FC<SideNavProps> = ({
               />
               <label
                 htmlFor={folder.title}
-                className="ext-sidenav-item"
+                className="cmdb-app-sidenav-item"
                 onClick={() => folder && handleFolderNavigation(folder)}
               >
                 {currentParent?.id === "0" ? (

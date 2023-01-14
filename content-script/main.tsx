@@ -15,21 +15,22 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     show = !show;
 
     const ext_container_elem = document.getElementsByClassName(
-      "ext-container-border"
+      "cmdb-app-container-border"
     )[0];
 
-    const body = document.querySelector("body");
     const html = document.querySelector("html");
     if (show) {
-      const app = document.createElement("div");
+      const app = document.createElement("cmdb-app");
       app.id = "root";
-      if (body) {
-        body.prepend(app);
+      if (html) {
+        html.append(app);
       }
       if (html) {
         html.style.overflow = "hidden";
       }
-      let root = createRoot(document.getElementById("root") as HTMLElement);
+      let root = createRoot(
+        document.getElementsByTagName("cmdb-app")[0] as HTMLElement
+      );
       root.render(
         <App
           bookmarkdata={msg.bookmarkdata}
@@ -38,18 +39,18 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
       );
 
       if (ext_container_elem) {
-        ext_container_elem.classList.add("ext-container-show");
-        ext_container_elem.classList.remove("ext-container-hide");
+        ext_container_elem.classList.add("cmdb-app-container-show");
+        ext_container_elem.classList.remove("cmdb-app-container-hide");
       }
     } else {
       if (html) {
         html.style.overflow = "auto";
       }
-      ext_container_elem.classList.add("ext-container-hide");
-      ext_container_elem.classList.remove("ext-container-show");
+      ext_container_elem.classList.add("cmdb-app-container-hide");
+      ext_container_elem.classList.remove("cmdb-app-container-show");
 
       setTimeout(() => {
-        const div_root = document.getElementById("root");
+        const div_root = document.getElementsByTagName("cmdb-app")[0];
         div_root?.remove();
       }, 100);
     }

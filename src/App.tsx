@@ -124,12 +124,12 @@ const App: React.FC<AppProps> = ({ bookmarkdata, recentbookmardata }) => {
   }, []);
 
   return (
-    <div className="App">
-      <div className="ext-shadow" />
-      <div className="ext-container-border ext-container-show">
-        <div className="ext-container">
+    <div id="cmdb-app-space">
+      <div className="cmdb-app-shadow" />
+      <div className="cmdb-app-container-border cmdb-app-container-show">
+        <div className="cmdb-app-container">
           <TopNav handleSearch={handleSearch} handleSaveUrl={handleSaveUrl} />
-          <div className="ext-body">
+          <div className="cmdb-app-body">
             <SideNav
               folders={folders}
               selectedFolder={selectedFolder}
