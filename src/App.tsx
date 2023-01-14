@@ -5,28 +5,29 @@ import "./styles/App.scss";
 import { Content } from "./components/Content";
 import { SideNav } from "./components/SideNav";
 import { TopNav } from "./components/TopNav";
-// import cheerio from "cheerio";
-// import axios from "axios";
+import cheerio from "cheerio";
+import axios from "axios";
 
-interface AppProps {
-  bookmarkdata: any;
-  recentbookmardata: any;
-}
+interface AppProps {}
 
-const App: React.FC<AppProps> = ({ bookmarkdata, recentbookmardata }) => {
-  // states
-  const RECENTLY_ADDED = "recently_added";
+const App: React.FC<AppProps> = () => {
+  // keys
+  const CMDB_RECENTLY_ADDED = "CMDB_RECENTLY_ADDED";
+  const CMDB_FETCH_BOOKMARKS = "CMDB_FETCH_BOOKMARKS";
+  const CMDB_FETCH_RECENT_BOOKMARKS = "CMDB_FETCH_RECENT_BOOKMARKS";
   const SEARCH_RESULT = "search_result";
+  const CMDB_CREATE_BOOKMARK = "CMDB_CREATE_BOOKMARK";
+  const CMDB_SEARCH = "CMDB_SEARCH";
+
+  // states
   let [folders, setfolders] = React.useState<any>([]);
   let [bookmarks, setbookmarks] = React.useState<any>([]);
-  const [selectedFolder, setselectedFolder] = React.useState<any>({
-    id: RECENTLY_ADDED,
-  });
+  const [recentBookmarks, setrecentBookmarks] = React.useState<any>([]);
+  const [selectedFolder, setselectedFolder] = React.useState<any>({});
   const [bookmarksOnView, setbookmarksOnView] = React.useState<any>([]);
   const [foldersToDisplay, setfoldersToDisplay] = React.useState<any>(null);
   const [currentParent, setcurrentParent] = React.useState<any>(null);
 
-  // ALL methods
   // separate folders from bookmarks(actual bookmarks)
   let newBookmarks: any[] = [];
   let newFolders: any[] = [];
@@ -52,17 +53,25 @@ const App: React.FC<AppProps> = ({ bookmarkdata, recentbookmardata }) => {
   };
 
   const handleSearch = (str: string) => {
-    chrome.runtime.sendMessage(str, (result) => {
-      setselectedFolder({ id: SEARCH_RESULT, title: "Search result" });
-      setbookmarksOnView(result);
-    });
+    if (str === "") {
+      setselectedFolder({ id: CMDB_RECENTLY_ADDED });
+    } else {
+      chrome.runtime.sendMessage(
+        { string: str, command: CMDB_SEARCH },
+        (result) => {
+          setselectedFolder({ id: SEARCH_RESULT, title: "Search result" });
+          setbookmarksOnView(result);
+        }
+      );
+    }
   };
 
+  // this handles whats category of bookmarks to show in the content section
   const showbookmarksOnView = (id: string) => {
     if (id === "0") {
       setbookmarksOnView(bookmarks);
-    } else if (id === RECENTLY_ADDED) {
-      setbookmarksOnView(recentbookmardata);
+    } else if (id === CMDB_RECENTLY_ADDED) {
+      setbookmarksOnView(recentBookmarks);
     } else if (id === SEARCH_RESULT) {
       if (bookmarksOnView.length === 0) {
         //
@@ -80,7 +89,6 @@ const App: React.FC<AppProps> = ({ bookmarkdata, recentbookmardata }) => {
     const temp_nested_folders: object[] = [];
     // iterate over folders
     folders.forEach((folder: { parentId: string; id: string }) => {
-      console.log(folders);
       // check if folder has children
       const hasChildren = folders?.find(
         (child: { parentId: any }) => child.parentId === folder.id
@@ -96,31 +104,44 @@ const App: React.FC<AppProps> = ({ bookmarkdata, recentbookmardata }) => {
   };
 
   const handleSaveUrl = () => {
-    // const url = window.location.href;
-    // const parentId = currentParent?.id;
-    // try {
-    //   axios.get(url).then((response) => {
-    //     var $ = cheerio.load(response.data);
-    //     var title = $("title").text();
-    //     console.log(url, title, parentId);
-    //     chrome.runtime.sendMessage({ title, url }, (response) => {
-    //       //
-    //     });
-    //   });
-    // } catch (error) {
-    //   console.log("outer", error);
-    // }
+    const url = window.location.href;
+    const parentId = currentParent?.id;
+    const command = CMDB_CREATE_BOOKMARK;
+    try {
+      axios.get(url).then((response) => {
+        var $ = cheerio.load(response.data);
+        var title = $("title").text();
+        chrome.runtime.sendMessage({ title, url, command }, (response) => {});
+        fetchBookmarks();
+        fetchRecentBookmarks();
+      });
+    } catch (error) {
+      console.log("outer", error);
+    }
+  };
+
+  const fetchBookmarks = () => {
+    chrome.runtime.sendMessage(CMDB_FETCH_BOOKMARKS, (result) => {
+      separateFolderFromBookmarks(result);
+      handleNestingFolders();
+    });
+  };
+
+  const fetchRecentBookmarks = () => {
+    chrome.runtime.sendMessage(CMDB_FETCH_RECENT_BOOKMARKS, (result) => {
+      setselectedFolder({ id: CMDB_RECENTLY_ADDED });
+      setrecentBookmarks(result);
+    });
   };
 
   React.useEffect(() => {
     showbookmarksOnView(selectedFolder?.id);
-    console.log(selectedFolder);
   }, [selectedFolder]);
 
   // use effects
   React.useEffect(() => {
-    separateFolderFromBookmarks(bookmarkdata);
-    handleNestingFolders();
+    fetchBookmarks();
+    fetchRecentBookmarks();
   }, []);
 
   return (
@@ -138,7 +159,7 @@ const App: React.FC<AppProps> = ({ bookmarkdata, recentbookmardata }) => {
               currentParent={currentParent}
               setcurrentParent={setcurrentParent}
               setselectedFolder={setselectedFolder}
-              RECENTLY_ADDED={RECENTLY_ADDED}
+              CMDB_RECENTLY_ADDED={CMDB_RECENTLY_ADDED}
             />
             <Content
               selectedFolder={selectedFolder}

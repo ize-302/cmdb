@@ -1,12 +1,5 @@
 const toggleExtension = (tabid) => {
-  chrome.bookmarks.getTree((bookmarks) => {
-    chrome.bookmarks.getRecent(20, (recent) => {
-      chrome.tabs.sendMessage(tabid, {
-        bookmarkdata: bookmarks[0],
-        recentbookmarkdata: recent,
-      });
-    });
-  });
+  chrome.tabs.sendMessage(tabid, {});
 };
 
 // toggle extension when extension icon is clicked
@@ -21,17 +14,33 @@ chrome.commands.onCommand.addListener((command, tab) => {
 
 // Receive messages
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  if (message === "CMDB_FETCH_BOOKMARKS") {
+    chrome.bookmarks.getTree((bookmarks) => {
+      sendResponse(bookmarks[0]);
+    });
+  }
+
+  if (message === "CMDB_FETCH_RECENT_BOOKMARKS") {
+    chrome.bookmarks.getRecent(20, (result) => {
+      sendResponse(result);
+    });
+  }
+
   // handle search result
-  chrome.bookmarks.search(message, function (result) {
-    sendResponse(result);
-  });
+  if (message.command === "CMDB_SEARCH") {
+    chrome.bookmarks.search(message.string, function (result) {
+      sendResponse(result);
+    });
+  }
 
   // handle create
-  chrome.bookmarks.create(
-    { title: message.title, url: message.url, parentId: message.parentId },
-    (response) => {
-      sendResponse(response);
-    }
-  );
+  if (message.command === "CMDB_CREATE_BOOKMARK") {
+    chrome.bookmarks.create(
+      { title: message.title, url: message.url, parentId: message.parentId },
+      (response) => {
+        sendResponse(response);
+      }
+    );
+  }
   return true;
 });

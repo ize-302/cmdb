@@ -10,7 +10,7 @@ interface SideNavProps {
   setfoldersToDisplay: (payload: any) => void;
   setcurrentParent: (payload: any) => void;
   currentParent: any;
-  RECENTLY_ADDED: string;
+  CMDB_RECENTLY_ADDED: string;
 }
 
 const displayGreeting = () => {
@@ -32,7 +32,7 @@ export const SideNav: React.FC<SideNavProps> = ({
   setfoldersToDisplay,
   currentParent,
   setcurrentParent,
-  RECENTLY_ADDED,
+  CMDB_RECENTLY_ADDED,
 }) => {
   const fetchFoldersToDisplay = (id: string) => {
     return folders?.filter((folder) => folder.parentId === id);
@@ -85,9 +85,9 @@ export const SideNav: React.FC<SideNavProps> = ({
             <input
               type="radio"
               name="items"
-              checked={selectedFolder?.id === RECENTLY_ADDED}
-              id={RECENTLY_ADDED}
-              value={RECENTLY_ADDED}
+              checked={selectedFolder?.id === CMDB_RECENTLY_ADDED}
+              id={CMDB_RECENTLY_ADDED}
+              value={CMDB_RECENTLY_ADDED}
               readOnly
             />
             <label
@@ -97,7 +97,7 @@ export const SideNav: React.FC<SideNavProps> = ({
                 handleFolderNavigation({
                   children: [],
                   hasBookmarks: true,
-                  id: RECENTLY_ADDED,
+                  id: CMDB_RECENTLY_ADDED,
                   parentId: "0",
                   title: "Recently added",
                 })
