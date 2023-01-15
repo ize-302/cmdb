@@ -27,15 +27,21 @@ export const Content: React.FC<ContentProps> = ({
           </b>
           {bookmarksOnView?.map((bookmark, index) => (
             <div key={index} className="cmdb-app-content-bookmark-item">
-              <div className="cmdb-app-content-bookmark-item_title">
-                <img
-                  src={`http://www.google.com/s2/favicons?domain=${bookmark.url}`}
-                />
-                {bookmark.title}
-              </div>
-              <div>
+              <span>
+                <a
+                  href={bookmark.url}
+                  target="_blank"
+                  className="cmdb-app-content-bookmark-item_title"
+                >
+                  <img
+                    src={`http://www.google.com/s2/favicons?domain=${bookmark.url}`}
+                  />
+                  {bookmark.title}
+                </a>
+              </span>
+              <span>
                 <EllipsisVerticalIcon color="white" width="18" />
-              </div>
+              </span>
             </div>
           ))}
         </div>

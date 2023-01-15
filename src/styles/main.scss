@@ -1,3 +1,5 @@
+@import "./partial/_colors.scss";
+
 #cmdb-app-space {
   *,
   ::after,
@@ -43,7 +45,7 @@
    v2.0 | 20110126
    License: none (public domain)
 */
-  // start reset
+  // RESET STARTS HERE //
   html,
   body,
   div,
@@ -177,7 +179,7 @@
     box-sizing: border-box;
     border: none;
   }
-  // end reset
+  // RESET ENDS HERE //
 
   .cmdb-app-shadow {
     position: fixed;
@@ -303,7 +305,7 @@
   }
 
   .cmdb-app-heading {
-    background: #1a1b2c;
+    background: $bg-dark;
     border-top-right-radius: 9px;
     border-top-left-radius: 9px;
     margin-bottom: 1px;
@@ -382,7 +384,7 @@
 
   .cmdb-app-sidenav {
     margin-right: 1px;
-    background: #1a1b2c;
+    background: $bg-dark;
     min-width: 240px;
     padding: 0px 10px;
     overflow-y: auto;
@@ -478,7 +480,7 @@
     overflow-y: auto;
     width: 100%;
     position: relative;
-    background: #1a1b2c;
+    background: $bg-dark;
     border-bottom-right-radius: 9px;
 
     .cmdb-app-content-nobookmark {

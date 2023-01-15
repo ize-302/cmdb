@@ -1,7 +1,7 @@
 /*global chrome*/
 
 import React from "react";
-import "./styles/App.scss";
+import "./styles/main.scss";
 import { Content } from "./components/Content";
 import { SideNav } from "./components/SideNav";
 import { TopNav } from "./components/TopNav";
@@ -95,7 +95,7 @@ const App: React.FC<AppProps> = () => {
       );
       temp_nested_folders.push({
         ...folder,
-        // hasChildren: hasChildren ? true : false,
+        hasChildren: hasChildren ? true : false,
       });
     });
     setfolders([...temp_nested_folders]);
@@ -116,7 +116,7 @@ const App: React.FC<AppProps> = () => {
         fetchRecentBookmarks();
       });
     } catch (error) {
-      console.log("outer", error);
+      console.log("error => ", error);
     }
   };
 
