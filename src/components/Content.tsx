@@ -3,6 +3,7 @@ import {
   ExclamationCircleIcon,
   EllipsisVerticalIcon,
 } from "@heroicons/react/24/outline";
+import { BookmarkItem } from "./BookmarkItem";
 
 interface ContentProps {
   bookmarksOnView: any[];
@@ -13,6 +14,15 @@ export const Content: React.FC<ContentProps> = ({
   bookmarksOnView,
   selectedFolder,
 }) => {
+  const [selectedBookmarks, setselectedBookmarks] = React.useState<string[]>(
+    []
+  );
+
+  const handleSelectBookmark = (e: any, bookmark: any, index: number) => {
+    if (e.detail === 1) setselectedBookmarks([bookmark.id]);
+    else if (e.detail === 2) window.open(bookmark.url, "_blank");
+  };
+
   return (
     <div className="cmdb-app-content">
       {bookmarksOnView?.length === 0 ? (
@@ -26,23 +36,14 @@ export const Content: React.FC<ContentProps> = ({
             {selectedFolder?.title || "Recently added"}
           </b>
           {bookmarksOnView?.map((bookmark, index) => (
-            <div key={index} className="cmdb-app-content-bookmark-item">
-              <span>
-                <a
-                  href={bookmark.url}
-                  target="_blank"
-                  className="cmdb-app-content-bookmark-item_title"
-                >
-                  <img
-                    src={`http://www.google.com/s2/favicons?domain=${bookmark.url}`}
-                  />
-                  {bookmark.title}
-                </a>
-              </span>
-              <span>
-                <EllipsisVerticalIcon color="white" width="18" />
-              </span>
-            </div>
+            <BookmarkItem
+              key={index}
+              bookmark={bookmark}
+              handleSelectBookmark={(e, bookmark) =>
+                handleSelectBookmark(e, bookmark, index)
+              }
+              selectedBookmarks={selectedBookmarks}
+            />
           ))}
         </div>
       )}

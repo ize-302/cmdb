@@ -530,18 +530,45 @@
             color: white;
             cursor: pointer;
           }
+          .cmdb-app-content-bookmark-item_url {
+            display: block;
+          }
         }
         .cmdb-app-content-bookmark-item_title {
           transition-duration: 0.3s;
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow-x: hidden;
-          max-width: 600px;
           width: 100%;
           display: flex;
           gap: 10px;
-          align-items: center;
+          align-items: flex-end;
           color: rgb(210, 211, 224);
+        }
+        .cmdb-app-content-bookmark-item_url {
+          display: none;
+          opacity: 0.3;
+          font-size: 12px;
+        }
+      }
+      input[type="checkbox"] {
+        display: none;
+      }
+      input[type="checkbox"]:checked + label {
+        background: #2c2d42;
+        position: relative;
+      }
+
+      .cmdb-app-content-bookmark-item_kebab {
+        cursor: pointer;
+        min-width: 24px;
+        min-height: 24px;
+        padding-top: 1px;
+        border-radius: 100%;
+        display: grid;
+        place-items: center;
+        &:hover {
+          background: #ececec11;
         }
       }
       // keyframes
