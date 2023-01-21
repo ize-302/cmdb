@@ -33,6 +33,12 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     });
   }
 
+  // delete a bookmark
+  if (message.command === "CMDB_DELETE_BOOKMARK") {
+    chrome.bookmarks.remove(message.id);
+    sendResponse("removed");
+  }
+
   // handle create
   if (message.command === "CMDB_CREATE_BOOKMARK") {
     chrome.bookmarks.create(

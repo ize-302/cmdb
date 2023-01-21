@@ -7,18 +7,19 @@ import { SideNav } from "./components/SideNav";
 import { TopNav } from "./components/TopNav";
 import cheerio from "cheerio";
 import axios from "axios";
+import {
+  CMDB_RECENTLY_ADDED,
+  CMDB_FETCH_BOOKMARKS,
+  CMDB_FETCH_RECENT_BOOKMARKS,
+  SEARCH_RESULT,
+  CMDB_CREATE_BOOKMARK,
+  CMDB_SEARCH,
+  CMDB_DELETE_BOOKMARK,
+} from "./keys";
 
 interface AppProps {}
 
 const App: React.FC<AppProps> = () => {
-  // keys
-  const CMDB_RECENTLY_ADDED = "CMDB_RECENTLY_ADDED";
-  const CMDB_FETCH_BOOKMARKS = "CMDB_FETCH_BOOKMARKS";
-  const CMDB_FETCH_RECENT_BOOKMARKS = "CMDB_FETCH_RECENT_BOOKMARKS";
-  const SEARCH_RESULT = "search_result";
-  const CMDB_CREATE_BOOKMARK = "CMDB_CREATE_BOOKMARK";
-  const CMDB_SEARCH = "CMDB_SEARCH";
-
   // states
   let [folders, setfolders] = React.useState<any>([]);
   let [bookmarks, setbookmarks] = React.useState<any>([]);
@@ -129,9 +130,22 @@ const App: React.FC<AppProps> = () => {
 
   const fetchRecentBookmarks = () => {
     chrome.runtime.sendMessage(CMDB_FETCH_RECENT_BOOKMARKS, (result) => {
-      setselectedFolder({ id: CMDB_RECENTLY_ADDED });
       setrecentBookmarks(result);
+      setselectedFolder({ id: CMDB_RECENTLY_ADDED });
     });
+  };
+
+  const deleteBookmark = (bookmark: any) => {
+    const currentSelectedfolder = selectedFolder;
+    chrome.runtime.sendMessage(
+      { id: bookmark.id, command: CMDB_DELETE_BOOKMARK },
+      (result) => {
+        fetchBookmarks();
+        if (!currentSelectedfolder.index) {
+          fetchRecentBookmarks();
+        }
+      }
+    );
   };
 
   React.useEffect(() => {
@@ -164,6 +178,7 @@ const App: React.FC<AppProps> = () => {
             <Content
               selectedFolder={selectedFolder}
               bookmarksOnView={bookmarksOnView}
+              deleteBookmark={deleteBookmark}
             />
           </div>
         </div>

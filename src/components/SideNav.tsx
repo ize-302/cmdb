@@ -34,6 +34,8 @@ export const SideNav: React.FC<SideNavProps> = ({
   setcurrentParent,
   CMDB_RECENTLY_ADDED,
 }) => {
+  const dragOverItem = React.useRef();
+
   const fetchFoldersToDisplay = (id: string) => {
     return folders?.filter((folder) => folder.parentId === id);
   };
@@ -69,12 +71,17 @@ export const SideNav: React.FC<SideNavProps> = ({
     }
   }, [folders]);
 
+  const dragEnter = (e: any, position: any) => {
+    dragOverItem.current = position;
+    console.log(e.target);
+  };
+
   return (
     <div className="cmdb-app-sidenav">
       {currentParent?.id !== "0" ? (
         <div className="cmdb-app-go-back" onClick={() => handleGoback()}>
           <ChevronLeftIcon width="14" />
-          {currentParent?.title}
+          Go back
         </div>
       ) : (
         <div className="greetings">{displayGreeting()}</div>
@@ -112,9 +119,20 @@ export const SideNav: React.FC<SideNavProps> = ({
             </label>
           </div>
         )}
+        {currentParent?.id !== "0" && (
+          <div className="cmdb-app-currentfolder-name">
+            in: {currentParent?.title}
+          </div>
+        )}
         {foldersToDisplay?.map(
           (folder: any, index: React.Key | null | undefined) => (
-            <div key={index}>
+            <div
+              key={index}
+              onDragEnter={(e) => dragEnter(e, index)}
+              onDragCapture={() => console.log("capture")}
+              onDragExit={() => console.log("exit")}
+              onDragLeave={() => console.log("leave")}
+            >
               <input
                 type="radio"
                 name="items"
@@ -127,6 +145,7 @@ export const SideNav: React.FC<SideNavProps> = ({
                 htmlFor={folder.title}
                 className="cmdb-app-sidenav-item"
                 onClick={() => folder && handleFolderNavigation(folder)}
+                id={folder.id}
               >
                 {currentParent?.id === "0" ? (
                   <BookmarkIcon opacity={0.4} width="14" />
