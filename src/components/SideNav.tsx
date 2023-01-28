@@ -77,16 +77,16 @@ export const SideNav: React.FC<SideNavProps> = ({
   };
 
   return (
-    <div className="cmdb-app-sidenav">
+    <div className="cmdb-sidenav">
       {currentParent?.id !== "0" ? (
-        <div className="cmdb-app-go-back" onClick={() => handleGoback()}>
+        <div className="cmdb-sidenav_go-back" onClick={() => handleGoback()}>
           <ChevronLeftIcon width="14" />
           Go back
         </div>
       ) : (
-        <div className="greetings">{displayGreeting()}</div>
+        <div className="cmdb-sidenav_greetings">{displayGreeting()}</div>
       )}
-      <div className="cmdb-app-sidenav-list">
+      <div className="cmdb-sidenav-items">
         {currentParent?.id === "0" && (
           <div>
             <input
@@ -99,7 +99,7 @@ export const SideNav: React.FC<SideNavProps> = ({
             />
             <label
               htmlFor="Recently added"
-              className="cmdb-app-sidenav-item"
+              className="cmdb-sidenav-item"
               onClick={() =>
                 handleFolderNavigation({
                   children: [],
@@ -110,17 +110,13 @@ export const SideNav: React.FC<SideNavProps> = ({
                 })
               }
             >
-              {currentParent?.id === "0" ? (
-                <BookmarkIcon opacity={0.4} width="14" />
-              ) : (
-                <FolderIcon opacity={0.4} width="14" />
-              )}
+              <BookmarkIcon opacity={0.4} width="14" />
               Recently added
             </label>
           </div>
         )}
         {currentParent?.id !== "0" && (
-          <div className="cmdb-app-currentfolder-name">
+          <div className="cmdb-currentfolder-name">
             in: {currentParent?.title}
           </div>
         )}
@@ -143,7 +139,7 @@ export const SideNav: React.FC<SideNavProps> = ({
               />
               <label
                 htmlFor={folder.title}
-                className="cmdb-app-sidenav-item"
+                className="cmdb-sidenav-item"
                 onClick={() => folder && handleFolderNavigation(folder)}
                 id={folder.id}
               >

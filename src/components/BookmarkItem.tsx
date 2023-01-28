@@ -1,60 +1,15 @@
 import * as React from "react";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
-
-function useOutsideAlerter(ref: any, setisopen: any) {
-  React.useEffect(() => {
-    /**
-     * Alert if clicked on outside of element
-     */
-    function handleClickOutside(event: { target: any }) {
-      if (ref.current && !ref.current.contains(event.target)) {
-        setisopen(false);
-      }
-    }
-    // Bind the event listener
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      // Unbind the event listener on clean up
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [ref]);
-}
-
-interface MenuProps {
-  setisopen: (payload: boolean) => void;
-  deleteBookmark: () => void;
-  bookmark: any;
-}
-
-const Menu: React.FC<MenuProps> = ({ setisopen, deleteBookmark, bookmark }) => {
-  const wrapperRef = React.useRef(null);
-  useOutsideAlerter(wrapperRef, setisopen);
-
-  return (
-    <ul ref={wrapperRef} className="cmdb-app-menu">
-      <li
-        className="cmdb-app-menu-item"
-        onClick={() => window.open(bookmark.url, "_blank")}
-      >
-        Open
-      </li>
-      <li className="cmdb-app-menu-item">Edit</li>
-      <li
-        className="cmdb-app-menu-item delete"
-        onClick={() => deleteBookmark()}
-      >
-        Delete
-      </li>
-    </ul>
-  );
-};
+import Menu from "./Menu";
+import { BookmarkProps } from "../types";
 
 interface BookmarkItemProps {
   selectedBookmarks: any[];
-  bookmark: any;
-  handleSelectBookmark: (e: any, bookmark: any) => void;
+  bookmark: BookmarkProps;
+  handleSelectBookmark: (e: any, bookmark: BookmarkProps) => void;
   deleteBookmark: (bookmark: any) => void;
   index: number;
+  editBookmark: (bookmark: any) => void;
 }
 
 export const BookmarkItem: React.FC<BookmarkItemProps> = ({
@@ -63,6 +18,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
   handleSelectBookmark,
   deleteBookmark,
   index,
+  editBookmark,
 }) => {
   const [isopen, setisopen] = React.useState(false);
   const dragItem = React.useRef();
@@ -89,18 +45,19 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
       <label
         onClick={(e) => handleSelectBookmark(e, bookmark)}
         htmlFor={bookmark.title}
-        className="cmdb-app-content-bookmark-item"
+        className="cmdb-list-item"
         title="Double click to open"
         id={bookmark.id}
       >
-        <span className="cmdb-app-content-bookmark-item_title">
+        <span className="cmdb-list-item_title">
           <img
             src={`http://www.google.com/s2/favicons?domain=${bookmark.url}`}
+            alt={bookmark.title}
           />
           {bookmark.title}
         </span>
         <span
-          className="cmdb-app-content-bookmark-item_kebab"
+          className="cmdb-list-item_kebab"
           onClick={() => setisopen(!isopen)}
         >
           <EllipsisVerticalIcon color="white" width="18" />
@@ -109,11 +66,9 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
       {isopen && (
         <Menu
           setisopen={setisopen}
-          deleteBookmark={() => {
-            deleteBookmark(bookmark);
-            setisopen(false);
-          }}
+          deleteBookmark={() => deleteBookmark(bookmark)}
           bookmark={bookmark}
+          editBookmark={editBookmark}
         />
       )}
     </div>

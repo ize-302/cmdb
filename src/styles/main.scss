@@ -1,16 +1,19 @@
 @import "./partial/_colors.scss";
 
-#cmdb-app-space {
+#cmdb {
   *,
   ::after,
   ::before {
     box-sizing: border-box;
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Old versions of Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none;
+    // remove highlights
+    // -webkit-touch-callout: none; /* iOS Safari */
+    // -webkit-user-select: none; /* Safari */
+    // -khtml-user-select: none; /* Konqueror HTML */
+    // -moz-user-select: none; /* Old versions of Firefox */
+    // -ms-user-select: none; /* Internet Explorer/Edge */
+    // user-select: none;
+    letter-spacing: 0px;
+    font-weight: 400;
   }
 
   body {
@@ -20,7 +23,7 @@
   }
 
   position: fixed;
-  z-index: 9999999999;
+  z-index: 9999;
   top: 0;
   left: 0;
   width: 100%;
@@ -33,6 +36,7 @@
   font-family: "Inter" !important;
   text-align: left;
   line-height: 100%;
+  color: $text-color;
 
   ::-webkit-scrollbar {
     width: 10px;
@@ -53,94 +57,94 @@
    License: none (public domain)
 */
   // RESET STARTS HERE //
-  html,
-  body,
-  div,
-  span,
-  applet,
-  object,
-  iframe,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p,
-  blockquote,
-  pre,
-  a,
-  abbr,
-  acronym,
-  address,
-  big,
-  cite,
-  code,
-  del,
-  dfn,
-  em,
-  img,
-  ins,
-  kbd,
-  q,
-  s,
-  samp,
-  small,
-  strike,
-  strong,
-  sub,
-  sup,
-  tt,
-  var,
-  b,
-  u,
-  i,
-  center,
-  dl,
-  dt,
-  dd,
-  ol,
-  ul,
-  li,
-  fieldset,
-  form,
-  label,
-  legend,
-  table,
-  caption,
-  tbody,
-  tfoot,
-  thead,
-  tr,
-  th,
-  td,
-  article,
-  aside,
-  canvas,
-  details,
-  embed,
-  figure,
-  figcaption,
-  footer,
-  header,
-  hgroup,
-  menu,
-  nav,
-  output,
-  ruby,
-  section,
-  summary,
-  time,
-  mark,
-  audio,
-  video {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
-  }
+  // html,
+  // body,
+  // div,
+  // span,
+  // applet,
+  // object,
+  // iframe,
+  // h1,
+  // h2,
+  // h3,
+  // h4,
+  // h5,
+  // h6,
+  // p,
+  // blockquote,
+  // pre,
+  // a,
+  // abbr,
+  // acronym,
+  // address,
+  // big,
+  // cite,
+  // code,
+  // del,
+  // dfn,
+  // em,
+  // img,
+  // ins,
+  // kbd,
+  // q,
+  // s,
+  // samp,
+  // small,
+  // strike,
+  // strong,
+  // sub,
+  // sup,
+  // tt,
+  // var,
+  // b,
+  // u,
+  // i,
+  // center,
+  // dl,
+  // dt,
+  // dd,
+  // ol,
+  // ul,
+  // li,
+  // fieldset,
+  // form,
+  // label,
+  // legend,
+  // table,
+  // caption,
+  // tbody,
+  // tfoot,
+  // thead,
+  // tr,
+  // th,
+  // td,
+  // article,
+  // aside,
+  // canvas,
+  // details,
+  // embed,
+  // figure,
+  // figcaption,
+  // footer,
+  // header,
+  // hgroup,
+  // menu,
+  // nav,
+  // output,
+  // ruby,
+  // section,
+  // summary,
+  // time,
+  // mark,
+  // audio,
+  // video {
+  //   margin: 0;
+  //   padding: 0;
+  //   border: 0;
+  //   font-size: 100%;
+  //   font: inherit;
+  //   vertical-align: baseline;
+  // }
   /* HTML5 display-role reset for older browsers */
   article,
   aside,
@@ -159,8 +163,11 @@
     line-height: 1;
   }
   ol,
-  ul {
+  ul,
+  li {
     list-style: none;
+    padding: 0;
+    margin: 0;
   }
   blockquote,
   q {
@@ -188,7 +195,107 @@
   }
   // RESET ENDS HERE //
 
-  .cmdb-app-shadow {
+  //buttons
+  button {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    &.cmdb-primary {
+      background-color: white;
+      color: #333;
+    }
+    &.cmdb-secondary {
+      background-color: transparent;
+      color: white;
+    }
+  }
+
+  // inputs
+  input {
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    height: 26px;
+    font-size: 12px;
+    &.cmdb-input {
+      background-color: rgba(0, 0, 0, 0.606);
+      position: relative;
+      color: white;
+      margin-bottom: 10px;
+      &:focus {
+        outline: none !important;
+      }
+    }
+  }
+  label {
+    &.cmdb-label {
+      font-size: 10px;
+      margin-bottom: 3px;
+      display: block;
+      color: rgba(255, 255, 255, 0.443);
+    }
+  }
+
+  .react-tooltip {
+    color: white;
+    background-color: $item-bg;
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  // keyframes
+  @keyframes rotate {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes fadein {
+    0% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes fadeout {
+    0% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+  }
+
+  @keyframes itemsappear {
+    0% {
+      opacity: 0;
+      left: -40px;
+    }
+    100% {
+      opacity: 1;
+      left: 0;
+    }
+  }
+
+  @keyframes SlideIn {
+    0% {
+      opacity: 0;
+      bottom: -10px;
+    }
+    100% {
+      bottom: 0;
+    }
+  }
+
+  .cmdb-dropshadow {
     position: fixed;
     top: 0;
     width: 50vw;
@@ -208,7 +315,7 @@
     overflow: hidden;
   }
 
-  .cmdb-app-container-border {
+  .cmdb-animated-bg {
     position: relative;
     z-index: 0;
     max-width: 970px;
@@ -254,19 +361,12 @@
     }
   }
 
-  @keyframes rotate {
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-
-  .cmdb-app-container {
-    // height: 95.8%;
+  .cmdb-container {
     height: 100%;
     width: 100%;
   }
 
-  .cmdb-app-container-show {
+  .cmdb-show {
     animation-name: fadein;
     animation-duration: 0.1s;
     animation-timing-function: ease-out;
@@ -278,18 +378,7 @@
     transition: all;
   }
 
-  @keyframes fadein {
-    0% {
-      opacity: 0;
-      transform: scale(0.5);
-    }
-    100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  .cmdb-app-container-hide {
+  .cmdb-hide {
     animation-name: fadeout;
     animation-duration: 0.3s;
     animation-timing-function: ease-out;
@@ -301,18 +390,8 @@
     transition: all;
   }
 
-  @keyframes fadeout {
-    0% {
-      opacity: 1;
-      transform: scale(1);
-    }
-    100% {
-      opacity: 0;
-      transform: scale(0.5);
-    }
-  }
-
-  .cmdb-app-heading {
+  // top nav starts here
+  .cmdb-topnav {
     background-color: rgba(0, 0, 0, 0.513);
     border-top-right-radius: 9px;
     border-top-left-radius: 9px;
@@ -324,53 +403,54 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: sticky;
-    top: 0;
-    left: 0;
-    /* height: 5%; */
-
-    .cmdb-app-heading-child {
+    // position: relative;
+    // z-index: 100;
+    // top: 0;
+    // left: 0;
+    .cmdb-topnav-item {
       width: 30%;
       display: flex;
       align-items: center;
 
-      &__left {
+      .cmdb-logo {
+        font-size: 15px;
+        font-weight: 400;
+        color: white;
+        gap: 3px;
+      }
+      .cmdb-version {
+        margin-left: 2px;
+        font-size: 9px;
+        color: #bbb;
+        position: relative;
+        bottom: -2px;
+      }
+
+      &_right {
         justify-content: flex-end;
         gap: 24px;
-        .save-url {
-          background-color: #212b27;
-          color: #12b981;
+        .cmdb-topnav-item_right-save-url {
+          background-color: #000;
+          color: #000;
           font-size: 12px;
-          border-radius: 10px;
+          border-radius: 4px;
           padding: 10px 5px;
           justify-content: center;
           gap: 4px;
-          width: 70px;
           display: flex;
+          max-width: 30px;
           align-items: center;
         }
       }
     }
-  }
-
-  .cmdb-app-heading {
-    .cmdb-app-logo {
-      font-size: 15px;
-      font-weight: 400;
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 3px;
-    }
-
     button {
       padding: 0;
       border: none;
-      height: 16px;
+      max-height: 16px;
+      min-height: 16px;
     }
-
-    input#cmdb-app-search {
-      background-color: rgba(255, 255, 255, 0.06);
+    input#cmdb-search {
+      background-color: $bg-dark;
       border: none;
       border-radius: 4px;
       width: 300px;
@@ -387,124 +467,113 @@
     }
   }
 
-  /*  */
-  .cmdb-app-body {
+  /* body starts here  */
+  .cmdb-body {
     display: flex;
     height: calc(100vh - 159px);
-  }
 
-  .cmdb-app-sidenav {
-    margin-right: 1px;
-    background: $bg-dark;
-    min-width: 240px;
-    padding: 0px 10px;
-    overflow-y: auto;
-    border-bottom-left-radius: 9px;
-  }
-
-  .greetings {
-    color: white;
-    margin: 20px 0 10px 10px;
-    font-size: 14px;
-    outline: none;
-    font-weight: 400;
-    opacity: 0.4;
-  }
-
-  .cmdb-app-go-back {
-    color: white;
-    margin: 20px 0 40px 6px;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    outline: none;
-    font-weight: 400;
-    cursor: pointer;
-    opacity: 0.4;
-    &:focus {
-      outline: none;
-    }
-    &:hover {
-      opacity: 0.6;
-    }
-  }
-
-  .cmdb-app-sidenav-list {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    margin-top: 20px;
-    animation-name: itemsappear;
-    animation-duration: 0.4s;
-    animation-timing-function: ease-out;
-    animation-delay: 0;
-    animation-direction: alternate;
-    animation-iteration-count: 1;
-    animation-fill-mode: both;
-    animation-play-state: running;
-    transition: all;
-    opacity: 0;
-    position: relative;
-
-    @keyframes itemsappear {
-      0% {
+    // side nav
+    .cmdb-sidenav {
+      margin-right: 1px;
+      background: $bg-dark;
+      min-width: 240px;
+      padding: 0px 10px;
+      overflow-y: auto;
+      border-bottom-left-radius: 9px;
+      &_greetings {
+        color: white;
+        margin: 20px 0 10px 10px;
+        font-size: 14px;
+        outline: none;
+        font-weight: 400;
+        opacity: 0.4;
+      }
+      &_go-back {
+        color: white;
+        margin: 20px 0 40px 6px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        outline: none;
+        font-weight: 400;
+        cursor: pointer;
+        opacity: 0.4;
+        &:focus {
+          outline: none;
+        }
+        &:hover {
+          opacity: 0.6;
+        }
+      }
+      &-items {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        margin-top: 20px;
+        animation-name: itemsappear;
+        animation-duration: 0.4s;
+        animation-timing-function: ease-out;
+        animation-delay: 0;
+        animation-direction: alternate;
+        animation-iteration-count: 1;
+        animation-fill-mode: both;
+        animation-play-state: running;
+        transition: all;
         opacity: 0;
-        left: -40px;
-      }
-      100% {
-        opacity: 1;
-        left: 0;
-      }
-    }
-    .cmdb-app-currentfolder-name {
-      font-size: 14px;
-      margin-bottom: 5px;
-      margin-left: 10px;
-      color: $text-color;
-      opacity: 0.4;
-    }
-    .cmdb-app-sidenav-item {
-      cursor: pointer;
-      padding: 10px;
-      border-radius: 4px;
-      color: $text-color;
-      font-size: 14px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      transition-duration: 0.3s;
-      &:hover {
-        background: $item-bg;
-        svg {
+        position: relative;
+
+        .cmdb-currentfolder-name {
+          font-size: 14px;
+          margin-bottom: 5px;
+          margin-left: 10px;
+          color: $text-color;
+          opacity: 0.4;
+        }
+        .cmdb-sidenav-item {
+          cursor: pointer;
+          padding: 10px;
+          border-radius: 4px;
+          color: $text-color;
+          font-size: 14px;
+          display: flex;
+          gap: 10px;
+          align-items: center;
+          transition-duration: 0.3s;
+          &:hover {
+            background: $item-bg;
+            svg {
+              color: white;
+              opacity: 1;
+            }
+          }
+        }
+        input[type="radio"] {
+          display: none;
+        }
+        input[type="radio"]:checked + label {
+          background: $item-bg;
+          border-width: 1px;
+          border-style: solid;
+          border-color: $item-border;
           color: white;
-          opacity: 1;
+          svg {
+            opacity: 1;
+          }
         }
       }
     }
-    input[type="radio"] {
-      display: none;
-    }
-    input[type="radio"]:checked + label {
-      background: $item-bg;
-      border-width: 1px;
-      border-style: solid;
-      border-color: $item-border;
-      color: white;
-      svg {
-        opacity: 1;
-      }
-    }
   }
 
-  .cmdb-app-content {
+  .cmdb-content-section {
     overflow-y: auto;
+    overflow-x: hidden;
     width: 100%;
     position: relative;
     background: $bg-dark;
     border-bottom-right-radius: 9px;
 
-    .cmdb-app-content-nobookmark {
+    .cmdb-empty-page {
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -514,16 +583,17 @@
       height: 100%;
       text-align: center;
       color: $text-color;
+      margin-top: 100px;
     }
 
-    .cmdb-app-content-bookmarklist {
+    .cmdb-list {
       padding: 18px 10px 32px 10px;
       font-size: 13px;
       display: flex;
       flex-direction: column;
       gap: 4px;
 
-      .cmdb-app-content-bookmarkheader {
+      .cmdb-page-title {
         border-bottom: 1px solid $item-border;
         color: white;
         padding: 0 10px 10px 10px;
@@ -531,32 +601,31 @@
       }
 
       @for $i from 1 through 40 {
-        .cmdb-app-content-bookmark-item:nth-child(#{$i}n) {
+        .cmdb-list-item:nth-child(#{$i}n) {
           animation-delay: #{$i * 0.05}s;
         }
       }
 
-      .cmdb-app-content-bookmark-item {
+      .cmdb-list-item {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        animation: FadeIn 0.3s linear forwards;
+        animation: SlideIn 0.3s linear forwards;
         animation-fill-mode: both;
         position: relative;
         padding: 6px 12px;
         border-radius: 4px;
         &:hover {
           background: $item-bg;
-          .cmdb-app-content-bookmark-item_title {
+          .cmdb-list-item_title {
             color: white;
             cursor: pointer;
           }
         }
-        .cmdb-app-content-bookmark-item_title {
+        .cmdb-list-item_title {
           transition-duration: 0.3s;
           text-overflow: ellipsis;
           white-space: nowrap;
-          overflow-x: hidden;
           width: 90%;
           display: flex;
           gap: 10px;
@@ -574,7 +643,7 @@
         position: relative;
       }
 
-      .cmdb-app-content-bookmark-item_kebab {
+      .cmdb-list-item_kebab {
         cursor: pointer;
         min-width: 30px;
         min-height: 30px;
@@ -586,18 +655,8 @@
           background: #ececec11;
         }
       }
-      // keyframes
-      @keyframes FadeIn {
-        0% {
-          opacity: 0;
-          bottom: -10px;
-        }
-        100% {
-          bottom: 0;
-        }
-      }
 
-      .cmdb-app-menu {
+      .cmdb-menu {
         min-width: 150px;
         border-radius: 4px;
         background: #1d2230;
@@ -609,10 +668,12 @@
         right: 10px;
         z-index: 4;
 
-        .cmdb-app-menu-item {
+        .cmdb-menu-item {
           border-bottom: 1px solid $item-border;
           padding: 8px 12px;
           color: $text-color;
+          font-size: 14px;
+          margin: 0;
           &.delete {
             color: red;
           }
@@ -624,6 +685,57 @@
             border: none;
           }
         }
+      }
+    }
+  }
+
+  //
+  .cmdb-modal {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .cmdb-modal-backdrop {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: rgba(0, 0, 0, 0.473);
+      width: 100%;
+      height: 100%;
+    }
+    .cmdb-modal-content {
+      position: relative;
+      z-index: 1;
+      background: $item-bg;
+      width: 350px;
+      border-radius: 4px;
+      border: 1px solid $item-border;
+      box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.302);
+      padding: 15px;
+      animation-name: fadein;
+      animation-duration: 0.1s;
+      animation-timing-function: ease-out;
+      animation-delay: 0;
+      animation-direction: alternate;
+      animation-iteration-count: 1;
+      animation-fill-mode: both;
+      animation-play-state: running;
+      transition: all;
+
+      .cmdb-modal-title {
+        margin-bottom: 15px;
+        font-size: 14px;
+      }
+
+      .cmdb-modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 10px;
       }
     }
   }

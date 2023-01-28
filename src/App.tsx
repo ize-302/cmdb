@@ -1,6 +1,7 @@
 /*global chrome*/
 
 import React from "react";
+import "react-tooltip/dist/react-tooltip.css";
 import "./styles/main.scss";
 import { Content } from "./components/Content";
 import { SideNav } from "./components/SideNav";
@@ -15,7 +16,15 @@ import {
   CMDB_CREATE_BOOKMARK,
   CMDB_SEARCH,
   CMDB_DELETE_BOOKMARK,
+  CMDB_UPDATE_BOOKMARK,
+  CMDB_REMOVE_BOOKMARK_MSG,
+  CMDB_SAVED_BOOKMARK_MSG,
+  CMDB_UPDATED_BOOKMARK_MSG,
 } from "./keys";
+import EditBookmarkModal from "./components/EditBookmarkModal";
+import toast from "react-hot-toast";
+import CustomToast from "./components/CustomToast";
+import { BookmarkProps } from "../src/types";
 
 interface AppProps {}
 
@@ -23,11 +32,16 @@ const App: React.FC<AppProps> = () => {
   // states
   let [folders, setfolders] = React.useState<any>([]);
   let [bookmarks, setbookmarks] = React.useState<any>([]);
-  const [recentBookmarks, setrecentBookmarks] = React.useState<any>([]);
+  const [recentBookmarks, setrecentBookmarks] = React.useState<BookmarkProps[]>(
+    []
+  );
   const [selectedFolder, setselectedFolder] = React.useState<any>({});
   const [bookmarksOnView, setbookmarksOnView] = React.useState<any>([]);
   const [foldersToDisplay, setfoldersToDisplay] = React.useState<any>(null);
   const [currentParent, setcurrentParent] = React.useState<any>(null);
+  const [showmodal, setshowmodal] = React.useState(false);
+  const [bookmarkToEdit, setbookmarkToEdit] = React.useState({});
+  const [isbookmarked, setisbookmarked] = React.useState(false);
 
   // separate folders from bookmarks(actual bookmarks)
   let newBookmarks: any[] = [];
@@ -92,7 +106,7 @@ const App: React.FC<AppProps> = () => {
     folders.forEach((folder: { parentId: string; id: string }) => {
       // check if folder has children
       const hasChildren = folders?.find(
-        (child: { parentId: any }) => child.parentId === folder.id
+        (child: { parentId: string }) => child.parentId === folder.id
       );
       temp_nested_folders.push({
         ...folder,
@@ -104,20 +118,30 @@ const App: React.FC<AppProps> = () => {
     showbookmarksOnView(selectedFolder?.id);
   };
 
-  const handleSaveUrl = () => {
+  const handleSaveUrl = async () => {
     const url = window.location.href;
-    const parentId = currentParent?.id;
-    const command = CMDB_CREATE_BOOKMARK;
-    try {
-      axios.get(url).then((response) => {
-        var $ = cheerio.load(response.data);
+    if (!isbookmarked) {
+      const parentId = currentParent.title ? currentParent?.id : null;
+      const command = CMDB_CREATE_BOOKMARK;
+      try {
+        const response = axios.get(url);
+        var $ = cheerio.load((await response).data);
         var title = $("title").text();
-        chrome.runtime.sendMessage({ title, url, command }, (response) => {});
+        chrome.runtime.sendMessage(
+          { title, url, command, parentId },
+          (response) => {}
+        );
+        toast.success(CMDB_SAVED_BOOKMARK_MSG);
         fetchBookmarks();
         fetchRecentBookmarks();
-      });
-    } catch (error) {
-      console.log("error => ", error);
+      } catch (error) {
+        console.log("error => ", error);
+      }
+    } else {
+      const findBookmark = bookmarks.find(
+        (bookmark: BookmarkProps) => bookmark.url === url
+      );
+      deleteBookmark(findBookmark);
     }
   };
 
@@ -135,11 +159,30 @@ const App: React.FC<AppProps> = () => {
     });
   };
 
-  const deleteBookmark = (bookmark: any) => {
+  const deleteBookmark = (bookmark: BookmarkProps) => {
     const currentSelectedfolder = selectedFolder;
     chrome.runtime.sendMessage(
       { id: bookmark.id, command: CMDB_DELETE_BOOKMARK },
       (result) => {
+        fetchBookmarks();
+        toast.success(CMDB_REMOVE_BOOKMARK_MSG);
+        if (!currentSelectedfolder.index) {
+          fetchRecentBookmarks();
+        }
+      }
+    );
+  };
+
+  const updateBookmark = (bookmark: BookmarkProps) => {
+    const currentSelectedfolder = selectedFolder;
+    console.log(bookmark);
+    const { id, title, url } = bookmark;
+    chrome.runtime.sendMessage(
+      { id, title, url, command: CMDB_UPDATE_BOOKMARK },
+      (result) => {
+        toast.success(CMDB_UPDATED_BOOKMARK_MSG);
+        setshowmodal(false);
+        setbookmarkToEdit({});
         fetchBookmarks();
         if (!currentSelectedfolder.index) {
           fetchRecentBookmarks();
@@ -147,6 +190,16 @@ const App: React.FC<AppProps> = () => {
       }
     );
   };
+
+  React.useEffect(() => {
+    if (window && bookmarks.length > 0) {
+      const currenturl = window.location.href;
+      const findBookmark = bookmarks.find(
+        (bookmark: BookmarkProps) => bookmark.url === currenturl
+      );
+      findBookmark ? setisbookmarked(true) : setisbookmarked(false);
+    }
+  }, [window, bookmarks]);
 
   React.useEffect(() => {
     showbookmarksOnView(selectedFolder?.id);
@@ -159,12 +212,17 @@ const App: React.FC<AppProps> = () => {
   }, []);
 
   return (
-    <div id="cmdb-app-space">
-      <div className="cmdb-app-shadow" />
-      <div className="cmdb-app-container-border cmdb-app-container-show">
-        <div className="cmdb-app-container">
-          <TopNav handleSearch={handleSearch} handleSaveUrl={handleSaveUrl} />
-          <div className="cmdb-app-body">
+    <div id="cmdb">
+      <div className="cmdb-dropshadow" />
+      <div className="cmdb-animated-bg cmdb-show">
+        <div className="cmdb-container">
+          <CustomToast />
+          <TopNav
+            handleSearch={handleSearch}
+            handleSaveUrl={handleSaveUrl}
+            isbookmarked={isbookmarked}
+          />
+          <div className="cmdb-body">
             <SideNav
               folders={folders}
               selectedFolder={selectedFolder}
@@ -179,8 +237,24 @@ const App: React.FC<AppProps> = () => {
               selectedFolder={selectedFolder}
               bookmarksOnView={bookmarksOnView}
               deleteBookmark={deleteBookmark}
+              editBookmark={(bookmark: BookmarkProps) => {
+                setshowmodal(true);
+                setbookmarkToEdit(bookmark);
+              }}
             />
           </div>
+          {/* edit modal */}
+          {showmodal && (
+            <EditBookmarkModal
+              modaltitle="Edit bookmark"
+              bookmark={bookmarkToEdit}
+              setisopen={(payload) => {
+                setshowmodal(payload);
+                setbookmarkToEdit({});
+              }}
+              submitEditBookmark={updateBookmark}
+            />
+          )}
         </div>
       </div>
     </div>

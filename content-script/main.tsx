@@ -13,13 +13,12 @@ let show = false;
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
   show = !show;
 
-  const ext_container_elem = document.getElementsByClassName(
-    "cmdb-app-container-border"
-  )[0];
+  const ext_container_elem =
+    document.getElementsByClassName("cmdb-animated-bg")[0];
 
   const html = document.querySelector("html");
   if (show) {
-    const app = document.createElement("cmdb-app");
+    const app = document.createElement("cmdb");
     app.id = "root";
     if (html) {
       html.append(app);
@@ -28,23 +27,23 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
       html.style.overflow = "hidden";
     }
     let root = createRoot(
-      document.getElementsByTagName("cmdb-app")[0] as HTMLElement
+      document.getElementsByTagName("cmdb")[0] as HTMLElement
     );
     root.render(<App />);
 
     if (ext_container_elem) {
-      ext_container_elem.classList.add("cmdb-app-container-show");
-      ext_container_elem.classList.remove("cmdb-app-container-hide");
+      ext_container_elem.classList.add("cmdb-show");
+      ext_container_elem.classList.remove("cmdb-hide");
     }
   } else {
     if (html) {
       html.style.overflow = "auto";
     }
-    ext_container_elem.classList.add("cmdb-app-container-hide");
-    ext_container_elem.classList.remove("cmdb-app-container-show");
+    ext_container_elem.classList.add("cmdb-hide");
+    ext_container_elem.classList.remove("cmdb-show");
 
     setTimeout(() => {
-      const div_root = document.getElementsByTagName("cmdb-app")[0];
+      const div_root = document.getElementsByTagName("cmdb")[0];
       div_root?.remove();
     }, 100);
   }

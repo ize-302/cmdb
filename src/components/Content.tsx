@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { BookmarkItem } from "./BookmarkItem";
+import { BookmarkProps } from "../types";
 
 interface ContentProps {
-  bookmarksOnView: any[];
+  bookmarksOnView: BookmarkProps[];
   selectedFolder: any;
-  deleteBookmark: (bookmark: any) => void;
+  deleteBookmark: (bookmark: BookmarkProps) => void;
+  editBookmark: (bookmark: BookmarkProps) => void;
 }
 
 export const Content: React.FC<ContentProps> = ({
   bookmarksOnView,
   selectedFolder,
   deleteBookmark,
+  editBookmark,
 }) => {
   const [selectedBookmarks, setselectedBookmarks] = React.useState<string[]>(
     []
@@ -28,31 +31,34 @@ export const Content: React.FC<ContentProps> = ({
   };
 
   return (
-    <div className="cmdb-app-content">
-      {bookmarksOnView?.length === 0 ? (
-        <div className="cmdb-app-content-nobookmark">
-          <ExclamationCircleIcon width="34" opacity={0.4} />
-          <p>Nothing to see here!</p>
-        </div>
-      ) : (
-        <div className="cmdb-app-content-bookmarklist">
-          <b className="cmdb-app-content-bookmarkheader">
-            {selectedFolder?.title || "Recently added"}
-          </b>
-          {bookmarksOnView?.map((bookmark, index) => (
-            <BookmarkItem
-              key={index}
-              index={index}
-              bookmark={bookmark}
-              handleSelectBookmark={(e, bookmark) =>
-                handleSelectBookmark(e, bookmark, index)
-              }
-              selectedBookmarks={selectedBookmarks}
-              deleteBookmark={deleteBookmark}
-            />
-          ))}
-        </div>
-      )}
+    <div className="cmdb-content-section">
+      <div className="cmdb-list">
+        <b className="cmdb-page-title">
+          {selectedFolder?.title || "Recently added"}
+        </b>
+        {bookmarksOnView?.length === 0 ? (
+          <div className="cmdb-empty-page">
+            <ExclamationCircleIcon width="34" opacity={0.4} />
+            <p>Nothing to see here!</p>
+          </div>
+        ) : (
+          <>
+            {bookmarksOnView?.map((bookmark, index) => (
+              <BookmarkItem
+                key={index}
+                index={index}
+                bookmark={bookmark}
+                handleSelectBookmark={(e, bookmark) =>
+                  handleSelectBookmark(e, bookmark, index)
+                }
+                selectedBookmarks={selectedBookmarks}
+                deleteBookmark={deleteBookmark}
+                editBookmark={editBookmark}
+              />
+            ))}
+          </>
+        )}
+      </div>
     </div>
   );
 };

@@ -3,13 +3,27 @@ const toggleExtension = (tabid) => {
 };
 
 // toggle extension when extension icon is clicked
-chrome.action.onClicked.addListener(function (tab: any) {
+chrome.action.onClicked.addListener(function (tab) {
   toggleExtension(tab.id);
 });
 
 //  toggle extension when Cmd+B is pressed
 chrome.commands.onCommand.addListener((command, tab) => {
   toggleExtension(tab.id);
+});
+
+// first time isntlalation
+chrome.runtime.onInstalled.addListener(function () {
+  alert(
+    "You just made the best decision of today, by installing GMass!\n\nWe will now redirect you to your Gmail account so you can get started sending email campaigns inside Gmail."
+  );
+
+  chrome.tabs.create({
+    url: "https://mail.google.com",
+    active: true,
+  });
+
+  return false;
 });
 
 // Receive messages
@@ -48,5 +62,17 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       }
     );
   }
+
+  // handle update
+  if (message.command === "CMDB_UPDATE_BOOKMARK") {
+    chrome.bookmarks.update(
+      message.id,
+      { title: message.title, url: message.url },
+      (response) => {
+        sendResponse(response);
+      }
+    );
+  }
+
   return true;
 });
