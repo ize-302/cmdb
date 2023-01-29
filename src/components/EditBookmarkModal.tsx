@@ -5,14 +5,12 @@ import { BookmarkProps } from "../types";
 interface EditBookmarkModalProps {
   bookmark: any;
   setisopen: (payload: boolean) => void;
-  modaltitle: string;
   submitEditBookmark: (payload: BookmarkProps) => void;
 }
 
 const EditBookmarkModal: React.FC<EditBookmarkModalProps> = ({
   bookmark,
   setisopen,
-  modaltitle,
   submitEditBookmark,
 }) => {
   const wrapperRef = React.useRef(null);
@@ -30,9 +28,7 @@ const EditBookmarkModal: React.FC<EditBookmarkModalProps> = ({
     <div className="cmdb-modal">
       <div className="cmdb-modal-backdrop" />
       <div ref={wrapperRef} className="cmdb-modal-content">
-        <div className="cmdb-modal-title">
-          {bookmark ? "Edit bookmark" : "Add bookmark"}
-        </div>
+        <div className="cmdb-modal-title">Edit bookmark</div>
         <form>
           <label className="cmdb-label">Title</label>
           <input

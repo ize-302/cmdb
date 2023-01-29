@@ -229,6 +229,24 @@
       }
     }
   }
+  // select
+  select {
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    height: 26px;
+    font-size: 12px;
+    &.cmdb-select {
+      background-color: rgba(0, 0, 0, 0.606);
+      position: relative;
+      color: white;
+      margin-bottom: 10px;
+      &:focus {
+        outline: none !important;
+      }
+    }
+  }
   label {
     &.cmdb-label {
       font-size: 10px;
@@ -587,7 +605,7 @@
     }
 
     .cmdb-list {
-      padding: 18px 10px 32px 10px;
+      padding: 18px 10px 20px 10px;
       font-size: 13px;
       display: flex;
       flex-direction: column;
@@ -623,10 +641,11 @@
           }
         }
         .cmdb-list-item_title {
+          overflow-x: hidden;
           transition-duration: 0.3s;
           text-overflow: ellipsis;
           white-space: nowrap;
-          width: 90%;
+          max-width: 700px;
           display: flex;
           gap: 10px;
           color: $text-color;
@@ -684,6 +703,31 @@
           &:last-child {
             border: none;
           }
+        }
+      }
+    }
+    .cmdb-content-actions {
+      position: sticky;
+      bottom: 10px;
+      background-color: #439dfc;
+      height: 40px;
+      border-radius: 4px;
+      width: 97%;
+      margin: 0 1.5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.302);
+      padding: 0 15px;
+      font-size: 14px;
+      color: #000;
+
+      &-controls {
+        display: flex;
+        align-items: center;
+        .delete {
+          color: red;
+          cursor: pointer;
         }
       }
     }

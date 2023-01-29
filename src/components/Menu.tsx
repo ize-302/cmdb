@@ -24,6 +24,7 @@ interface MenuProps {
   deleteBookmark: () => void;
   bookmark: any;
   editBookmark: (bookmark: any) => void;
+  moveBookmark: (bookmark: any) => void;
 }
 
 const Menu: React.FC<MenuProps> = ({
@@ -31,6 +32,7 @@ const Menu: React.FC<MenuProps> = ({
   deleteBookmark,
   bookmark,
   editBookmark,
+  moveBookmark,
 }) => {
   const wrapperRef = React.useRef(null);
   useOutsideAlerter(wrapperRef, setisopen);
@@ -55,7 +57,15 @@ const Menu: React.FC<MenuProps> = ({
       >
         Open in new tab
       </li>
-      <li className="cmdb-menu-item">Move</li>
+      <li
+        className="cmdb-menu-item"
+        onClick={() => {
+          moveBookmark(bookmark);
+          setisopen(false);
+        }}
+      >
+        Move
+      </li>
       <li
         className="cmdb-menu-item"
         onClick={() => {

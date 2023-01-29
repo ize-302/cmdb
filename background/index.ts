@@ -74,5 +74,16 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     );
   }
 
+  // handle move bookmark
+  if (message.command === "CMDB_MOVE_BOOKMARK") {
+    chrome.bookmarks.move(
+      message.id,
+      { parentId: message.parentId },
+      (response) => {
+        sendResponse(response);
+      }
+    );
+  }
+
   return true;
 });

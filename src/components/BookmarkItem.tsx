@@ -7,9 +7,10 @@ interface BookmarkItemProps {
   selectedBookmarks: any[];
   bookmark: BookmarkProps;
   handleSelectBookmark: (e: any, bookmark: BookmarkProps) => void;
-  deleteBookmark: (bookmark: any) => void;
+  deleteBookmark: (bookmark: BookmarkProps) => void;
   index: number;
-  editBookmark: (bookmark: any) => void;
+  editBookmark: (bookmark: BookmarkProps) => void;
+  moveBookmark: (bookmark: BookmarkProps) => void;
 }
 
 export const BookmarkItem: React.FC<BookmarkItemProps> = ({
@@ -19,6 +20,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
   deleteBookmark,
   index,
   editBookmark,
+  moveBookmark,
 }) => {
   const [isopen, setisopen] = React.useState(false);
   const dragItem = React.useRef();
@@ -69,6 +71,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
           deleteBookmark={() => deleteBookmark(bookmark)}
           bookmark={bookmark}
           editBookmark={editBookmark}
+          moveBookmark={moveBookmark}
         />
       )}
     </div>

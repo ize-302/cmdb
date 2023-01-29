@@ -17,14 +17,18 @@ import {
   CMDB_SEARCH,
   CMDB_DELETE_BOOKMARK,
   CMDB_UPDATE_BOOKMARK,
-  CMDB_REMOVE_BOOKMARK_MSG,
+  CMDB_MOVE_BOOKMARK,
+  CMDB_REMOVED_BOOKMARK_MSG,
   CMDB_SAVED_BOOKMARK_MSG,
   CMDB_UPDATED_BOOKMARK_MSG,
+  CMDB_REMOVED_BOOKMARKS_MSG,
+  CMDB_MOVED_BOOKMARK_MSG,
 } from "./keys";
 import EditBookmarkModal from "./components/EditBookmarkModal";
 import toast from "react-hot-toast";
 import CustomToast from "./components/CustomToast";
 import { BookmarkProps } from "../src/types";
+import MoveBookmarkModal from "./components/MoveBookmarkModal";
 
 interface AppProps {}
 
@@ -39,9 +43,14 @@ const App: React.FC<AppProps> = () => {
   const [bookmarksOnView, setbookmarksOnView] = React.useState<any>([]);
   const [foldersToDisplay, setfoldersToDisplay] = React.useState<any>(null);
   const [currentParent, setcurrentParent] = React.useState<any>(null);
-  const [showmodal, setshowmodal] = React.useState(false);
+  const [showeditmodal, setshoweditmodal] = React.useState(false);
   const [bookmarkToEdit, setbookmarkToEdit] = React.useState({});
+  const [showmovemodal, setshowmovemodal] = React.useState(false);
+  const [bookmarksToMove, setbookmarksToMove] = React.useState([]);
   const [isbookmarked, setisbookmarked] = React.useState(false);
+  const [selectedBookmarks, setselectedBookmarks] = React.useState<string[]>(
+    []
+  );
 
   // separate folders from bookmarks(actual bookmarks)
   let newBookmarks: any[] = [];
@@ -160,12 +169,13 @@ const App: React.FC<AppProps> = () => {
   };
 
   const deleteBookmark = (bookmark: BookmarkProps) => {
+    console.log(bookmark);
     const currentSelectedfolder = selectedFolder;
     chrome.runtime.sendMessage(
       { id: bookmark.id, command: CMDB_DELETE_BOOKMARK },
       (result) => {
         fetchBookmarks();
-        toast.success(CMDB_REMOVE_BOOKMARK_MSG);
+        toast.success(CMDB_REMOVED_BOOKMARK_MSG);
         if (!currentSelectedfolder.index) {
           fetchRecentBookmarks();
         }
@@ -173,15 +183,61 @@ const App: React.FC<AppProps> = () => {
     );
   };
 
+  const deleteMultipleBookmarks = () => {
+    const currentSelectedfolder = selectedFolder;
+    for (let i = 0; i <= selectedBookmarks.length; i++) {
+      chrome.runtime.sendMessage({
+        id: selectedBookmarks[i],
+        command: CMDB_DELETE_BOOKMARK,
+      });
+      if (i === selectedBookmarks.length - 1) {
+        fetchBookmarks();
+        if (!currentSelectedfolder.index) {
+          fetchRecentBookmarks();
+        }
+        setselectedBookmarks([]);
+        toast.success(CMDB_REMOVED_BOOKMARKS_MSG);
+        return;
+      }
+    }
+  };
+
+  const moveBookmark = (bookmarks: string[], parentId: string) => {
+    console.log(bookmarks);
+    const currentSelectedfolder = selectedFolder;
+    for (let i = 0; i <= bookmarks.length; i++) {
+      chrome.runtime.sendMessage({
+        id: bookmarks[i],
+        parentId,
+        command: CMDB_MOVE_BOOKMARK,
+      });
+      if (i === bookmarks.length - 1) {
+        fetchBookmarks();
+        if (!currentSelectedfolder.index) {
+          fetchRecentBookmarks();
+        }
+        setbookmarksToMove([]);
+        setshowmovemodal(false);
+        toast.success(CMDB_MOVED_BOOKMARK_MSG);
+        return;
+      }
+    }
+  };
+
+  const moveMultipleBookmakrs = () => {
+    setshowmovemodal(true);
+    const merged: any = [...selectedBookmarks];
+    setbookmarksToMove(merged);
+  };
+
   const updateBookmark = (bookmark: BookmarkProps) => {
     const currentSelectedfolder = selectedFolder;
-    console.log(bookmark);
     const { id, title, url } = bookmark;
     chrome.runtime.sendMessage(
       { id, title, url, command: CMDB_UPDATE_BOOKMARK },
       (result) => {
         toast.success(CMDB_UPDATED_BOOKMARK_MSG);
-        setshowmodal(false);
+        setshoweditmodal(false);
         setbookmarkToEdit({});
         fetchBookmarks();
         if (!currentSelectedfolder.index) {
@@ -203,6 +259,7 @@ const App: React.FC<AppProps> = () => {
 
   React.useEffect(() => {
     showbookmarksOnView(selectedFolder?.id);
+    setselectedBookmarks([]);
   }, [selectedFolder]);
 
   // use effects
@@ -238,21 +295,41 @@ const App: React.FC<AppProps> = () => {
               bookmarksOnView={bookmarksOnView}
               deleteBookmark={deleteBookmark}
               editBookmark={(bookmark: BookmarkProps) => {
-                setshowmodal(true);
+                setshoweditmodal(true);
                 setbookmarkToEdit(bookmark);
               }}
+              moveBookmark={(bookmark: BookmarkProps) => {
+                setshowmovemodal(true);
+                const merged: any = [...bookmarksToMove, bookmark.id];
+                setbookmarksToMove(merged);
+              }}
+              selectedBookmarks={selectedBookmarks}
+              setselectedBookmarks={setselectedBookmarks}
+              deleteMultipleBookmarks={deleteMultipleBookmarks}
+              moveMultipleBookmakrs={moveMultipleBookmakrs}
             />
           </div>
           {/* edit modal */}
-          {showmodal && (
+          {showeditmodal && (
             <EditBookmarkModal
-              modaltitle="Edit bookmark"
               bookmark={bookmarkToEdit}
               setisopen={(payload) => {
-                setshowmodal(payload);
+                setshoweditmodal(payload);
                 setbookmarkToEdit({});
               }}
               submitEditBookmark={updateBookmark}
+            />
+          )}
+          {/* move modal */}
+          {showmovemodal && (
+            <MoveBookmarkModal
+              folders={folders}
+              bookmarks={bookmarksToMove}
+              setisopen={(payload) => {
+                setshowmovemodal(payload);
+                setbookmarksToMove([]);
+              }}
+              submitMoveBookmark={moveBookmark}
             />
           )}
         </div>

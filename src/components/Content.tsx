@@ -8,6 +8,11 @@ interface ContentProps {
   selectedFolder: any;
   deleteBookmark: (bookmark: BookmarkProps) => void;
   editBookmark: (bookmark: BookmarkProps) => void;
+  setselectedBookmarks: (value: string[]) => void;
+  selectedBookmarks: string[];
+  deleteMultipleBookmarks: () => void;
+  moveMultipleBookmakrs: () => void;
+  moveBookmark: (bookmark: BookmarkProps) => void;
 }
 
 export const Content: React.FC<ContentProps> = ({
@@ -15,10 +20,12 @@ export const Content: React.FC<ContentProps> = ({
   selectedFolder,
   deleteBookmark,
   editBookmark,
+  selectedBookmarks,
+  setselectedBookmarks,
+  deleteMultipleBookmarks,
+  moveMultipleBookmakrs,
+  moveBookmark,
 }) => {
-  const [selectedBookmarks, setselectedBookmarks] = React.useState<string[]>(
-    []
-  );
   const handleSelectBookmark = (e: any, bookmark: any, index: number) => {
     if (e.shiftKey) {
       const previouslyselected = [...selectedBookmarks];
@@ -54,11 +61,29 @@ export const Content: React.FC<ContentProps> = ({
                 selectedBookmarks={selectedBookmarks}
                 deleteBookmark={deleteBookmark}
                 editBookmark={editBookmark}
+                moveBookmark={moveBookmark}
               />
             ))}
           </>
         )}
       </div>
+      {/* actions for multiple selection */}
+      {selectedBookmarks.length > 1 && (
+        <div className="cmdb-content-actions">
+          <span>
+            <b style={{ fontWeight: 600 }}>{selectedBookmarks.length}</b> items
+          </span>
+          <div className="cmdb-content-actions-controls">
+            <button onClick={() => moveMultipleBookmakrs()}>Move</button>
+            <button
+              className="delete"
+              onClick={() => deleteMultipleBookmarks()}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
