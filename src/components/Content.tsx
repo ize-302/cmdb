@@ -8,7 +8,7 @@ interface ContentProps {
   selectedFolder: any;
   deleteBookmark: (bookmark: BookmarkProps) => void;
   editBookmark: (bookmark: BookmarkProps) => void;
-  setselectedBookmarks: (value: string[]) => void;
+  setselectedBookmarks: (value: any[]) => void;
   selectedBookmarks: string[];
   deleteMultipleBookmarks: () => void;
   moveMultipleBookmakrs: () => void;
@@ -29,10 +29,10 @@ export const Content: React.FC<ContentProps> = ({
   const handleSelectBookmark = (e: any, bookmark: any, index: number) => {
     if (e.shiftKey) {
       const previouslyselected = [...selectedBookmarks];
-      previouslyselected.push(bookmark.id);
+      previouslyselected.push(bookmark);
       setselectedBookmarks(previouslyselected);
     } else {
-      if (e.detail === 1) setselectedBookmarks([bookmark.id]);
+      if (e.detail === 1) setselectedBookmarks([bookmark]);
       else if (e.detail === 2) window.open(bookmark.url, "_blank");
     }
   };

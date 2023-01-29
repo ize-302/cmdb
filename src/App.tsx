@@ -48,9 +48,7 @@ const App: React.FC<AppProps> = () => {
   const [showmovemodal, setshowmovemodal] = React.useState(false);
   const [bookmarksToMove, setbookmarksToMove] = React.useState([]);
   const [isbookmarked, setisbookmarked] = React.useState(false);
-  const [selectedBookmarks, setselectedBookmarks] = React.useState<string[]>(
-    []
-  );
+  const [selectedBookmarks, setselectedBookmarks] = React.useState<any[]>([]);
 
   // separate folders from bookmarks(actual bookmarks)
   let newBookmarks: any[] = [];
@@ -186,8 +184,9 @@ const App: React.FC<AppProps> = () => {
   const deleteMultipleBookmarks = () => {
     const currentSelectedfolder = selectedFolder;
     for (let i = 0; i <= selectedBookmarks.length; i++) {
+      console.log(selectedBookmarks[i]);
       chrome.runtime.sendMessage({
-        id: selectedBookmarks[i],
+        id: selectedBookmarks[i].id,
         command: CMDB_DELETE_BOOKMARK,
       });
       if (i === selectedBookmarks.length - 1) {
@@ -203,7 +202,6 @@ const App: React.FC<AppProps> = () => {
   };
 
   const moveBookmark = (bookmarks: string[], parentId: string) => {
-    console.log(bookmarks);
     const currentSelectedfolder = selectedFolder;
     for (let i = 0; i <= bookmarks.length; i++) {
       chrome.runtime.sendMessage({

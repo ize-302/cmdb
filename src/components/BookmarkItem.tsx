@@ -40,7 +40,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
       <input
         type="checkbox"
         name="items"
-        checked={selectedBookmarks.includes(bookmark.id)}
+        checked={selectedBookmarks.includes(bookmark)}
         value={bookmark.id}
         readOnly
       />
