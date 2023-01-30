@@ -1,4 +1,5 @@
 import React from "react";
+import { CMDB_TRASH } from "../keys";
 
 export function useOutsideAlerter(ref: any, setisopen: any) {
   React.useEffect(() => {
@@ -25,6 +26,8 @@ interface MenuProps {
   bookmark: any;
   editBookmark: (bookmark: any) => void;
   moveBookmark: (bookmark: any) => void;
+  deleteBookmarkFromTrash: () => void;
+  selectedFolder: any;
 }
 
 const Menu: React.FC<MenuProps> = ({
@@ -33,9 +36,13 @@ const Menu: React.FC<MenuProps> = ({
   bookmark,
   editBookmark,
   moveBookmark,
+  deleteBookmarkFromTrash,
+  selectedFolder,
 }) => {
   const wrapperRef = React.useRef(null);
   useOutsideAlerter(wrapperRef, setisopen);
+
+  console.log(selectedFolder);
 
   return (
     <ul ref={wrapperRef} className="cmdb-menu">
@@ -75,15 +82,28 @@ const Menu: React.FC<MenuProps> = ({
       >
         Edit
       </li>
-      <li
-        className="cmdb-menu-item delete"
-        onClick={() => {
-          deleteBookmark();
-          setisopen(false);
-        }}
-      >
-        Delete
-      </li>
+      {selectedFolder?.id !== CMDB_TRASH && (
+        <li
+          className="cmdb-menu-item delete"
+          onClick={() => {
+            deleteBookmark();
+            setisopen(false);
+          }}
+        >
+          Remove
+        </li>
+      )}
+      {selectedFolder?.id === CMDB_TRASH && (
+        <li
+          className="cmdb-menu-item delete"
+          onClick={() => {
+            deleteBookmarkFromTrash();
+            setisopen(false);
+          }}
+        >
+          Permanently delete
+        </li>
+      )}
     </ul>
   );
 };

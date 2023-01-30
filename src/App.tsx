@@ -13,11 +13,15 @@ import {
   CMDB_FETCH_BOOKMARKS,
   CMDB_FETCH_RECENT_BOOKMARKS,
   SEARCH_RESULT,
-  CMDB_CREATE_BOOKMARK,
+  CMDB_CREATE_ITEM,
   CMDB_SEARCH,
-  CMDB_DELETE_BOOKMARK,
-  CMDB_UPDATE_BOOKMARK,
-  CMDB_MOVE_BOOKMARK,
+  CMDB_DELETE_ITEM,
+  CMDB_UPDATE_ITEM,
+  CMDB_MOVE_ITEM,
+  CMDB_TRASH_DELETED_BOOKMARK,
+  CMDB_GET_TRASHED_BOOKMARK,
+  CMDB_TRASH,
+  CMDB_DELETE_TRASHED_BOOKMARK,
   CMDB_REMOVED_BOOKMARK_MSG,
   CMDB_SAVED_BOOKMARK_MSG,
   CMDB_UPDATED_BOOKMARK_MSG,
@@ -49,6 +53,7 @@ const App: React.FC<AppProps> = () => {
   const [bookmarksToMove, setbookmarksToMove] = React.useState([]);
   const [isbookmarked, setisbookmarked] = React.useState(false);
   const [selectedBookmarks, setselectedBookmarks] = React.useState<any[]>([]);
+  const [trash, settrash] = React.useState([]);
 
   // separate folders from bookmarks(actual bookmarks)
   let newBookmarks: any[] = [];
@@ -98,6 +103,8 @@ const App: React.FC<AppProps> = () => {
       if (bookmarksOnView.length === 0) {
         //
       }
+    } else if (id === CMDB_TRASH) {
+      setbookmarksOnView(trash);
     } else {
       const filteredBookmarks = bookmarks.filter(
         (bookmark: { parentId: string }) =>
@@ -129,7 +136,7 @@ const App: React.FC<AppProps> = () => {
     const url = window.location.href;
     if (!isbookmarked) {
       const parentId = currentParent.title ? currentParent?.id : null;
-      const command = CMDB_CREATE_BOOKMARK;
+      const command = CMDB_CREATE_ITEM;
       try {
         const response = axios.get(url);
         var $ = cheerio.load((await response).data);
@@ -166,13 +173,32 @@ const App: React.FC<AppProps> = () => {
     });
   };
 
+  const saveToLocalTrash = (data: any) => {
+    chrome.runtime.sendMessage(
+      { data, command: CMDB_TRASH_DELETED_BOOKMARK },
+      (result) => {
+        console.log("==", result);
+      }
+    );
+  };
+
+  const fetchTrash = () => {
+    chrome.runtime.sendMessage(
+      { command: CMDB_GET_TRASHED_BOOKMARK },
+      (result) => {
+        settrash(result);
+      }
+    );
+  };
+
   const deleteBookmark = (bookmark: BookmarkProps) => {
-    console.log(bookmark);
+    saveToLocalTrash(bookmark);
     const currentSelectedfolder = selectedFolder;
     chrome.runtime.sendMessage(
-      { id: bookmark.id, command: CMDB_DELETE_BOOKMARK },
+      { id: bookmark.id, command: CMDB_DELETE_ITEM },
       (result) => {
         fetchBookmarks();
+        fetchTrash();
         toast.success(CMDB_REMOVED_BOOKMARK_MSG);
         if (!currentSelectedfolder.index) {
           fetchRecentBookmarks();
@@ -181,13 +207,24 @@ const App: React.FC<AppProps> = () => {
     );
   };
 
+  const deleteBookmarkFromTrash = (bookmark: BookmarkProps) => {
+    chrome.runtime.sendMessage(
+      { id: bookmark.id, command: CMDB_DELETE_TRASHED_BOOKMARK },
+      (result) => {
+        setbookmarksOnView(result);
+        fetchTrash();
+        toast.success(CMDB_REMOVED_BOOKMARK_MSG);
+      }
+    );
+  };
+
   const deleteMultipleBookmarks = () => {
     const currentSelectedfolder = selectedFolder;
     for (let i = 0; i <= selectedBookmarks.length; i++) {
-      console.log(selectedBookmarks[i]);
+      saveToLocalTrash(selectedBookmarks[i]);
       chrome.runtime.sendMessage({
         id: selectedBookmarks[i].id,
-        command: CMDB_DELETE_BOOKMARK,
+        command: CMDB_DELETE_ITEM,
       });
       if (i === selectedBookmarks.length - 1) {
         fetchBookmarks();
@@ -198,6 +235,7 @@ const App: React.FC<AppProps> = () => {
         toast.success(CMDB_REMOVED_BOOKMARKS_MSG);
         return;
       }
+      fetchTrash();
     }
   };
 
@@ -207,7 +245,7 @@ const App: React.FC<AppProps> = () => {
       chrome.runtime.sendMessage({
         id: bookmarks[i],
         parentId,
-        command: CMDB_MOVE_BOOKMARK,
+        command: CMDB_MOVE_ITEM,
       });
       if (i === bookmarks.length - 1) {
         fetchBookmarks();
@@ -232,7 +270,7 @@ const App: React.FC<AppProps> = () => {
     const currentSelectedfolder = selectedFolder;
     const { id, title, url } = bookmark;
     chrome.runtime.sendMessage(
-      { id, title, url, command: CMDB_UPDATE_BOOKMARK },
+      { id, title, url, command: CMDB_UPDATE_ITEM },
       (result) => {
         toast.success(CMDB_UPDATED_BOOKMARK_MSG);
         setshoweditmodal(false);
@@ -264,6 +302,7 @@ const App: React.FC<AppProps> = () => {
   React.useEffect(() => {
     fetchBookmarks();
     fetchRecentBookmarks();
+    fetchTrash();
   }, []);
 
   return (
@@ -286,7 +325,7 @@ const App: React.FC<AppProps> = () => {
               currentParent={currentParent}
               setcurrentParent={setcurrentParent}
               setselectedFolder={setselectedFolder}
-              CMDB_RECENTLY_ADDED={CMDB_RECENTLY_ADDED}
+              trash={trash}
             />
             <Content
               selectedFolder={selectedFolder}
@@ -305,6 +344,7 @@ const App: React.FC<AppProps> = () => {
               setselectedBookmarks={setselectedBookmarks}
               deleteMultipleBookmarks={deleteMultipleBookmarks}
               moveMultipleBookmakrs={moveMultipleBookmakrs}
+              deleteBookmarkFromTrash={deleteBookmarkFromTrash}
             />
           </div>
           {/* edit modal */}

@@ -13,6 +13,7 @@ interface ContentProps {
   deleteMultipleBookmarks: () => void;
   moveMultipleBookmakrs: () => void;
   moveBookmark: (bookmark: BookmarkProps) => void;
+  deleteBookmarkFromTrash: (bookmark: BookmarkProps) => void;
 }
 
 export const Content: React.FC<ContentProps> = ({
@@ -25,6 +26,7 @@ export const Content: React.FC<ContentProps> = ({
   deleteMultipleBookmarks,
   moveMultipleBookmakrs,
   moveBookmark,
+  deleteBookmarkFromTrash,
 }) => {
   const handleSelectBookmark = (e: any, bookmark: any, index: number) => {
     if (e.shiftKey) {
@@ -62,6 +64,8 @@ export const Content: React.FC<ContentProps> = ({
                 deleteBookmark={deleteBookmark}
                 editBookmark={editBookmark}
                 moveBookmark={moveBookmark}
+                deleteBookmarkFromTrash={deleteBookmarkFromTrash}
+                selectedFolder={selectedFolder}
               />
             ))}
           </>

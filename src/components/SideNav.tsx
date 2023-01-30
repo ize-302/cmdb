@@ -1,6 +1,12 @@
 import * as React from "react";
 import { ChevronLeftIcon } from "@heroicons/react/24/solid";
-import { FolderIcon, BookmarkIcon } from "@heroicons/react/24/outline";
+import {
+  FolderIcon,
+  BookmarkIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+import { BookmarkProps } from "../types";
+import { CMDB_TRASH, CMDB_RECENTLY_ADDED } from "../keys";
 
 interface SideNavProps {
   folders: any[];
@@ -10,7 +16,7 @@ interface SideNavProps {
   setfoldersToDisplay: (payload: any) => void;
   setcurrentParent: (payload: any) => void;
   currentParent: any;
-  CMDB_RECENTLY_ADDED: string;
+  trash: BookmarkProps[];
 }
 
 const displayGreeting = () => {
@@ -32,7 +38,7 @@ export const SideNav: React.FC<SideNavProps> = ({
   setfoldersToDisplay,
   currentParent,
   setcurrentParent,
-  CMDB_RECENTLY_ADDED,
+  trash,
 }) => {
   const dragOverItem = React.useRef();
 
@@ -152,6 +158,36 @@ export const SideNav: React.FC<SideNavProps> = ({
               </label>
             </div>
           )
+        )}
+
+        <br />
+        {currentParent?.id === "0" && (
+          <div>
+            <input
+              type="radio"
+              name="items"
+              checked={selectedFolder?.id === CMDB_TRASH}
+              id={CMDB_TRASH}
+              value={CMDB_TRASH}
+              readOnly
+            />
+            <label
+              htmlFor="Trash"
+              className="cmdb-sidenav-item"
+              onClick={() =>
+                handleFolderNavigation({
+                  children: [],
+                  hasBookmarks: true,
+                  id: CMDB_TRASH,
+                  parentId: "0",
+                  title: "Trash",
+                })
+              }
+            >
+              <TrashIcon opacity={0.4} width="14" />
+              Trash ({trash?.length || 0})
+            </label>
+          </div>
         )}
       </div>
     </div>

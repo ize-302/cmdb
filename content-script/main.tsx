@@ -32,15 +32,15 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     root.render(<App />);
 
     if (ext_container_elem) {
-      ext_container_elem.classList.add("cmdb-show");
-      ext_container_elem.classList.remove("cmdb-hide");
+      ext_container_elem?.classList.add("cmdb-show");
+      ext_container_elem?.classList.remove("cmdb-hide");
     }
   } else {
     if (html) {
       html.style.overflow = "auto";
     }
-    ext_container_elem.classList.add("cmdb-hide");
-    ext_container_elem.classList.remove("cmdb-show");
+    ext_container_elem?.classList.add("cmdb-hide");
+    ext_container_elem?.classList.remove("cmdb-show");
 
     setTimeout(() => {
       const div_root = document.getElementsByTagName("cmdb")[0];
