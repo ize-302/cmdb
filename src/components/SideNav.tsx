@@ -1,6 +1,13 @@
 import * as React from "react";
 import { ChevronLeftIcon } from "@heroicons/react/24/solid";
-import { FolderIcon, BookmarkIcon } from "@heroicons/react/24/outline";
+import {
+  FolderIcon,
+  BookmarkIcon,
+  TrashIcon,
+  ClockIcon,
+} from "@heroicons/react/24/outline";
+import { BookmarkProps } from "../types";
+import { CMDB_TRASH, CMDB_RECENTLY_ADDED } from "../keys";
 
 interface SideNavProps {
   folders: any[];
@@ -10,7 +17,7 @@ interface SideNavProps {
   setfoldersToDisplay: (payload: any) => void;
   setcurrentParent: (payload: any) => void;
   currentParent: any;
-  RECENTLY_ADDED: string;
+  trash: BookmarkProps[];
 }
 
 const displayGreeting = () => {
@@ -32,8 +39,10 @@ export const SideNav: React.FC<SideNavProps> = ({
   setfoldersToDisplay,
   currentParent,
   setcurrentParent,
-  RECENTLY_ADDED,
+  trash,
 }) => {
+  const dragOverItem = React.useRef();
+
   const fetchFoldersToDisplay = (id: string) => {
     return folders?.filter((folder) => folder.parentId === id);
   };
@@ -69,52 +78,64 @@ export const SideNav: React.FC<SideNavProps> = ({
     }
   }, [folders]);
 
+  const dragEnter = (e: any, position: any) => {
+    dragOverItem.current = position;
+    console.log(e.target);
+  };
+
   return (
-    <div className="ext-sidenav">
+    <div className="cmdb-sidenav">
       {currentParent?.id !== "0" ? (
-        <div className="ext-go-back" onClick={() => handleGoback()}>
+        <div className="cmdb-sidenav_go-back" onClick={() => handleGoback()}>
           <ChevronLeftIcon width="14" />
-          {currentParent?.title}
+          Go back
         </div>
       ) : (
-        <div className="greetings">{displayGreeting()}</div>
+        <div className="cmdb-sidenav_greetings">{displayGreeting()}</div>
       )}
-      <div className="ext-sidenav-list">
+      <div className="cmdb-sidenav-items">
         {currentParent?.id === "0" && (
           <div>
             <input
               type="radio"
               name="items"
-              checked={selectedFolder?.id === RECENTLY_ADDED}
-              id={RECENTLY_ADDED}
-              value={RECENTLY_ADDED}
+              checked={selectedFolder?.id === CMDB_RECENTLY_ADDED}
+              id={CMDB_RECENTLY_ADDED}
+              value={CMDB_RECENTLY_ADDED}
               readOnly
             />
             <label
               htmlFor="Recently added"
-              className="ext-sidenav-item"
+              className="cmdb-sidenav-item"
               onClick={() =>
                 handleFolderNavigation({
                   children: [],
                   hasBookmarks: true,
-                  id: RECENTLY_ADDED,
+                  id: CMDB_RECENTLY_ADDED,
                   parentId: "0",
                   title: "Recently added",
                 })
               }
             >
-              {currentParent?.id === "0" ? (
-                <BookmarkIcon opacity={0.4} width="14" />
-              ) : (
-                <FolderIcon opacity={0.4} width="14" />
-              )}
+              <ClockIcon opacity={0.4} width="14" />
               Recently added
             </label>
           </div>
         )}
+        {currentParent?.id !== "0" && (
+          <div className="cmdb-currentfolder-name">
+            in: {currentParent?.title}
+          </div>
+        )}
         {foldersToDisplay?.map(
           (folder: any, index: React.Key | null | undefined) => (
-            <div key={index}>
+            <div
+              key={index}
+              onDragEnter={(e) => dragEnter(e, index)}
+              onDragCapture={() => console.log("capture")}
+              onDragExit={() => console.log("exit")}
+              onDragLeave={() => console.log("leave")}
+            >
               <input
                 type="radio"
                 name="items"
@@ -125,8 +146,9 @@ export const SideNav: React.FC<SideNavProps> = ({
               />
               <label
                 htmlFor={folder.title}
-                className="ext-sidenav-item"
+                className="cmdb-sidenav-item"
                 onClick={() => folder && handleFolderNavigation(folder)}
+                id={folder.id}
               >
                 {currentParent?.id === "0" ? (
                   <BookmarkIcon opacity={0.4} width="14" />
@@ -137,6 +159,36 @@ export const SideNav: React.FC<SideNavProps> = ({
               </label>
             </div>
           )
+        )}
+
+        <br />
+        {currentParent?.id === "0" && (
+          <div>
+            <input
+              type="radio"
+              name="items"
+              checked={selectedFolder?.id === CMDB_TRASH}
+              id={CMDB_TRASH}
+              value={CMDB_TRASH}
+              readOnly
+            />
+            <label
+              htmlFor="Trash"
+              className="cmdb-sidenav-item"
+              onClick={() =>
+                handleFolderNavigation({
+                  children: [],
+                  hasBookmarks: true,
+                  id: CMDB_TRASH,
+                  parentId: "0",
+                  title: "Trash",
+                })
+              }
+            >
+              <TrashIcon opacity={0.4} width="14" />
+              Trash {trash?.length > 0 && <span className="dot" />}
+            </label>
+          </div>
         )}
       </div>
     </div>

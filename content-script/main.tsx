@@ -11,47 +11,40 @@ let show = false;
 // https://developer.chrome.com/docs/extensions/mv3/content_scripts/#run_time
 
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-  if (msg.bookmarkdata) {
-    show = !show;
+  show = !show;
 
-    const ext_container_elem = document.getElementsByClassName(
-      "ext-container-border"
-    )[0];
+  const ext_container_elem =
+    document.getElementsByClassName("cmdb-animated-bg")[0];
 
-    const body = document.querySelector("body");
-    const html = document.querySelector("html");
-    if (show) {
-      const app = document.createElement("div");
-      app.id = "root";
-      if (body) {
-        body.prepend(app);
-      }
-      if (html) {
-        html.style.overflow = "hidden";
-      }
-      let root = createRoot(document.getElementById("root") as HTMLElement);
-      root.render(
-        <App
-          bookmarkdata={msg.bookmarkdata}
-          recentbookmardata={msg.recentbookmarkdata}
-        />
-      );
-
-      if (ext_container_elem) {
-        ext_container_elem.classList.add("ext-container-show");
-        ext_container_elem.classList.remove("ext-container-hide");
-      }
-    } else {
-      if (html) {
-        html.style.overflow = "auto";
-      }
-      ext_container_elem.classList.add("ext-container-hide");
-      ext_container_elem.classList.remove("ext-container-show");
-
-      setTimeout(() => {
-        const div_root = document.getElementById("root");
-        div_root?.remove();
-      }, 100);
+  const html = document.querySelector("html");
+  if (show) {
+    const app = document.createElement("cmdb");
+    app.id = "root";
+    if (html) {
+      html.append(app);
     }
+    if (html) {
+      html.style.overflow = "hidden";
+    }
+    let root = createRoot(
+      document.getElementsByTagName("cmdb")[0] as HTMLElement
+    );
+    root.render(<App />);
+
+    if (ext_container_elem) {
+      ext_container_elem?.classList.add("cmdb-show");
+      ext_container_elem?.classList.remove("cmdb-hide");
+    }
+  } else {
+    if (html) {
+      html.style.overflow = "auto";
+    }
+    ext_container_elem?.classList.add("cmdb-hide");
+    ext_container_elem?.classList.remove("cmdb-show");
+
+    setTimeout(() => {
+      const div_root = document.getElementsByTagName("cmdb")[0];
+      div_root?.remove();
+    }, 100);
   }
 });

@@ -1,43 +1,123 @@
-import React from "react";
-import {
-  ExclamationCircleIcon,
-  EllipsisVerticalIcon,
-} from "@heroicons/react/24/outline";
+import React, { useEffect, useState } from "react";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { BookmarkItem } from "./BookmarkItem";
+import { BookmarkProps } from "../types";
+import { CMDB_TRASH } from "../keys";
 
 interface ContentProps {
-  bookmarksOnView: any[];
+  bookmarksOnView: BookmarkProps[];
   selectedFolder: any;
+  // deleteBookmark: (bookmark: BookmarkProps) => void;
+  editBookmark: (bookmark: BookmarkProps) => void;
+  setselectedBookmarks: (value: BookmarkProps[]) => void;
+  selectedBookmarks: any[];
+  deleteBookmarks: () => void;
+  moveBookmarks: () => void;
+  deleteBookmarkFromTrash: (bookmarks: BookmarkProps[]) => void;
+  handleEmptyTrash: () => void;
+  trash: BookmarkProps[];
 }
 
 export const Content: React.FC<ContentProps> = ({
   bookmarksOnView,
   selectedFolder,
+  // deleteBookmark,
+  editBookmark,
+  selectedBookmarks,
+  setselectedBookmarks,
+  deleteBookmarks,
+  moveBookmarks,
+  deleteBookmarkFromTrash,
+  handleEmptyTrash,
+  trash,
 }) => {
+  const handleSelectBookmark = (e: any, bookmark: any, index: number) => {
+    if (e.shiftKey) {
+      const previouslyselected = [...selectedBookmarks];
+      // check if bookmark has already been selected
+      const hasPreviouslyBeenSelected = previouslyselected.find(
+        (item) => item.id === bookmark.id
+      );
+      if (!hasPreviouslyBeenSelected) {
+        previouslyselected.push(bookmark);
+        console.log(previouslyselected);
+        setselectedBookmarks(previouslyselected);
+      }
+    } else {
+      if (e.detail === 1) setselectedBookmarks([bookmark]);
+      else if (e.detail === 2) window.open(bookmark.url, "_blank");
+    }
+  };
+
   return (
-    <div className="ext-content">
-      {bookmarksOnView?.length === 0 ? (
-        <div className="ext-content-nobookmark">
-          <ExclamationCircleIcon width="34" opacity={0.4} />
-          <p>Nothing to see here!</p>
-        </div>
-      ) : (
-        <div className="ext-content-bookmarklist">
-          <b className="ext-content-bookmarkheader">
+    <div className="cmdb-content-section">
+      <div className="cmdb-list">
+        <div className="cmdb-page-heading">
+          <b className="cmdb-page-title">
             {selectedFolder?.title || "Recently added"}
           </b>
-          {bookmarksOnView?.map((bookmark, index) => (
-            <div key={index} className="ext-content-bookmark-item">
-              <div className="ext-content-bookmark-item_title">
-                <img
-                  src={`http://www.google.com/s2/favicons?domain=${bookmark.url}`}
-                />
-                {bookmark.title}
-              </div>
-              <div>
-                <EllipsisVerticalIcon color="white" width="18" />
-              </div>
-            </div>
-          ))}
+          <div>
+            {selectedFolder?.id === CMDB_TRASH && trash.length > 0 && (
+              <button onClick={() => handleEmptyTrash()}>Empty Trash</button>
+            )}
+          </div>
+        </div>
+        {bookmarksOnView?.length === 0 ? (
+          <div className="cmdb-empty-page">
+            <ExclamationCircleIcon width="34" opacity={0.4} />
+            <p>Nothing to see here!</p>
+          </div>
+        ) : (
+          <>
+            {bookmarksOnView?.map((bookmark, index) => (
+              <BookmarkItem
+                key={index}
+                index={index}
+                bookmark={bookmark}
+                handleSelectBookmark={(e, bookmark) =>
+                  handleSelectBookmark(e, bookmark, index)
+                }
+                selectedBookmarks={selectedBookmarks}
+                deleteBookmark={deleteBookmarks}
+                editBookmark={editBookmark}
+                moveBookmark={moveBookmarks}
+                deleteBookmarkFromTrash={deleteBookmarkFromTrash}
+                selectedFolder={selectedFolder}
+              />
+            ))}
+          </>
+        )}
+      </div>
+      {/* actions for multiple selection */}
+      {selectedBookmarks.length > 1 && (
+        <div className="cmdb-content-actions">
+          <span>
+            <b style={{ fontWeight: 600 }}>{selectedBookmarks.length}</b> items
+          </span>
+          <div className="cmdb-content-actions-controls">
+            {selectedFolder?.id === CMDB_TRASH ? (
+              <>
+                <button
+                  onClick={() => deleteBookmarkFromTrash(selectedBookmarks)}
+                >
+                  Restore
+                </button>
+                <button
+                  className="delete"
+                  onClick={() => deleteBookmarkFromTrash(selectedBookmarks)}
+                >
+                  Delete
+                </button>
+              </>
+            ) : (
+              <>
+                <button onClick={() => moveBookmarks()}>Move</button>
+                <button className="delete" onClick={() => deleteBookmarks()}>
+                  Delete
+                </button>
+              </>
+            )}
+          </div>
         </div>
       )}
     </div>
