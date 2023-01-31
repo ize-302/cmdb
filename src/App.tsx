@@ -2,7 +2,6 @@
 
 import React from "react";
 import "react-tooltip/dist/react-tooltip.css";
-import "./styles/main.scss";
 import { Content } from "./components/Content";
 import { SideNav } from "./components/SideNav";
 import { TopNav } from "./components/TopNav";
@@ -34,6 +33,7 @@ import toast from "react-hot-toast";
 import CustomToast from "./components/CustomToast";
 import { BookmarkProps } from "../src/types";
 import MoveBookmarkModal from "./components/MoveBookmarkModal";
+import { CmdbWrapper } from "./components/Style";
 
 interface AppProps {}
 
@@ -120,7 +120,7 @@ const App: React.FC<AppProps> = () => {
         //
       }
     } else if (id === CMDB_TRASH) {
-      setbookmarksOnView(trash);
+      setbookmarksOnView(trash || []);
     } else {
       const filteredBookmarks = bookmarks.filter(
         (bookmark: { parentId: string }) =>
@@ -306,69 +306,71 @@ const App: React.FC<AppProps> = () => {
   }, []);
 
   return (
-    <div id="cmdb">
-      <div className="cmdb-dropshadow" />
-      <div className="cmdb-animated-bg cmdb-show">
-        <div className="cmdb-container">
-          <CustomToast />
-          <TopNav
-            handleSearch={handleSearch}
-            handleSaveUrl={handleSaveUrl}
-            isbookmarked={isbookmarked}
-          />
-          <div className="cmdb-body">
-            <SideNav
-              folders={folders}
-              selectedFolder={selectedFolder}
-              foldersToDisplay={foldersToDisplay}
-              setfoldersToDisplay={setfoldersToDisplay}
-              currentParent={currentParent}
-              setcurrentParent={setcurrentParent}
-              setselectedFolder={setselectedFolder}
-              trash={trash}
+    <CmdbWrapper>
+      <div id="cmdb">
+        <div className="cmdb-dropshadow" />
+        <div className="cmdb-animated-bg cmdb-show">
+          <div className="cmdb-container">
+            <CustomToast />
+            <TopNav
+              handleSearch={handleSearch}
+              handleSaveUrl={handleSaveUrl}
+              isbookmarked={isbookmarked}
             />
-            <Content
-              selectedFolder={selectedFolder}
-              bookmarksOnView={bookmarksOnView}
-              editBookmark={(bookmark: BookmarkProps) => {
-                setshoweditmodal(true);
-                setbookmarkToEdit(bookmark);
-              }}
-              selectedBookmarks={selectedBookmarks}
-              setselectedBookmarks={setselectedBookmarks}
-              deleteBookmarks={deleteBookmarks}
-              moveBookmarks={moveBookmarks}
-              deleteBookmarkFromTrash={deleteBookmarkFromTrash}
-              handleEmptyTrash={handleEmptyTrash}
-              trash={trash}
-            />
+            <div className="cmdb-body">
+              <SideNav
+                folders={folders}
+                selectedFolder={selectedFolder}
+                foldersToDisplay={foldersToDisplay}
+                setfoldersToDisplay={setfoldersToDisplay}
+                currentParent={currentParent}
+                setcurrentParent={setcurrentParent}
+                setselectedFolder={setselectedFolder}
+                trash={trash}
+              />
+              <Content
+                selectedFolder={selectedFolder}
+                bookmarksOnView={bookmarksOnView}
+                editBookmark={(bookmark: BookmarkProps) => {
+                  setshoweditmodal(true);
+                  setbookmarkToEdit(bookmark);
+                }}
+                selectedBookmarks={selectedBookmarks}
+                setselectedBookmarks={setselectedBookmarks}
+                deleteBookmarks={deleteBookmarks}
+                moveBookmarks={moveBookmarks}
+                deleteBookmarkFromTrash={deleteBookmarkFromTrash}
+                handleEmptyTrash={handleEmptyTrash}
+                trash={trash}
+              />
+            </div>
+            {/* edit modal */}
+            {showeditmodal && (
+              <EditBookmarkModal
+                bookmark={bookmarkToEdit}
+                setisopen={(payload) => {
+                  setshoweditmodal(payload);
+                  setbookmarkToEdit({});
+                }}
+                submitEditBookmark={updateBookmark}
+              />
+            )}
+            {/* move modal */}
+            {showmovemodal && (
+              <MoveBookmarkModal
+                folders={folders}
+                bookmarks={bookmarksToMove}
+                setisopen={(payload) => {
+                  setshowmovemodal(payload);
+                  setbookmarksToMove([]);
+                }}
+                submitMoveBookmark={moveBookmark}
+              />
+            )}
           </div>
-          {/* edit modal */}
-          {showeditmodal && (
-            <EditBookmarkModal
-              bookmark={bookmarkToEdit}
-              setisopen={(payload) => {
-                setshoweditmodal(payload);
-                setbookmarkToEdit({});
-              }}
-              submitEditBookmark={updateBookmark}
-            />
-          )}
-          {/* move modal */}
-          {showmovemodal && (
-            <MoveBookmarkModal
-              folders={folders}
-              bookmarks={bookmarksToMove}
-              setisopen={(payload) => {
-                setshowmovemodal(payload);
-                setbookmarksToMove([]);
-              }}
-              submitMoveBookmark={moveBookmark}
-            />
-          )}
         </div>
       </div>
-    </div>
+    </CmdbWrapper>
   );
 };
 
