@@ -21,12 +21,14 @@ import {
   CMDB_TRASH,
   CMDB_EMTPY_TRASH,
   CMDB_DELETE_TRASHED_BOOKMARK,
+  CMDB_RESTORE_TRASHED_BOOKMARK,
   CMDB_REMOVED_BOOKMARK_MSG,
   CMDB_SAVED_BOOKMARK_MSG,
   CMDB_UPDATED_BOOKMARK_MSG,
   CMDB_REMOVED_BOOKMARKS_MSG,
   CMDB_MOVED_BOOKMARK_MSG,
   CMDB_EMPTIED_TRASH_MSG,
+  CMDB_RESTORED_BOOKMARK_MSG,
 } from "./keys";
 import EditBookmarkModal from "./components/EditBookmarkModal";
 import toast from "react-hot-toast";
@@ -173,7 +175,6 @@ const App: React.FC<AppProps> = () => {
   const fetchBookmarks = () => {
     chrome.runtime.sendMessage(CMDB_FETCH_BOOKMARKS, (result) => {
       separateFolderFromBookmarks(result);
-      // handleNestingFolders();
     });
   };
 
@@ -197,11 +198,29 @@ const App: React.FC<AppProps> = () => {
     chrome.runtime.sendMessage(
       { bookmarks, command: CMDB_DELETE_TRASHED_BOOKMARK },
       (result) => {
+        console.log(result);
         if (result) {
           toast.success(CMDB_REMOVED_BOOKMARK_MSG);
           setbookmarksOnView(result);
           setselectedBookmarks([]);
           fetchTrash();
+        }
+      }
+    );
+  };
+
+  const restoreBookmarkFromTrash = (bookmarks: BookmarkProps[]) => {
+    chrome.runtime.sendMessage(
+      { bookmarks, command: CMDB_RESTORE_TRASHED_BOOKMARK },
+      (result) => {
+        if (result) {
+          fetchBookmarks();
+          fetchRecentBookmarks();
+          setselectedBookmarks([]);
+          fetchTrash();
+          setbookmarksOnView(result);
+          showbookmarksOnView(CMDB_TRASH);
+          toast.success(CMDB_RESTORED_BOOKMARK_MSG);
         }
       }
     );
@@ -342,6 +361,7 @@ const App: React.FC<AppProps> = () => {
                 deleteBookmarkFromTrash={deleteBookmarkFromTrash}
                 handleEmptyTrash={handleEmptyTrash}
                 trash={trash}
+                restoreBookmarkFromTrash={restoreBookmarkFromTrash}
               />
             </div>
             {/* edit modal */}

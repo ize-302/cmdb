@@ -16,6 +16,7 @@ interface ContentProps {
   deleteBookmarkFromTrash: (bookmarks: BookmarkProps[]) => void;
   handleEmptyTrash: () => void;
   trash: BookmarkProps[];
+  restoreBookmarkFromTrash: (bookmarks: BookmarkProps[]) => void;
 }
 
 export const Content: React.FC<ContentProps> = ({
@@ -29,6 +30,7 @@ export const Content: React.FC<ContentProps> = ({
   moveBookmarks,
   deleteBookmarkFromTrash,
   handleEmptyTrash,
+  restoreBookmarkFromTrash,
   trash,
 }) => {
   const handleSelectBookmark = (e: any, bookmark: any, index: number) => {
@@ -38,6 +40,12 @@ export const Content: React.FC<ContentProps> = ({
       const hasPreviouslyBeenSelected = previouslyselected.find(
         (item) => item.id === bookmark.id
       );
+      if (hasPreviouslyBeenSelected) {
+        const filtered = previouslyselected.filter(
+          (item) => item.id !== bookmark.id
+        );
+        setselectedBookmarks(filtered);
+      }
       if (!hasPreviouslyBeenSelected) {
         previouslyselected.push(bookmark);
         console.log(previouslyselected);
@@ -83,6 +91,7 @@ export const Content: React.FC<ContentProps> = ({
                 moveBookmark={moveBookmarks}
                 deleteBookmarkFromTrash={deleteBookmarkFromTrash}
                 selectedFolder={selectedFolder}
+                restoreBookmarkFromTrash={restoreBookmarkFromTrash}
               />
             ))}
           </>
@@ -98,7 +107,7 @@ export const Content: React.FC<ContentProps> = ({
             {selectedFolder?.id === CMDB_TRASH ? (
               <>
                 <button
-                  onClick={() => deleteBookmarkFromTrash(selectedBookmarks)}
+                  onClick={() => restoreBookmarkFromTrash(selectedBookmarks)}
                 >
                   Restore
                 </button>

@@ -27,6 +27,7 @@ interface MenuProps {
   editBookmark: (bookmark: any) => void;
   moveBookmark: () => void;
   deleteBookmarkFromTrash: () => void;
+  restoreBookmarkFromTrash: () => void;
   selectedFolder: any;
 }
 
@@ -37,6 +38,7 @@ const Menu: React.FC<MenuProps> = ({
   editBookmark,
   moveBookmark,
   deleteBookmarkFromTrash,
+  restoreBookmarkFromTrash,
   selectedFolder,
 }) => {
   const wrapperRef = React.useRef(null);
@@ -99,7 +101,7 @@ const Menu: React.FC<MenuProps> = ({
           <li
             className="cmdb-menu-item"
             onClick={() => {
-              // deleteBookmarkFromTrash();
+              restoreBookmarkFromTrash();
               setisopen(false);
             }}
           >

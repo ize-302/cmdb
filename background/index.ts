@@ -136,6 +136,26 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     }
   }
 
+  // restore trashed bookmark
+  if (message.command === "CMDB_RESTORE_TRASHED_BOOKMARK") {
+    for (let i = 0; i < message.bookmarks.length; i++) {
+      createItem(message.bookmarks[i]);
+    }
+    // sendResponse(message.bookmarks);
+    for (let i = 0; i < message.bookmarks.length; i++) {
+      getTrashedBookmarks().then((response) => {
+        const trash = response.cmdb_trashed_bookmarks || []; // retrieve trash
+        const results = trash.filter(
+          ({ id: id1 }) => !message.bookmarks.some(({ id: id2 }) => id2 === id1)
+        );
+        if (i === message.bookmarks.length - 1) {
+          trashBookmark(results);
+          sendResponse(results);
+        }
+      });
+    }
+  }
+
   // empty trash
   if (message.command === "CMDB_EMTPY_TRASH") {
     trashBookmark([]).then(() => {

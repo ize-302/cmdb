@@ -12,12 +12,12 @@ export const CmdbWrapper = styled.div`
     ::before {
       box-sizing: border-box;
       // remove highlights
-      // -webkit-touch-callout: none; /* iOS Safari */
-      // -webkit-user-select: none; /* Safari */
-      // -khtml-user-select: none; /* Konqueror HTML */
-      // -moz-user-select: none; /* Old versions of Firefox */
-      // -ms-user-select: none; /* Internet Explorer/Edge */
-      // user-select: none;
+      -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+      -khtml-user-select: none; /* Konqueror HTML */
+      -moz-user-select: none; /* Old versions of Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+      user-select: none;
       letter-spacing: 0.3px;
       font-weight: 400;
       font-family: "Inter", sans-serif;
@@ -565,7 +565,6 @@ export const CmdbWrapper = styled.div`
           padding: 6px 12px;
           border-radius: 4px;
           &:hover {
-            background: ${itembg};
             .cmdb-list-item_title {
               color: white;
               cursor: pointer;
