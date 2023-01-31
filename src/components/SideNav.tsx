@@ -4,6 +4,7 @@ import {
   FolderIcon,
   BookmarkIcon,
   TrashIcon,
+  ClockIcon,
 } from "@heroicons/react/24/outline";
 import { BookmarkProps } from "../types";
 import { CMDB_TRASH, CMDB_RECENTLY_ADDED } from "../keys";
@@ -116,7 +117,7 @@ export const SideNav: React.FC<SideNavProps> = ({
                 })
               }
             >
-              <BookmarkIcon opacity={0.4} width="14" />
+              <ClockIcon opacity={0.4} width="14" />
               Recently added
             </label>
           </div>
