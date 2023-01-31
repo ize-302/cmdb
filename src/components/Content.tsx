@@ -34,8 +34,15 @@ export const Content: React.FC<ContentProps> = ({
   const handleSelectBookmark = (e: any, bookmark: any, index: number) => {
     if (e.shiftKey) {
       const previouslyselected = [...selectedBookmarks];
-      previouslyselected.push(bookmark);
-      setselectedBookmarks(previouslyselected);
+      // check if bookmark has already been selected
+      const hasPreviouslyBeenSelected = previouslyselected.find(
+        (item) => item.id === bookmark.id
+      );
+      if (!hasPreviouslyBeenSelected) {
+        previouslyselected.push(bookmark);
+        console.log(previouslyselected);
+        setselectedBookmarks(previouslyselected);
+      }
     } else {
       if (e.detail === 1) setselectedBookmarks([bookmark]);
       else if (e.detail === 2) window.open(bookmark.url, "_blank");
@@ -89,12 +96,19 @@ export const Content: React.FC<ContentProps> = ({
           </span>
           <div className="cmdb-content-actions-controls">
             {selectedFolder?.id === CMDB_TRASH ? (
-              <button
-                className="delete"
-                onClick={() => deleteBookmarkFromTrash(selectedBookmarks)}
-              >
-                Delete
-              </button>
+              <>
+                <button
+                  onClick={() => deleteBookmarkFromTrash(selectedBookmarks)}
+                >
+                  Restore
+                </button>
+                <button
+                  className="delete"
+                  onClick={() => deleteBookmarkFromTrash(selectedBookmarks)}
+                >
+                  Delete
+                </button>
+              </>
             ) : (
               <>
                 <button onClick={() => moveBookmarks()}>Move</button>
