@@ -2,31 +2,34 @@ import React, { useEffect, useState } from "react";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { BookmarkItem } from "./BookmarkItem";
 import { BookmarkProps } from "../types";
+import { CMDB_TRASH } from "../keys";
 
 interface ContentProps {
   bookmarksOnView: BookmarkProps[];
   selectedFolder: any;
-  deleteBookmark: (bookmark: BookmarkProps) => void;
+  // deleteBookmark: (bookmark: BookmarkProps) => void;
   editBookmark: (bookmark: BookmarkProps) => void;
-  setselectedBookmarks: (value: any[]) => void;
-  selectedBookmarks: string[];
-  deleteMultipleBookmarks: () => void;
-  moveMultipleBookmakrs: () => void;
-  moveBookmark: (bookmark: BookmarkProps) => void;
-  deleteBookmarkFromTrash: (bookmark: BookmarkProps) => void;
+  setselectedBookmarks: (value: BookmarkProps[]) => void;
+  selectedBookmarks: any[];
+  deleteBookmarks: () => void;
+  moveBookmarks: () => void;
+  deleteBookmarkFromTrash: (bookmarks: BookmarkProps[]) => void;
+  handleEmptyTrash: () => void;
+  trash: BookmarkProps[];
 }
 
 export const Content: React.FC<ContentProps> = ({
   bookmarksOnView,
   selectedFolder,
-  deleteBookmark,
+  // deleteBookmark,
   editBookmark,
   selectedBookmarks,
   setselectedBookmarks,
-  deleteMultipleBookmarks,
-  moveMultipleBookmakrs,
-  moveBookmark,
+  deleteBookmarks,
+  moveBookmarks,
   deleteBookmarkFromTrash,
+  handleEmptyTrash,
+  trash,
 }) => {
   const handleSelectBookmark = (e: any, bookmark: any, index: number) => {
     if (e.shiftKey) {
@@ -42,9 +45,16 @@ export const Content: React.FC<ContentProps> = ({
   return (
     <div className="cmdb-content-section">
       <div className="cmdb-list">
-        <b className="cmdb-page-title">
-          {selectedFolder?.title || "Recently added"}
-        </b>
+        <div className="cmdb-page-heading">
+          <b className="cmdb-page-title">
+            {selectedFolder?.title || "Recently added"}
+          </b>
+          <div>
+            {selectedFolder?.id === CMDB_TRASH && trash.length > 0 && (
+              <button onClick={() => handleEmptyTrash()}>Empty Trash</button>
+            )}
+          </div>
+        </div>
         {bookmarksOnView?.length === 0 ? (
           <div className="cmdb-empty-page">
             <ExclamationCircleIcon width="34" opacity={0.4} />
@@ -61,9 +71,9 @@ export const Content: React.FC<ContentProps> = ({
                   handleSelectBookmark(e, bookmark, index)
                 }
                 selectedBookmarks={selectedBookmarks}
-                deleteBookmark={deleteBookmark}
+                deleteBookmark={deleteBookmarks}
                 editBookmark={editBookmark}
-                moveBookmark={moveBookmark}
+                moveBookmark={moveBookmarks}
                 deleteBookmarkFromTrash={deleteBookmarkFromTrash}
                 selectedFolder={selectedFolder}
               />
@@ -78,13 +88,21 @@ export const Content: React.FC<ContentProps> = ({
             <b style={{ fontWeight: 600 }}>{selectedBookmarks.length}</b> items
           </span>
           <div className="cmdb-content-actions-controls">
-            <button onClick={() => moveMultipleBookmakrs()}>Move</button>
-            <button
-              className="delete"
-              onClick={() => deleteMultipleBookmarks()}
-            >
-              Delete
-            </button>
+            {selectedFolder?.id === CMDB_TRASH ? (
+              <button
+                className="delete"
+                onClick={() => deleteBookmarkFromTrash(selectedBookmarks)}
+              >
+                Delete
+              </button>
+            ) : (
+              <>
+                <button onClick={() => moveBookmarks()}>Move</button>
+                <button className="delete" onClick={() => deleteBookmarks()}>
+                  Delete
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}

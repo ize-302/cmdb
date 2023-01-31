@@ -42,6 +42,7 @@ chrome.runtime.onInstalled.addListener(function () {
 
   return false;
 });
+
 // Receive messages
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message === "CMDB_FETCH_BOOKMARKS") {
@@ -65,8 +66,18 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
   // delete a bookmark
   if (message.command === "CMDB_DELETE_ITEM") {
-    chrome.bookmarks.remove(message.id);
-    sendResponse("removed");
+    getTrashedBookmarks().then((response) => {
+      const trash = response.cmdb_trashed_bookmarks || []; // retrieve trash
+      for (let i = 0; i < message.bookmarks.length; i++) {
+        trash.push(message.bookmarks[i]);
+        trashBookmark(trash); // update trash
+        chrome.bookmarks.remove(message.bookmarks[i].id, () => {
+          if (i === message.bookmarks.length - 1) {
+            sendResponse("deleted");
+          }
+        });
+      }
+    });
   }
 
   // handle create
@@ -89,25 +100,17 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
   // handle move bookmark
   if (message.command === "CMDB_MOVE_ITEM") {
-    chrome.bookmarks.move(
-      message.id,
-      { parentId: message.parentId },
-      (response) => {
-        sendResponse(response);
-      }
-    );
-  }
-
-  // trash deleted bookmarks
-  if (message.command === "CMDB_TRASH_DELETED_BOOKMARK") {
-    // get previously saved
-    getTrashedBookmarks().then((result) => {
-      const trash = result.cmdb_trashed_bookmarks || [];
-      trash.push(message.data);
-      trashBookmark(trash).then(() => {
-        sendResponse("saved");
-      });
-    });
+    for (let i = 0; i < message.bookmarks.length; i++) {
+      chrome.bookmarks.move(
+        message.bookmarks[i].id,
+        { parentId: message.parentId },
+        (response) => {
+          if (i === message.bookmarks.length - 1) {
+            sendResponse(response);
+          }
+        }
+      );
+    }
   }
 
   // get trashed bookmarks
@@ -119,14 +122,25 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
   // delete trashed bookmark
   if (message.command === "CMDB_DELETE_TRASHED_BOOKMARK") {
-    getTrashedBookmarks().then((result) => {
-      const filtered = result.cmdb_trashed_bookmarks.filter(
-        (bookmark) => bookmark.id !== message.id
-      );
-      trashBookmark(filtered).then(() => {
-        getTrashedBookmarks().then((result) => {
-          sendResponse(result.cmdb_trashed_bookmarks);
-        });
+    for (let i = 0; i < message.bookmarks.length; i++) {
+      getTrashedBookmarks().then((response) => {
+        const trash = response.cmdb_trashed_bookmarks || []; // retrieve trash
+        const results = trash.filter(
+          ({ id: id1 }) => !message.bookmarks.some(({ id: id2 }) => id2 === id1)
+        );
+        if (i === message.bookmarks.length - 1) {
+          trashBookmark(results);
+          sendResponse(results);
+        }
+      });
+    }
+  }
+
+  // empty trash
+  if (message.command === "CMDB_EMTPY_TRASH") {
+    trashBookmark([]).then(() => {
+      getTrashedBookmarks().then((result) => {
+        sendResponse(result.cmdb_trashed_bookmarks);
       });
     });
   }

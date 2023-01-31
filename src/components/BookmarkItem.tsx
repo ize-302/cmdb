@@ -10,8 +10,8 @@ interface BookmarkItemProps {
   deleteBookmark: (bookmark: BookmarkProps) => void;
   index: number;
   editBookmark: (bookmark: BookmarkProps) => void;
-  moveBookmark: (bookmark: BookmarkProps) => void;
-  deleteBookmarkFromTrash: (bookmark: BookmarkProps) => void;
+  moveBookmark: () => void;
+  deleteBookmarkFromTrash: (bookmarks: BookmarkProps[]) => void;
   selectedFolder: any;
 }
 
@@ -76,7 +76,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
           bookmark={bookmark}
           editBookmark={editBookmark}
           moveBookmark={moveBookmark}
-          deleteBookmarkFromTrash={() => deleteBookmarkFromTrash(bookmark)}
+          deleteBookmarkFromTrash={() => deleteBookmarkFromTrash([bookmark])}
           selectedFolder={selectedFolder}
         />
       )}

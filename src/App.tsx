@@ -18,15 +18,16 @@ import {
   CMDB_DELETE_ITEM,
   CMDB_UPDATE_ITEM,
   CMDB_MOVE_ITEM,
-  CMDB_TRASH_DELETED_BOOKMARK,
   CMDB_GET_TRASHED_BOOKMARK,
   CMDB_TRASH,
+  CMDB_EMTPY_TRASH,
   CMDB_DELETE_TRASHED_BOOKMARK,
   CMDB_REMOVED_BOOKMARK_MSG,
   CMDB_SAVED_BOOKMARK_MSG,
   CMDB_UPDATED_BOOKMARK_MSG,
   CMDB_REMOVED_BOOKMARKS_MSG,
   CMDB_MOVED_BOOKMARK_MSG,
+  CMDB_EMPTIED_TRASH_MSG,
 } from "./keys";
 import EditBookmarkModal from "./components/EditBookmarkModal";
 import toast from "react-hot-toast";
@@ -75,7 +76,22 @@ const App: React.FC<AppProps> = () => {
       newBookmarks.push(node);
       bookmarks = newBookmarks;
     }
-    setfolders(folders);
+    // handle nesting folders
+    const temp_nested_folders: object[] = [];
+    // iterate over folders
+    folders.forEach((folder: { parentId: string; id: string }) => {
+      // check if folder has children
+      const hasChildren = folders?.find(
+        (child: { parentId: string }) => child.parentId === folder.id
+      );
+      temp_nested_folders.push({
+        ...folder,
+        hasChildren: hasChildren ? true : false,
+      });
+    });
+    setfolders([...temp_nested_folders]);
+    setselectedFolder(selectedFolder ? selectedFolder : folders?.[0]);
+    showbookmarksOnView(selectedFolder?.id);
     setbookmarks(bookmarks);
   };
 
@@ -114,28 +130,10 @@ const App: React.FC<AppProps> = () => {
     }
   };
 
-  const handleNestingFolders = () => {
-    const temp_nested_folders: object[] = [];
-    // iterate over folders
-    folders.forEach((folder: { parentId: string; id: string }) => {
-      // check if folder has children
-      const hasChildren = folders?.find(
-        (child: { parentId: string }) => child.parentId === folder.id
-      );
-      temp_nested_folders.push({
-        ...folder,
-        hasChildren: hasChildren ? true : false,
-      });
-    });
-    setfolders([...temp_nested_folders]);
-    setselectedFolder(selectedFolder ? selectedFolder : folders?.[0]);
-    showbookmarksOnView(selectedFolder?.id);
-  };
-
   const handleSaveUrl = async () => {
     const url = window.location.href;
     if (!isbookmarked) {
-      const parentId = currentParent.title ? currentParent?.id : null;
+      const parentId = selectedFolder.title ? selectedFolder?.id : null;
       const command = CMDB_CREATE_ITEM;
       try {
         const response = axios.get(url);
@@ -155,14 +153,27 @@ const App: React.FC<AppProps> = () => {
       const findBookmark = bookmarks.find(
         (bookmark: BookmarkProps) => bookmark.url === url
       );
-      deleteBookmark(findBookmark);
+      const currentSelectedfolder = selectedFolder;
+      chrome.runtime.sendMessage(
+        { bookmarks: [findBookmark], command: CMDB_DELETE_ITEM },
+        (result) => {
+          if (result === "deleted") {
+            toast.success(CMDB_REMOVED_BOOKMARK_MSG);
+            fetchBookmarks();
+            fetchTrash();
+            if (!currentSelectedfolder.index) {
+              fetchRecentBookmarks();
+            }
+          }
+        }
+      );
     }
   };
 
   const fetchBookmarks = () => {
     chrome.runtime.sendMessage(CMDB_FETCH_BOOKMARKS, (result) => {
       separateFolderFromBookmarks(result);
-      handleNestingFolders();
+      // handleNestingFolders();
     });
   };
 
@@ -171,15 +182,6 @@ const App: React.FC<AppProps> = () => {
       setrecentBookmarks(result);
       setselectedFolder({ id: CMDB_RECENTLY_ADDED });
     });
-  };
-
-  const saveToLocalTrash = (data: any) => {
-    chrome.runtime.sendMessage(
-      { data, command: CMDB_TRASH_DELETED_BOOKMARK },
-      (result) => {
-        console.log("==", result);
-      }
-    );
   };
 
   const fetchTrash = () => {
@@ -191,76 +193,66 @@ const App: React.FC<AppProps> = () => {
     );
   };
 
-  const deleteBookmark = (bookmark: BookmarkProps) => {
-    saveToLocalTrash(bookmark);
-    const currentSelectedfolder = selectedFolder;
+  const deleteBookmarkFromTrash = (bookmarks: BookmarkProps[]) => {
     chrome.runtime.sendMessage(
-      { id: bookmark.id, command: CMDB_DELETE_ITEM },
+      { bookmarks, command: CMDB_DELETE_TRASHED_BOOKMARK },
       (result) => {
-        fetchBookmarks();
-        fetchTrash();
-        toast.success(CMDB_REMOVED_BOOKMARK_MSG);
-        if (!currentSelectedfolder.index) {
-          fetchRecentBookmarks();
+        if (result) {
+          toast.success(CMDB_REMOVED_BOOKMARK_MSG);
+          setbookmarksOnView(result);
+          setselectedBookmarks([]);
+          fetchTrash();
         }
       }
     );
   };
 
-  const deleteBookmarkFromTrash = (bookmark: BookmarkProps) => {
-    chrome.runtime.sendMessage(
-      { id: bookmark.id, command: CMDB_DELETE_TRASHED_BOOKMARK },
-      (result) => {
-        setbookmarksOnView(result);
-        fetchTrash();
-        toast.success(CMDB_REMOVED_BOOKMARK_MSG);
-      }
-    );
-  };
-
-  const deleteMultipleBookmarks = () => {
+  const deleteBookmarks = () => {
     const currentSelectedfolder = selectedFolder;
-    for (let i = 0; i <= selectedBookmarks.length; i++) {
-      saveToLocalTrash(selectedBookmarks[i]);
-      chrome.runtime.sendMessage({
-        id: selectedBookmarks[i].id,
+    chrome.runtime.sendMessage(
+      {
+        bookmarks: selectedBookmarks,
         command: CMDB_DELETE_ITEM,
-      });
-      if (i === selectedBookmarks.length - 1) {
-        fetchBookmarks();
-        if (!currentSelectedfolder.index) {
-          fetchRecentBookmarks();
+      },
+      (res) => {
+        if (res === "deleted") {
+          toast.success(CMDB_REMOVED_BOOKMARKS_MSG);
+          console.log(res);
+          fetchBookmarks();
+          if (!currentSelectedfolder.index) {
+            fetchRecentBookmarks();
+          }
+          setselectedBookmarks([]);
+          fetchTrash();
+          return;
         }
-        setselectedBookmarks([]);
-        toast.success(CMDB_REMOVED_BOOKMARKS_MSG);
-        return;
       }
-      fetchTrash();
-    }
+    );
   };
 
   const moveBookmark = (bookmarks: string[], parentId: string) => {
     const currentSelectedfolder = selectedFolder;
-    for (let i = 0; i <= bookmarks.length; i++) {
-      chrome.runtime.sendMessage({
-        id: bookmarks[i],
+    chrome.runtime.sendMessage(
+      {
+        bookmarks,
         parentId,
         command: CMDB_MOVE_ITEM,
-      });
-      if (i === bookmarks.length - 1) {
+      },
+      (res) => {
         fetchBookmarks();
         if (!currentSelectedfolder.index) {
           fetchRecentBookmarks();
         }
         setbookmarksToMove([]);
+        setselectedBookmarks([]);
         setshowmovemodal(false);
         toast.success(CMDB_MOVED_BOOKMARK_MSG);
         return;
       }
-    }
+    );
   };
 
-  const moveMultipleBookmakrs = () => {
+  const moveBookmarks = () => {
     setshowmovemodal(true);
     const merged: any = [...selectedBookmarks];
     setbookmarksToMove(merged);
@@ -281,6 +273,14 @@ const App: React.FC<AppProps> = () => {
         }
       }
     );
+  };
+
+  const handleEmptyTrash = () => {
+    chrome.runtime.sendMessage({ command: CMDB_EMTPY_TRASH }, (response) => {
+      settrash(response);
+      setbookmarksOnView(response);
+      toast.success(CMDB_EMPTIED_TRASH_MSG);
+    });
   };
 
   React.useEffect(() => {
@@ -330,21 +330,17 @@ const App: React.FC<AppProps> = () => {
             <Content
               selectedFolder={selectedFolder}
               bookmarksOnView={bookmarksOnView}
-              deleteBookmark={deleteBookmark}
               editBookmark={(bookmark: BookmarkProps) => {
                 setshoweditmodal(true);
                 setbookmarkToEdit(bookmark);
               }}
-              moveBookmark={(bookmark: BookmarkProps) => {
-                setshowmovemodal(true);
-                const merged: any = [...bookmarksToMove, bookmark.id];
-                setbookmarksToMove(merged);
-              }}
               selectedBookmarks={selectedBookmarks}
               setselectedBookmarks={setselectedBookmarks}
-              deleteMultipleBookmarks={deleteMultipleBookmarks}
-              moveMultipleBookmakrs={moveMultipleBookmakrs}
+              deleteBookmarks={deleteBookmarks}
+              moveBookmarks={moveBookmarks}
               deleteBookmarkFromTrash={deleteBookmarkFromTrash}
+              handleEmptyTrash={handleEmptyTrash}
+              trash={trash}
             />
           </div>
           {/* edit modal */}

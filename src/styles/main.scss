@@ -611,11 +611,20 @@
       flex-direction: column;
       gap: 4px;
 
-      .cmdb-page-title {
+      .cmdb-page-heading {
         border-bottom: 1px solid $item-border;
-        color: white;
         padding: 0 10px 10px 10px;
         margin-bottom: 4px;
+        display: flex;
+        justify-content: space-between;
+
+        .cmdb-page-title {
+          color: white;
+        }
+
+        button {
+          color: red;
+        }
       }
 
       @for $i from 1 through 40 {
@@ -641,11 +650,11 @@
           }
         }
         .cmdb-list-item_title {
-          overflow-x: hidden;
+          overflow: hidden;
           transition-duration: 0.3s;
           text-overflow: ellipsis;
           white-space: nowrap;
-          max-width: 700px;
+          max-width: 630px;
           display: flex;
           gap: 10px;
           color: $text-color;

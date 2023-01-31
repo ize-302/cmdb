@@ -25,7 +25,7 @@ interface MenuProps {
   deleteBookmark: () => void;
   bookmark: any;
   editBookmark: (bookmark: any) => void;
-  moveBookmark: (bookmark: any) => void;
+  moveBookmark: () => void;
   deleteBookmarkFromTrash: () => void;
   selectedFolder: any;
 }
@@ -41,8 +41,6 @@ const Menu: React.FC<MenuProps> = ({
 }) => {
   const wrapperRef = React.useRef(null);
   useOutsideAlerter(wrapperRef, setisopen);
-
-  console.log(selectedFolder);
 
   return (
     <ul ref={wrapperRef} className="cmdb-menu">
@@ -64,45 +62,59 @@ const Menu: React.FC<MenuProps> = ({
       >
         Open in new tab
       </li>
-      <li
-        className="cmdb-menu-item"
-        onClick={() => {
-          moveBookmark(bookmark);
-          setisopen(false);
-        }}
-      >
-        Move
-      </li>
-      <li
-        className="cmdb-menu-item"
-        onClick={() => {
-          editBookmark(bookmark);
-          setisopen(false);
-        }}
-      >
-        Edit
-      </li>
-      {selectedFolder?.id !== CMDB_TRASH && (
-        <li
-          className="cmdb-menu-item delete"
-          onClick={() => {
-            deleteBookmark();
-            setisopen(false);
-          }}
-        >
-          Remove
-        </li>
-      )}
-      {selectedFolder?.id === CMDB_TRASH && (
-        <li
-          className="cmdb-menu-item delete"
-          onClick={() => {
-            deleteBookmarkFromTrash();
-            setisopen(false);
-          }}
-        >
-          Permanently delete
-        </li>
+
+      {selectedFolder?.id !== CMDB_TRASH ? (
+        <>
+          <li
+            className="cmdb-menu-item"
+            onClick={() => {
+              moveBookmark();
+              setisopen(false);
+            }}
+          >
+            Move
+          </li>
+          <li
+            className="cmdb-menu-item"
+            onClick={() => {
+              editBookmark(bookmark);
+              setisopen(false);
+            }}
+          >
+            Edit
+          </li>
+
+          <li
+            className="cmdb-menu-item delete"
+            onClick={() => {
+              deleteBookmark();
+              setisopen(false);
+            }}
+          >
+            Remove
+          </li>
+        </>
+      ) : (
+        <>
+          <li
+            className="cmdb-menu-item"
+            onClick={() => {
+              // deleteBookmarkFromTrash();
+              setisopen(false);
+            }}
+          >
+            Restore
+          </li>
+          <li
+            className="cmdb-menu-item delete"
+            onClick={() => {
+              deleteBookmarkFromTrash();
+              setisopen(false);
+            }}
+          >
+            Permanently delete
+          </li>
+        </>
       )}
     </ul>
   );
