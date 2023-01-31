@@ -214,13 +214,13 @@ const App: React.FC<AppProps> = () => {
       { bookmarks, command: CMDB_RESTORE_TRASHED_BOOKMARK },
       (result) => {
         if (result) {
+          toast.success(CMDB_RESTORED_BOOKMARK_MSG);
           fetchBookmarks();
           fetchRecentBookmarks();
           setselectedBookmarks([]);
           fetchTrash();
           setbookmarksOnView(result);
           showbookmarksOnView(CMDB_TRASH);
-          toast.success(CMDB_RESTORED_BOOKMARK_MSG);
         }
       }
     );
@@ -296,9 +296,9 @@ const App: React.FC<AppProps> = () => {
 
   const handleEmptyTrash = () => {
     chrome.runtime.sendMessage({ command: CMDB_EMTPY_TRASH }, (response) => {
+      toast.success(CMDB_EMPTIED_TRASH_MSG);
       settrash(response);
       setbookmarksOnView(response);
-      toast.success(CMDB_EMPTIED_TRASH_MSG);
     });
   };
 

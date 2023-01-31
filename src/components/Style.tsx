@@ -545,7 +545,16 @@ export const CmdbWrapper = styled.div`
           }
 
           button {
-            color: red;
+            color: white;
+            &.delete {
+              color: red;
+            }
+          }
+
+          .cmdb-page-heading-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
           }
         }
 

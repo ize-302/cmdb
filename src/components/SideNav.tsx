@@ -112,7 +112,7 @@ export const SideNav: React.FC<SideNavProps> = ({
                   children: [],
                   hasBookmarks: true,
                   id: CMDB_RECENTLY_ADDED,
-                  parentId: "0",
+                  parentId: "",
                   title: "Recently added",
                 })
               }
@@ -180,7 +180,7 @@ export const SideNav: React.FC<SideNavProps> = ({
                   children: [],
                   hasBookmarks: true,
                   id: CMDB_TRASH,
-                  parentId: "0",
+                  parentId: "",
                   title: "Trash",
                 })
               }
