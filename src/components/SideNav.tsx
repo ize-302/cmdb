@@ -186,7 +186,7 @@ export const SideNav: React.FC<SideNavProps> = ({
               }
             >
               <TrashIcon opacity={0.4} width="14" />
-              Trash ({trash?.length || 0})
+              Trash {trash?.length > 0 && <span className="dot" />}
             </label>
           </div>
         )}

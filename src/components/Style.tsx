@@ -66,94 +66,7 @@ export const CmdbWrapper = styled.div`
    License: none (public domain)
 */
     // RESET STARTS HERE //
-    // html,
-    // body,
-    // div,
-    // span,
-    // applet,
-    // object,
-    // iframe,
-    // h1,
-    // h2,
-    // h3,
-    // h4,
-    // h5,
-    // h6,
-    // p,
-    // blockquote,
-    // pre,
-    // a,
-    // abbr,
-    // acronym,
-    // address,
-    // big,
-    // cite,
-    // code,
-    // del,
-    // dfn,
-    // em,
-    // img,
-    // ins,
-    // kbd,
-    // q,
-    // s,
-    // samp,
-    // small,
-    // strike,
-    // strong,
-    // sub,
-    // sup,
-    // tt,
-    // var,
-    // b,
-    // u,
-    // i,
-    // center,
-    // dl,
-    // dt,
-    // dd,
-    // ol,
-    // ul,
-    // li,
-    // fieldset,
-    // form,
-    // label,
-    // legend,
-    // table,
-    // caption,
-    // tbody,
-    // tfoot,
-    // thead,
-    // tr,
-    // th,
-    // td,
-    // article,
-    // aside,
-    // canvas,
-    // details,
-    // embed,
-    // figure,
-    // figcaption,
-    // footer,
-    // header,
-    // hgroup,
-    // menu,
-    // nav,
-    // output,
-    // ruby,
-    // section,
-    // summary,
-    // time,
-    // mark,
-    // audio,
-    // video {
-    //   margin: 0;
-    //   padding: 0;
-    //   border: 0;
-    //   font-size: 100%;
-    //   font: inherit;
-    //   vertical-align: baseline;
-    // }
+
     /* HTML5 display-role reset for older browsers */
     article,
     aside,
@@ -578,6 +491,16 @@ export const CmdbWrapper = styled.div`
               opacity: 1;
             }
           }
+        }
+        .dot {
+          display: block;
+          height: 6px;
+          width: 6px;
+          border-radius: 100px;
+          background: orange;
+          position: relative;
+          left: -5px;
+          top: 0px;
         }
       }
     }
