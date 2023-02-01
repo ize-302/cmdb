@@ -255,9 +255,9 @@ export const CmdbWrapper = styled.div`
     .cmdb-animated-bg {
       position: relative;
       z-index: 0;
-      max-width: 970px;
+      max-width: 985px;
       width: 90vw;
-      max-height: calc(100vh - 120px);
+      max-height: calc(90vh - 120px);
       height: 100%;
       border-radius: 10px;
       overflow: hidden;
@@ -400,7 +400,7 @@ export const CmdbWrapper = styled.div`
     /* body starts here  */
     .cmdb-body {
       display: flex;
-      height: calc(100vh - 159px);
+      height: calc(90vh - 159px);
 
       // side nav
       .cmdb-sidenav {
@@ -538,6 +538,7 @@ export const CmdbWrapper = styled.div`
           margin-bottom: 4px;
           display: flex;
           justify-content: space-between;
+          align-items: center;
 
           .cmdb-page-title {
             color: white;
