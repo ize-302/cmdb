@@ -12,14 +12,14 @@ export const CmdbWrapper = styled.div`
     ::before {
       box-sizing: border-box;
       // remove highlights
-      // -webkit-touch-callout: none; /* iOS Safari */
-      // -webkit-user-select: none; /* Safari */
-      // -khtml-user-select: none; /* Konqueror HTML */
-      // -moz-user-select: none; /* Old versions of Firefox */
-      // -ms-user-select: none; /* Internet Explorer/Edge */
-      // user-select: none;
-      letter-spacing: 0.3px;
-      font-weight: 400;
+      -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+      -khtml-user-select: none; /* Konqueror HTML */
+      -moz-user-select: none; /* Old versions of Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+      user-select: none;
+      letter-spacing: 0.3px !important;
+      font-weight: 400 !important;
       font-family: "Inter", sans-serif;
       font-size: 13px;
       line-height: 14px;
@@ -167,6 +167,7 @@ export const CmdbWrapper = styled.div`
       }
     }
     label {
+      margin: 0;
       &.cmdb-label {
         margin-bottom: 3px;
         display: block;
@@ -545,7 +546,16 @@ export const CmdbWrapper = styled.div`
           }
 
           button {
-            color: red;
+            color: white;
+            &.delete {
+              color: red;
+            }
+          }
+
+          .cmdb-page-heading-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
           }
         }
 
@@ -565,7 +575,6 @@ export const CmdbWrapper = styled.div`
           padding: 6px 12px;
           border-radius: 4px;
           &:hover {
-            background: ${itembg};
             .cmdb-list-item_title {
               color: white;
               cursor: pointer;

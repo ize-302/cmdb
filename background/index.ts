@@ -51,6 +51,12 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     });
   }
 
+  if (message.command === "CMDB_FETCH_BOOKMARS_BY_FOLDER") {
+    chrome.bookmarks.getChildren(message.id, (result: any) => {
+      sendResponse(result);
+    });
+  }
+
   if (message === "CMDB_FETCH_RECENT_BOOKMARKS") {
     chrome.bookmarks.getRecent(20, (result) => {
       sendResponse(result);
@@ -116,12 +122,32 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   // get trashed bookmarks
   if (message.command === "CMDB_GET_TRASHED_BOOKMARK") {
     getTrashedBookmarks().then((result) => {
-      sendResponse(result.cmdb_trashed_bookmarks);
+      sendResponse(result.cmdb_trashed_bookmarks || []);
     });
   }
 
   // delete trashed bookmark
   if (message.command === "CMDB_DELETE_TRASHED_BOOKMARK") {
+    for (let i = 0; i < message.bookmarks.length; i++) {
+      getTrashedBookmarks().then((response) => {
+        const trash = response.cmdb_trashed_bookmarks || []; // retrieve trash
+        const results = trash.filter(
+          ({ id: id1 }) => !message.bookmarks.some(({ id: id2 }) => id2 === id1)
+        );
+        if (i === message.bookmarks.length - 1) {
+          trashBookmark(results);
+          sendResponse(results);
+        }
+      });
+    }
+  }
+
+  // restore trashed bookmark
+  if (message.command === "CMDB_RESTORE_TRASHED_BOOKMARK") {
+    for (let i = 0; i < message.bookmarks.length; i++) {
+      createItem(message.bookmarks[i]);
+    }
+    // sendResponse(message.bookmarks);
     for (let i = 0; i < message.bookmarks.length; i++) {
       getTrashedBookmarks().then((response) => {
         const trash = response.cmdb_trashed_bookmarks || []; // retrieve trash

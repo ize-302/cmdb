@@ -5,17 +5,20 @@ import {
 } from "@heroicons/react/24/solid";
 import { StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
 import { Tooltip } from "react-tooltip";
+import { CMDB_RECENTLY_ADDED, CMDB_TRASH } from "../keys";
 
 interface TopNavProps {
   handleSearch: (str: string) => void;
   handleSaveUrl: () => void;
   isbookmarked: boolean;
+  selectedFolder: any;
 }
 
 export const TopNav: React.FC<TopNavProps> = ({
   handleSearch,
   handleSaveUrl,
   isbookmarked,
+  selectedFolder,
 }) => {
   return (
     <>
@@ -37,20 +40,19 @@ export const TopNav: React.FC<TopNavProps> = ({
           />
         </div>
         <div className="cmdb-topnav-item cmdb-topnav-item_right">
-          <button
-            className="cmdb-topnav-item_right-save-url"
-            onClick={() => handleSaveUrl()}
-            id="my-anchor-element"
-          >
-            {isbookmarked ? (
-              <StarIconSolid color="orange" width="16" />
-            ) : (
-              <StarIconOutline color="white" width="16" />
-            )}
-          </button>
-          {/* <button>
-            <Bars2Icon color="white" width="20" />
-          </button> */}
+          {selectedFolder.id !== CMDB_TRASH && (
+            <button
+              className="cmdb-topnav-item_right-save-url"
+              onClick={() => handleSaveUrl()}
+              id="my-anchor-element"
+            >
+              {isbookmarked ? (
+                <StarIconSolid color="orange" width="16" />
+              ) : (
+                <StarIconOutline color="white" width="16" />
+              )}
+            </button>
+          )}
         </div>
       </div>
     </>
