@@ -67,19 +67,21 @@ export const SideNav: React.FC<SideNavProps> = ({
   };
 
   const handleGoback = () => {
-    const parent = findParent(selectedFolder?.parentId);
     // find parent siblings
     const parentAndSiblings = folders.filter(
-      (folder) => folder.parentId === parent.parentId
+      (folder) => folder.parentId === currentParent.parentId
     );
     // find the grand parent
-    const grandparent = folders.find((folder) => folder.id === parent.parentId);
+    const grandparent = folders.find(
+      (folder) => folder.id === currentParent.parentId
+    );
     // console.log({ currentParent, parentAndSiblings, grandparent });
     if (
       ["1", "2", "3"].includes(currentParent.id) ||
       ["0"].includes(grandparent.id)
     ) {
       setshowMain(true);
+      setselectedFolder({ id: CMDB_RECENTLY_ADDED });
     } else {
       setcurrentParent(grandparent);
       setfoldersToDisplay(parentAndSiblings);
