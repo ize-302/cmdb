@@ -4,6 +4,7 @@ const bgdark = "#000212";
 const itembg = "#1d2230";
 const itemborder = "rgba(255, 255, 255, 0.05)";
 const textcolor = "rgb(210, 211, 224)";
+const blue = "#366FEB";
 
 export const CmdbWrapper = styled.div`
   #cmdb {
@@ -338,10 +339,6 @@ export const CmdbWrapper = styled.div`
       display: flex;
       justify-content: space-between;
       align-items: center;
-      // position: relative;
-      // z-index: 100;
-      // top: 0;
-      // left: 0;
       .cmdb-topnav-item {
         width: 30%;
         display: flex;
@@ -361,7 +358,7 @@ export const CmdbWrapper = styled.div`
 
         &_right {
           justify-content: flex-end;
-          gap: 24px;
+          gap: 10px;
           .cmdb-topnav-item_right-save-url {
             background-color: #000;
             color: #000;
@@ -380,6 +377,7 @@ export const CmdbWrapper = styled.div`
         border: none;
         max-height: 16px;
         min-height: 16px;
+        outline: 0;
       }
       input#cmdb-search {
         background-color: ${bgdark};
@@ -649,7 +647,7 @@ export const CmdbWrapper = styled.div`
       .cmdb-content-actions {
         position: sticky;
         bottom: 10px;
-        background-color: #439dfc;
+        background-color: ${blue};
         height: 40px;
         border-radius: 4px;
         width: 97%;
@@ -659,15 +657,16 @@ export const CmdbWrapper = styled.div`
         justify-content: space-between;
         box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.302);
         padding: 0 15px;
-
-        color: #000;
+        color: #fff;
 
         &-controls {
           display: flex;
           align-items: center;
-          .delete {
-            color: red;
-            cursor: pointer;
+          button {
+            color: #fff;
+            &.delete {
+              color: red;
+            }
           }
         }
       }
