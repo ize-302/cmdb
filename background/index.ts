@@ -51,6 +51,12 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     });
   }
 
+  if (message.command === "CMDB_FETCH_BOOKMARS_BY_FOLDER") {
+    chrome.bookmarks.getChildren(message.id, (result: any) => {
+      sendResponse(result);
+    });
+  }
+
   if (message === "CMDB_FETCH_RECENT_BOOKMARKS") {
     chrome.bookmarks.getRecent(20, (result) => {
       sendResponse(result);
@@ -116,7 +122,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   // get trashed bookmarks
   if (message.command === "CMDB_GET_TRASHED_BOOKMARK") {
     getTrashedBookmarks().then((result) => {
-      sendResponse(result.cmdb_trashed_bookmarks);
+      sendResponse(result.cmdb_trashed_bookmarks || []);
     });
   }
 

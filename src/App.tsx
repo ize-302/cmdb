@@ -22,6 +22,7 @@ import {
   CMDB_EMTPY_TRASH,
   CMDB_DELETE_TRASHED_BOOKMARK,
   CMDB_RESTORE_TRASHED_BOOKMARK,
+  CMDB_FETCH_BOOKMARS_BY_FOLDER,
   CMDB_REMOVED_BOOKMARK_MSG,
   CMDB_SAVED_BOOKMARK_MSG,
   CMDB_UPDATED_BOOKMARK_MSG,
@@ -42,7 +43,6 @@ interface AppProps {}
 const App: React.FC<AppProps> = () => {
   // states
   let [folders, setfolders] = React.useState<any>([]);
-  let [bookmarks, setbookmarks] = React.useState<any>([]);
   const [recentBookmarks, setrecentBookmarks] = React.useState<BookmarkProps[]>(
     []
   );
@@ -57,9 +57,9 @@ const App: React.FC<AppProps> = () => {
   const [isbookmarked, setisbookmarked] = React.useState(false);
   const [selectedBookmarks, setselectedBookmarks] = React.useState<any[]>([]);
   const [trash, settrash] = React.useState([]);
+  const [showMain, setshowMain] = React.useState(true);
 
-  // separate folders from bookmarks(actual bookmarks)
-  let newBookmarks: any[] = [];
+  // Extract folders
   let newFolders: any[] = [];
   const separateFolderFromBookmarks = (node: {
     children: any[];
@@ -73,28 +73,22 @@ const App: React.FC<AppProps> = () => {
       const hasBookmarks = node?.children.some((child) => child.url);
       newFolders.push({ ...node, children: [], hasBookmarks: hasBookmarks });
       folders = newFolders;
-      node.children.forEach((child) => separateFolderFromBookmarks(child));
-    } else {
-      newBookmarks.push(node);
-      bookmarks = newBookmarks;
-    }
-    // handle nesting folders
-    const temp_nested_folders: object[] = [];
-    // iterate over folders
-    folders.forEach((folder: { parentId: string; id: string }) => {
-      // check if folder has children
-      const hasChildren = folders?.find(
-        (child: { parentId: string }) => child.parentId === folder.id
-      );
-      temp_nested_folders.push({
-        ...folder,
-        hasChildren: hasChildren ? true : false,
+      // handle nesting folders
+      const temp_nested_folders: object[] = [];
+      // iterate over folders
+      folders.map((folder: { parentId: string; id: string }) => {
+        // check if folder has children
+        const hasChildren = folders?.find(
+          (child: { parentId: string }) => child.parentId === folder.id
+        );
+        temp_nested_folders.push({
+          ...folder,
+          hasChildren: hasChildren ? true : false,
+        });
       });
-    });
-    setfolders([...temp_nested_folders]);
-    setselectedFolder(selectedFolder ? selectedFolder : folders?.[0]);
-    showbookmarksOnView(selectedFolder?.id);
-    setbookmarks(bookmarks);
+      setfolders([...temp_nested_folders]);
+      node.children.forEach((child) => separateFolderFromBookmarks(child));
+    }
   };
 
   const handleSearch = (str: string) => {
@@ -111,27 +105,25 @@ const App: React.FC<AppProps> = () => {
     }
   };
 
-  // this handles whats category of bookmarks to show in the content section
-  const showbookmarksOnView = (id: string) => {
-    if (id === "0") {
-      setbookmarksOnView(bookmarks);
-    } else if (id === CMDB_RECENTLY_ADDED) {
-      setbookmarksOnView(recentBookmarks);
-    } else if (id === SEARCH_RESULT) {
-      if (bookmarksOnView.length === 0) {
-        //
-      }
-    } else if (id === CMDB_TRASH) {
-      setbookmarksOnView(trash || []);
+  // used for when a folder is clicked,
+  // fetch the nodes relating to that folder and filter out non bookmarks
+  const getBoomarksByFolder = (folder: any) => {
+    if (folder.id === CMDB_RECENTLY_ADDED) {
+      fetchRecentBookmarks();
+    } else if (folder.id === CMDB_TRASH) {
+      fetchTrash();
     } else {
-      const filteredBookmarks = bookmarks.filter(
-        (bookmark: { parentId: string }) =>
-          parseInt(bookmark.parentId) === parseInt(selectedFolder?.id)
+      chrome.runtime.sendMessage(
+        { id: folder.id, command: CMDB_FETCH_BOOKMARS_BY_FOLDER },
+        (response) => {
+          const filter = response.filter((item: any) => item.url);
+          setbookmarksOnView(filter);
+        }
       );
-      setbookmarksOnView(filteredBookmarks);
     }
   };
 
+  // toggle between save and unsafe url
   const handleSaveUrl = async () => {
     const url = window.location.href;
     if (!isbookmarked) {
@@ -146,27 +138,26 @@ const App: React.FC<AppProps> = () => {
           (response) => {}
         );
         toast.success(CMDB_SAVED_BOOKMARK_MSG);
-        fetchBookmarks();
-        fetchRecentBookmarks();
+        getBoomarksByFolder(selectedFolder);
+        // fetchBookmarks();
       } catch (error) {
         console.log("error => ", error);
       }
     } else {
-      const findBookmark = bookmarks.find(
-        (bookmark: BookmarkProps) => bookmark.url === url
-      );
-      const currentSelectedfolder = selectedFolder;
+      const currenturl = window.location.href;
       chrome.runtime.sendMessage(
-        { bookmarks: [findBookmark], command: CMDB_DELETE_ITEM },
+        { string: currenturl, command: CMDB_SEARCH },
         (result) => {
-          if (result === "deleted") {
-            toast.success(CMDB_REMOVED_BOOKMARK_MSG);
-            fetchBookmarks();
-            fetchTrash();
-            if (!currentSelectedfolder.index) {
-              fetchRecentBookmarks();
+          chrome.runtime.sendMessage(
+            { bookmarks: [...result], command: CMDB_DELETE_ITEM },
+            (result) => {
+              if (result === "deleted") {
+                toast.success(CMDB_REMOVED_BOOKMARK_MSG);
+                getBoomarksByFolder(selectedFolder);
+                fetchTrash();
+              }
             }
-          }
+          );
         }
       );
     }
@@ -181,7 +172,6 @@ const App: React.FC<AppProps> = () => {
   const fetchRecentBookmarks = () => {
     chrome.runtime.sendMessage(CMDB_FETCH_RECENT_BOOKMARKS, (result) => {
       setrecentBookmarks(result);
-      setselectedFolder({ id: CMDB_RECENTLY_ADDED });
     });
   };
 
@@ -198,12 +188,11 @@ const App: React.FC<AppProps> = () => {
     chrome.runtime.sendMessage(
       { bookmarks, command: CMDB_DELETE_TRASHED_BOOKMARK },
       (result) => {
-        console.log(result);
         if (result) {
           toast.success(CMDB_REMOVED_BOOKMARK_MSG);
+          fetchTrash();
           setbookmarksOnView(result);
           setselectedBookmarks([]);
-          fetchTrash();
         }
       }
     );
@@ -215,19 +204,15 @@ const App: React.FC<AppProps> = () => {
       (result) => {
         if (result) {
           toast.success(CMDB_RESTORED_BOOKMARK_MSG);
-          fetchBookmarks();
-          fetchRecentBookmarks();
           setselectedBookmarks([]);
           fetchTrash();
           setbookmarksOnView(result);
-          showbookmarksOnView(CMDB_TRASH);
         }
       }
     );
   };
 
   const deleteBookmarks = () => {
-    const currentSelectedfolder = selectedFolder;
     chrome.runtime.sendMessage(
       {
         bookmarks: selectedBookmarks,
@@ -236,11 +221,7 @@ const App: React.FC<AppProps> = () => {
       (res) => {
         if (res === "deleted") {
           toast.success(CMDB_REMOVED_BOOKMARKS_MSG);
-          console.log(res);
-          fetchBookmarks();
-          if (!currentSelectedfolder.index) {
-            fetchRecentBookmarks();
-          }
+          getBoomarksByFolder(selectedFolder);
           setselectedBookmarks([]);
           fetchTrash();
           return;
@@ -249,8 +230,7 @@ const App: React.FC<AppProps> = () => {
     );
   };
 
-  const moveBookmark = (bookmarks: string[], parentId: string) => {
-    const currentSelectedfolder = selectedFolder;
+  const handleMoveBookmark = (bookmarks: string[], parentId: string) => {
     chrome.runtime.sendMessage(
       {
         bookmarks,
@@ -258,15 +238,13 @@ const App: React.FC<AppProps> = () => {
         command: CMDB_MOVE_ITEM,
       },
       (res) => {
-        fetchBookmarks();
-        if (!currentSelectedfolder.index) {
-          fetchRecentBookmarks();
+        if (res) {
+          toast.success(CMDB_MOVED_BOOKMARK_MSG);
+          getBoomarksByFolder(selectedFolder);
+          setbookmarksToMove([]);
+          setselectedBookmarks([]);
+          setshowmovemodal(false);
         }
-        setbookmarksToMove([]);
-        setselectedBookmarks([]);
-        setshowmovemodal(false);
-        toast.success(CMDB_MOVED_BOOKMARK_MSG);
-        return;
       }
     );
   };
@@ -278,18 +256,14 @@ const App: React.FC<AppProps> = () => {
   };
 
   const updateBookmark = (bookmark: BookmarkProps) => {
-    const currentSelectedfolder = selectedFolder;
     const { id, title, url } = bookmark;
     chrome.runtime.sendMessage(
       { id, title, url, command: CMDB_UPDATE_ITEM },
       (result) => {
         toast.success(CMDB_UPDATED_BOOKMARK_MSG);
+        getBoomarksByFolder(selectedFolder);
         setshoweditmodal(false);
         setbookmarkToEdit({});
-        fetchBookmarks();
-        if (!currentSelectedfolder.index) {
-          fetchRecentBookmarks();
-        }
       }
     );
   };
@@ -303,18 +277,21 @@ const App: React.FC<AppProps> = () => {
   };
 
   React.useEffect(() => {
-    if (window && bookmarks.length > 0) {
-      const currenturl = window.location.href;
-      const findBookmark = bookmarks.find(
-        (bookmark: BookmarkProps) => bookmark.url === currenturl
-      );
-      findBookmark ? setisbookmarked(true) : setisbookmarked(false);
-    }
-  }, [window, bookmarks]);
+    const currenturl = window.location.href;
+    chrome.runtime.sendMessage(
+      { string: currenturl, command: CMDB_SEARCH },
+      (result) => {
+        result.length > 0 ? setisbookmarked(true) : setisbookmarked(false);
+      }
+    );
+  }, [window, handleSaveUrl]);
 
   React.useEffect(() => {
-    showbookmarksOnView(selectedFolder?.id);
-    setselectedBookmarks([]);
+    if (selectedFolder.id === CMDB_RECENTLY_ADDED) {
+      setbookmarksOnView(recentBookmarks);
+    } else if (selectedFolder.id === CMDB_TRASH) {
+      setbookmarksOnView(trash || []);
+    }
   }, [selectedFolder]);
 
   // use effects
@@ -323,6 +300,10 @@ const App: React.FC<AppProps> = () => {
     fetchRecentBookmarks();
     fetchTrash();
   }, []);
+
+  React.useEffect(() => {
+    setselectedFolder({ id: CMDB_RECENTLY_ADDED });
+  }, [recentBookmarks]);
 
   return (
     <CmdbWrapper>
@@ -335,6 +316,7 @@ const App: React.FC<AppProps> = () => {
               handleSearch={handleSearch}
               handleSaveUrl={handleSaveUrl}
               isbookmarked={isbookmarked}
+              selectedFolder={selectedFolder}
             />
             <div className="cmdb-body">
               <SideNav
@@ -344,8 +326,13 @@ const App: React.FC<AppProps> = () => {
                 setfoldersToDisplay={setfoldersToDisplay}
                 currentParent={currentParent}
                 setcurrentParent={setcurrentParent}
-                setselectedFolder={setselectedFolder}
+                setselectedFolder={(val) => {
+                  setselectedFolder(val);
+                  getBoomarksByFolder(val);
+                }}
                 trash={trash}
+                showMain={showMain}
+                setshowMain={setshowMain}
               />
               <Content
                 selectedFolder={selectedFolder}
@@ -384,7 +371,7 @@ const App: React.FC<AppProps> = () => {
                   setshowmovemodal(payload);
                   setbookmarksToMove([]);
                 }}
-                submitMoveBookmark={moveBookmark}
+                submitMoveBookmark={handleMoveBookmark}
               />
             )}
           </div>

@@ -18,8 +18,8 @@ export const CmdbWrapper = styled.div`
       -moz-user-select: none; /* Old versions of Firefox */
       -ms-user-select: none; /* Internet Explorer/Edge */
       user-select: none;
-      letter-spacing: 0.3px;
-      font-weight: 400;
+      letter-spacing: 0.3px !important;
+      font-weight: 400 !important;
       font-family: "Inter", sans-serif;
       font-size: 13px;
       line-height: 14px;
@@ -167,6 +167,7 @@ export const CmdbWrapper = styled.div`
       }
     }
     label {
+      margin: 0;
       &.cmdb-label {
         margin-bottom: 3px;
         display: block;

@@ -14,6 +14,8 @@ export const CMDB_GET_TRASHED_BOOKMARK = "CMDB_GET_TRASHED_BOOKMARK";
 export const CMDB_TRASH = "CMDB_TRASH";
 export const CMDB_DELETE_TRASHED_BOOKMARK = "CMDB_DELETE_TRASHED_BOOKMARK";
 export const CMDB_RESTORE_TRASHED_BOOKMARK = "CMDB_RESTORE_TRASHED_BOOKMARK";
+export const CMDB_FETCH_BOOKMARS_BY_FOLDER = "CMDB_FETCH_BOOKMARS_BY_FOLDER";
+
 export const CMDB_REMOVED_BOOKMARK_MSG = "Bookmark has been removed";
 export const CMDB_SAVED_BOOKMARK_MSG = "Bookmark has been added";
 export const CMDB_UPDATED_BOOKMARK_MSG = "Bookmark has been updated";
