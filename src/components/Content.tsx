@@ -25,6 +25,7 @@ interface ContentProps {
   handleEmptyTrash: () => void;
   trash: BookmarkProps[];
   restoreBookmarkFromTrash: (bookmarks: BookmarkProps[]) => void;
+  createFolder: () => void;
 }
 
 export const Content: React.FC<ContentProps> = ({
@@ -39,6 +40,7 @@ export const Content: React.FC<ContentProps> = ({
   deleteBookmarkFromTrash,
   handleEmptyTrash,
   restoreBookmarkFromTrash,
+  createFolder,
   trash,
 }) => {
   const [isopen, setisopen] = React.useState(false);
@@ -77,42 +79,27 @@ export const Content: React.FC<ContentProps> = ({
           <div className="cmdb-page-heading-actions">
             {selectedFolder.parentId ? (
               <>
-                <span
-                  className="cmdb-list-item_kebab"
-                  onClick={() => setisopen(!isopen)}
-                >
+                <button onClick={() => createFolder()}>
                   <FolderPlusIcon color="white" width="17" />
-                </span>
+                </button>
                 {selectedFolder.parentId !== "0" && (
                   <>
-                    <span
-                      className="cmdb-list-item_kebab"
-                      onClick={() => setisopen(!isopen)}
-                    >
+                    <button onClick={() => {}}>
                       <PencilSquareIcon color="white" width="17" />
-                    </span>
-                    <span
-                      className="cmdb-list-item_kebab"
-                      onClick={() => setisopen(!isopen)}
-                    >
+                    </button>
+                    <button onClick={() => setisopen(!isopen)}>
                       <ArrowsRightLeftIcon color="white" width="17" />
-                    </span>
+                    </button>
 
-                    <span
-                      className="cmdb-list-item_kebab"
-                      onClick={() => setisopen(!isopen)}
-                    >
+                    <button onClick={() => setisopen(!isopen)}>
                       <TrashIcon color="red" width="17" />
-                    </span>
+                    </button>
                   </>
                 )}
               </>
             ) : null}
             {selectedFolder?.id === CMDB_TRASH && trash.length > 0 && (
-              <span
-                className="cmdb-list-item_kebab"
-                onClick={() => handleEmptyTrash()}
-              >
+              <span onClick={() => handleEmptyTrash()}>
                 <TrashIcon color="red" width="17" />
               </span>
             )}

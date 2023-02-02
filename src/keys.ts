@@ -23,3 +23,4 @@ export const CMDB_REMOVED_BOOKMARKS_MSG = "Bookmarks have been removed";
 export const CMDB_MOVED_BOOKMARK_MSG = "Bookmark(s) have been moved";
 export const CMDB_EMPTIED_TRASH_MSG = "Trash has been emptied";
 export const CMDB_RESTORED_BOOKMARK_MSG = "Bookmark(s) has been restored";
+export const CMDB_FOLDER_CREATED_MSG = "Folder created";

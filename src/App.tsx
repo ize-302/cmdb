@@ -30,6 +30,7 @@ import {
   CMDB_MOVED_BOOKMARK_MSG,
   CMDB_EMPTIED_TRASH_MSG,
   CMDB_RESTORED_BOOKMARK_MSG,
+  CMDB_FOLDER_CREATED_MSG,
 } from "./keys";
 import EditBookmarkModal from "./components/EditBookmarkModal";
 import toast from "react-hot-toast";
@@ -37,6 +38,7 @@ import CustomToast from "./components/CustomToast";
 import { BookmarkProps } from "../src/types";
 import MoveBookmarkModal from "./components/MoveBookmarkModal";
 import { CmdbWrapper } from "./components/Style";
+import CreateFolderModal from "./components/CreateFolderModal";
 
 interface AppProps {}
 
@@ -58,6 +60,8 @@ const App: React.FC<AppProps> = () => {
   const [selectedBookmarks, setselectedBookmarks] = React.useState<any[]>([]);
   const [trash, settrash] = React.useState([]);
   const [showMain, setshowMain] = React.useState(true);
+  const [showcreatefoldermodal, setshowcreatefoldermodal] =
+    React.useState(false);
 
   // Extract folders
   let newFolders: any[] = [];
@@ -121,6 +125,18 @@ const App: React.FC<AppProps> = () => {
         }
       );
     }
+  };
+
+  const getFoldersByFolder = (folderId: any) => {
+    chrome.runtime.sendMessage(
+      { id: folderId, command: CMDB_FETCH_BOOKMARS_BY_FOLDER },
+      (response) => {
+        const filter = response.filter(
+          (item: any) => !item.url && item.parentId === folderId
+        );
+        setfoldersToDisplay(filter);
+      }
+    );
   };
 
   // toggle between save and unsafe url
@@ -276,6 +292,18 @@ const App: React.FC<AppProps> = () => {
     });
   };
 
+  const handleCreateFolder = (folderId: string, title: string) => {
+    chrome.runtime.sendMessage(
+      { title, command: CMDB_CREATE_ITEM, parentId: folderId },
+      (response) => {
+        toast.success(CMDB_FOLDER_CREATED_MSG);
+        setshowcreatefoldermodal(false);
+        getFoldersByFolder(folderId);
+        fetchBookmarks();
+      }
+    );
+  };
+
   React.useEffect(() => {
     const currenturl = window.location.href;
     chrome.runtime.sendMessage(
@@ -349,6 +377,9 @@ const App: React.FC<AppProps> = () => {
                 handleEmptyTrash={handleEmptyTrash}
                 trash={trash}
                 restoreBookmarkFromTrash={restoreBookmarkFromTrash}
+                createFolder={() => {
+                  setshowcreatefoldermodal(true);
+                }}
               />
             </div>
             {/* edit modal */}
@@ -372,6 +403,22 @@ const App: React.FC<AppProps> = () => {
                   setbookmarksToMove([]);
                 }}
                 submitMoveBookmark={handleMoveBookmark}
+              />
+            )}
+            {/* create folder modal */}
+            {showcreatefoldermodal && (
+              <CreateFolderModal
+                defaultSelectedFolder={selectedFolder}
+                folders={folders}
+                setisopen={(payload) => {
+                  setshowcreatefoldermodal(payload);
+                }}
+                submit={(folder, title) => {
+                  if (!title) {
+                    return toast.error("Folder should have a title");
+                  }
+                  handleCreateFolder(folder, title);
+                }}
               />
             )}
           </div>

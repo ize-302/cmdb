@@ -554,7 +554,10 @@ export const CmdbWrapper = styled.div`
           .cmdb-page-heading-actions {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: -2px;
+            button:hover {
+              background: ${itembg};
+            }
           }
         }
 
