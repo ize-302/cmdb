@@ -66,8 +66,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     getTrashedBookmarks().then((response) => {
       const trash = response.cmdb_trashed_bookmarks || []; // retrieve trash
       for (let i = 0; i < message.bookmarks.length; i++) {
-        trash.push(message.bookmarks[i]);
-        trashBookmark(trash); // update trash
+        // only save urls
+        if (message.bookmarks[i].url) {
+          trash.push(message.bookmarks[i]);
+          trashBookmark(trash); // update trash
+        }
         chrome.bookmarks.remove(message.bookmarks[i].id, () => {
           if (i === message.bookmarks.length - 1) {
             sendResponse("deleted");
@@ -141,18 +144,26 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
   // restore trashed bookmark
   if (message.command === "CMDB_RESTORE_TRASHED_BOOKMARK") {
+    // determine where to create restored bookmark
+    const checkParent = (parentId) => {
+      const findParent = message.folders.find(
+        (folder) => folder.id === parentId
+      );
+      return findParent ? findParent.id : null;
+    };
+    // create bookmark
     for (let i = 0; i < message.bookmarks.length; i++) {
       chrome.bookmarks.create(
         {
           title: message.bookmarks[i].title,
           url: message.bookmarks[i].url,
-          parentId: message.bookmarks[i].parentId,
+          parentId: checkParent(message.bookmarks[i].parentId),
           index: message.bookmarks[i].index,
         },
         (response) => response
       );
     }
-    // sendResponse(message.bookmarks);
+    // update trash
     for (let i = 0; i < message.bookmarks.length; i++) {
       getTrashedBookmarks().then((response) => {
         const trash = response.cmdb_trashed_bookmarks || []; // retrieve trash

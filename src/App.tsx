@@ -214,10 +214,10 @@ const App: React.FC<AppProps> = () => {
 
   const restoreBookmarkFromTrash = (bookmarks: BookmarkProps[]) => {
     chrome.runtime.sendMessage(
-      { bookmarks, command: CMDB_RESTORE_TRASHED_BOOKMARK },
+      { bookmarks, command: CMDB_RESTORE_TRASHED_BOOKMARK, folders },
       (result) => {
         if (result) {
-          toast.success(CMDB_RESTORED_BOOKMARK_MSG);
+          toast.success("Restored");
           setselectedBookmarks([]);
           fetchTrash();
           setbookmarksOnView(result);
@@ -234,7 +234,7 @@ const App: React.FC<AppProps> = () => {
       },
       (res) => {
         if (res === "deleted") {
-          toast.success(CMDB_REMOVED_BOOKMARKS_MSG);
+          toast.success("Bookmark has been trashed");
           getBoomarksByFolder(selectedFolder);
           setselectedBookmarks([]);
           fetchTrash();
@@ -345,6 +345,35 @@ const App: React.FC<AppProps> = () => {
     );
   };
 
+  const handleDeleteFolder = () => {
+    chrome.runtime.sendMessage(
+      { id: selectedFolder.id, command: CMDB_FETCH_BOOKMARS_BY_FOLDER },
+      (children) => {
+        if (children.length > 0) {
+          toast.error(`${selectedFolder.title} folder contains items`);
+        } else {
+          chrome.runtime.sendMessage(
+            {
+              bookmarks: [selectedFolder],
+              command: CMDB_DELETE_BOOKMARK,
+            },
+            (res) => {
+              if (res === "deleted") {
+                toast.success("Folder has been deleted");
+                setshowMain(true);
+                setselectedFolder({ id: CMDB_RECENTLY_ADDED });
+                fetchTrash();
+                getBoomarksByFolder(selectedFolder);
+                fetchBookmarks();
+                fetchRecentBookmarks();
+              }
+            }
+          );
+        }
+      }
+    );
+  };
+
   React.useEffect(() => {
     const currenturl = window.location.href;
     chrome.runtime.sendMessage(
@@ -428,6 +457,7 @@ const App: React.FC<AppProps> = () => {
                 setshowmovefoldermodal={() => {
                   setshowmovefoldermodal(true);
                 }}
+                deleteFolder={handleDeleteFolder}
               />
             </div>
             {/* edit modal */}

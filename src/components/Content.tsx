@@ -28,6 +28,7 @@ interface ContentProps {
   createFolder: () => void;
   renameFolder: () => void;
   setshowmovefoldermodal: () => void;
+  deleteFolder: () => void;
 }
 
 export const Content: React.FC<ContentProps> = ({
@@ -46,6 +47,7 @@ export const Content: React.FC<ContentProps> = ({
   renameFolder,
   trash,
   setshowmovefoldermodal,
+  deleteFolder,
 }) => {
   const [isopen, setisopen] = React.useState(false);
 
@@ -95,7 +97,7 @@ export const Content: React.FC<ContentProps> = ({
                       <ArrowsRightLeftIcon color="white" width="17" />
                     </button>
 
-                    <button onClick={() => setisopen(!isopen)}>
+                    <button onClick={() => deleteFolder()}>
                       <TrashIcon color="red" width="17" />
                     </button>
                   </>

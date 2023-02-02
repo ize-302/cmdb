@@ -6,6 +6,7 @@ import {
   TrashIcon,
   ClockIcon,
 } from "@heroicons/react/24/outline";
+import { DevicePhoneMobileIcon } from "@heroicons/react/24/solid";
 import { BookmarkProps } from "../types";
 import { CMDB_TRASH, CMDB_RECENTLY_ADDED } from "../keys";
 
@@ -156,7 +157,11 @@ export const SideNav: React.FC<SideNavProps> = ({
                     onClick={() => folder && handleFolderNavigation(folder)}
                     id={folder.id}
                   >
-                    <BookmarkIcon opacity={0.4} width="14" />
+                    {folder.id === "3" ? (
+                      <DevicePhoneMobileIcon opacity={0.4} width="14" />
+                    ) : (
+                      <BookmarkIcon opacity={0.4} width="14" />
+                    )}
 
                     {folder.title}
                   </label>

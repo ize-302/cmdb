@@ -4,11 +4,11 @@ import {
   StarIcon as StarIconSolid,
 } from "@heroicons/react/24/solid";
 import {
-  PlusIcon,
+  LinkIcon,
   StarIcon as StarIconOutline,
 } from "@heroicons/react/24/outline";
 import { Tooltip } from "react-tooltip";
-import { CMDB_RECENTLY_ADDED, CMDB_TRASH } from "../keys";
+import { CMDB_TRASH } from "../keys";
 
 interface TopNavProps {
   handleSearch: (str: string) => void;
@@ -55,7 +55,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                 onClick={() => {}}
                 id="manual-save-url"
               >
-                <PlusIcon color="white" width="16" />
+                <LinkIcon color="white" width="16" />
               </button>
               <button
                 className="cmdb-topnav-item_right-save-url"
