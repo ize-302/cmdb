@@ -12,9 +12,9 @@ import {
   CMDB_FETCH_BOOKMARKS,
   CMDB_FETCH_RECENT_BOOKMARKS,
   SEARCH_RESULT,
-  CMDB_CREATE_ITEM,
+  CMDB_CREATE_BOOKMARK,
   CMDB_SEARCH,
-  CMDB_DELETE_ITEM,
+  CMDB_DELETE_BOOKMARK,
   CMDB_UPDATE_ITEM,
   CMDB_MOVE_ITEM,
   CMDB_GET_TRASHED_BOOKMARK,
@@ -70,29 +70,28 @@ const App: React.FC<AppProps> = () => {
     url: string;
   }) => {
     if (node?.children) {
-      /*
-       * check if children of node are bookmarks
-       * only bookmarks have url property so we use that
-       * */
-      const hasBookmarks = node?.children.some((child) => child.url);
-      newFolders.push({ ...node, children: [], hasBookmarks: hasBookmarks });
-      folders = newFolders;
-      // handle nesting folders
-      const temp_nested_folders: object[] = [];
+      newFolders.push(node);
+      const modified_folders: object[] = [];
       // iterate over folders
-      folders.map((folder: { parentId: string; id: string }) => {
-        // check if folder has children
-        const hasChildren = folders?.find(
+      newFolders.map((folder: { parentId: string; id: string }) => {
+        // check if current folder has nested folders
+        const hasFolders = newFolders?.find(
           (child: { parentId: string }) => child.parentId === folder.id
         );
-        temp_nested_folders.push({
+        modified_folders.push({
           ...folder,
-          hasChildren: hasChildren ? true : false,
+          hasFolders: hasFolders ? true : false,
         });
       });
-      setfolders([...temp_nested_folders]);
+      setfolders([...modified_folders]);
       node.children.forEach((child) => separateFolderFromBookmarks(child));
     }
+  };
+
+  const fetchBookmarks = () => {
+    chrome.runtime.sendMessage(CMDB_FETCH_BOOKMARKS, (result) => {
+      separateFolderFromBookmarks(result);
+    });
   };
 
   const handleSearch = (str: string) => {
@@ -139,23 +138,25 @@ const App: React.FC<AppProps> = () => {
     );
   };
 
-  // toggle between save and unsafe url
+  // quick save and unsafe current tab
   const handleSaveUrl = async () => {
     const url = window.location.href;
     if (!isbookmarked) {
       const parentId = selectedFolder.title ? selectedFolder?.id : null;
-      const command = CMDB_CREATE_ITEM;
+      const command = CMDB_CREATE_BOOKMARK;
       try {
         const response = axios.get(url);
         var $ = cheerio.load((await response).data);
         var title = $("title").text();
         chrome.runtime.sendMessage(
           { title, url, command, parentId },
-          (response) => {}
+          (response) => {
+            if (response) {
+              toast.success(CMDB_SAVED_BOOKMARK_MSG);
+              getBoomarksByFolder(selectedFolder);
+            }
+          }
         );
-        toast.success(CMDB_SAVED_BOOKMARK_MSG);
-        getBoomarksByFolder(selectedFolder);
-        // fetchBookmarks();
       } catch (error) {
         console.log("error => ", error);
       }
@@ -165,7 +166,7 @@ const App: React.FC<AppProps> = () => {
         { string: currenturl, command: CMDB_SEARCH },
         (result) => {
           chrome.runtime.sendMessage(
-            { bookmarks: [...result], command: CMDB_DELETE_ITEM },
+            { bookmarks: [...result], command: CMDB_DELETE_BOOKMARK },
             (result) => {
               if (result === "deleted") {
                 toast.success(CMDB_REMOVED_BOOKMARK_MSG);
@@ -177,12 +178,6 @@ const App: React.FC<AppProps> = () => {
         }
       );
     }
-  };
-
-  const fetchBookmarks = () => {
-    chrome.runtime.sendMessage(CMDB_FETCH_BOOKMARKS, (result) => {
-      separateFolderFromBookmarks(result);
-    });
   };
 
   const fetchRecentBookmarks = () => {
@@ -232,7 +227,7 @@ const App: React.FC<AppProps> = () => {
     chrome.runtime.sendMessage(
       {
         bookmarks: selectedBookmarks,
-        command: CMDB_DELETE_ITEM,
+        command: CMDB_DELETE_BOOKMARK,
       },
       (res) => {
         if (res === "deleted") {
@@ -294,12 +289,18 @@ const App: React.FC<AppProps> = () => {
 
   const handleCreateFolder = (folderId: string, title: string) => {
     chrome.runtime.sendMessage(
-      { title, command: CMDB_CREATE_ITEM, parentId: folderId },
+      { title, command: CMDB_CREATE_BOOKMARK, parentId: folderId },
       (response) => {
         toast.success(CMDB_FOLDER_CREATED_MSG);
         setshowcreatefoldermodal(false);
         getFoldersByFolder(folderId);
         fetchBookmarks();
+        setselectedFolder(response);
+        setbookmarksOnView([]);
+        setcurrentParent(selectedFolder);
+        if (["1", "2", "3"].includes(selectedFolder.id)) {
+          setshowMain(false);
+        }
       }
     );
   };

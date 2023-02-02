@@ -58,7 +58,7 @@ export const SideNav: React.FC<SideNavProps> = ({
 
   const handleFolderNavigation = (clickedfolder: any) => {
     setselectedFolder(clickedfolder);
-    if (clickedfolder?.hasChildren) {
+    if (clickedfolder?.hasFolders) {
       setshowMain(false);
       const getFoldersToDisplay = fetchFoldersToDisplay(clickedfolder?.id);
       setcurrentParent(clickedfolder);
@@ -122,8 +122,6 @@ export const SideNav: React.FC<SideNavProps> = ({
                 className="cmdb-sidenav-item"
                 onClick={() =>
                   handleFolderNavigation({
-                    children: [],
-                    hasBookmarks: true,
                     id: CMDB_RECENTLY_ADDED,
                     parentId: "",
                     title: "Recently added",
@@ -181,8 +179,6 @@ export const SideNav: React.FC<SideNavProps> = ({
                 className="cmdb-sidenav-item"
                 onClick={() =>
                   handleFolderNavigation({
-                    children: [],
-                    hasBookmarks: true,
                     id: CMDB_TRASH,
                     parentId: "",
                     title: "Trash",

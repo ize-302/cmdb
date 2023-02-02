@@ -10,15 +10,6 @@ const trashBookmark = (trash) => {
   return chrome.storage.local.set({ cmdb_trashed_bookmarks: trash });
 };
 
-// create bookmark / folder item
-// https://developer.chrome.com/docs/extensions/reference/bookmarks/#method-create
-const createItem = async (value) => {
-  await chrome.bookmarks.create(
-    { title: value.title, url: value.url, parentId: value.parentId },
-    (response) => response
-  );
-};
-
 // toggle extension when extension icon is clicked
 chrome.action.onClicked.addListener(function (tab) {
   toggleExtension(tab.id);
@@ -71,7 +62,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   }
 
   // delete a bookmark
-  if (message.command === "CMDB_DELETE_ITEM") {
+  if (message.command === "CMDB_DELETE_BOOKMARK") {
     getTrashedBookmarks().then((response) => {
       const trash = response.cmdb_trashed_bookmarks || []; // retrieve trash
       for (let i = 0; i < message.bookmarks.length; i++) {
@@ -87,10 +78,16 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   }
 
   // handle create
-  if (message.command === "CMDB_CREATE_ITEM") {
-    createItem(message).then((response) => {
-      sendResponse(response);
-    });
+  if (message.command === "CMDB_CREATE_BOOKMARK") {
+    chrome.bookmarks.create(
+      {
+        title: message.title,
+        url: message.url,
+        parentId: message.parentId,
+        index: message.index,
+      },
+      (response) => sendResponse(response)
+    );
   }
 
   // handle update
@@ -145,7 +142,15 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   // restore trashed bookmark
   if (message.command === "CMDB_RESTORE_TRASHED_BOOKMARK") {
     for (let i = 0; i < message.bookmarks.length; i++) {
-      createItem(message.bookmarks[i]);
+      chrome.bookmarks.create(
+        {
+          title: message.bookmarks[i].title,
+          url: message.bookmarks[i].url,
+          parentId: message.bookmarks[i].parentId,
+          index: message.bookmarks[i].index,
+        },
+        (response) => response
+      );
     }
     // sendResponse(message.bookmarks);
     for (let i = 0; i < message.bookmarks.length; i++) {
