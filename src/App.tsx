@@ -39,6 +39,7 @@ import { BookmarkProps } from "../src/types";
 import MoveBookmarkModal from "./components/MoveBookmarkModal";
 import { CmdbWrapper } from "./components/Style";
 import CreateFolderModal from "./components/CreateFolderModal";
+import MoveFolderModal from "./components/MoveFolderModal";
 
 interface AppProps {}
 
@@ -62,6 +63,7 @@ const App: React.FC<AppProps> = () => {
   const [showMain, setshowMain] = React.useState(true);
   const [showcreatefoldermodal, setshowcreatefoldermodal] =
     React.useState(false);
+  const [showmovefoldermodal, setshowmovefoldermodal] = React.useState(false);
 
   // Extract folders
   let newFolders: any[] = [];
@@ -103,6 +105,7 @@ const App: React.FC<AppProps> = () => {
         (result) => {
           setselectedFolder({ id: SEARCH_RESULT, title: "Search result" });
           setbookmarksOnView(result);
+          setshowMain(true);
         }
       );
     }
@@ -268,13 +271,30 @@ const App: React.FC<AppProps> = () => {
 
   const updateBookmark = (bookmark: BookmarkProps) => {
     const { id, title, url } = bookmark;
+    if (!title) {
+      return toast.error("Name is required");
+    }
     chrome.runtime.sendMessage(
       { id, title, url, command: CMDB_UPDATE_ITEM },
       (result) => {
-        toast.success(CMDB_UPDATED_BOOKMARK_MSG);
-        getBoomarksByFolder(selectedFolder);
-        setshoweditmodal(false);
-        setbookmarkToEdit({});
+        if (result) {
+          setshoweditmodal(false);
+          setbookmarkToEdit({});
+          if (url) {
+            // for bookmarks
+            toast.success("Bookmark updated");
+            getBoomarksByFolder(selectedFolder);
+          } else {
+            // for folders
+            toast.success("Folder renamed");
+            getFoldersByFolder(currentParent.id);
+            fetchBookmarks();
+            if (currentParent.id === selectedFolder.id) {
+              setcurrentParent(result);
+            }
+            setselectedFolder(result);
+          }
+        }
       }
     );
   };
@@ -300,6 +320,26 @@ const App: React.FC<AppProps> = () => {
         setcurrentParent(selectedFolder);
         if (["1", "2", "3"].includes(selectedFolder.id)) {
           setshowMain(false);
+        }
+      }
+    );
+  };
+
+  const handleMoveFolder = (destinationFolder: any) => {
+    chrome.runtime.sendMessage(
+      {
+        bookmarks: [selectedFolder],
+        parentId: destinationFolder.id,
+        command: CMDB_MOVE_ITEM,
+      },
+      (res) => {
+        if (res) {
+          toast.success(`Folder moved to ${destinationFolder.title}`);
+          setshowmovefoldermodal(false);
+          fetchBookmarks();
+          getBoomarksByFolder(currentParent);
+          setselectedFolder({ id: CMDB_RECENTLY_ADDED });
+          setshowMain(true);
         }
       }
     );
@@ -381,6 +421,13 @@ const App: React.FC<AppProps> = () => {
                 createFolder={() => {
                   setshowcreatefoldermodal(true);
                 }}
+                renameFolder={() => {
+                  setshoweditmodal(true);
+                  setbookmarkToEdit(selectedFolder);
+                }}
+                setshowmovefoldermodal={() => {
+                  setshowmovefoldermodal(true);
+                }}
               />
             </div>
             {/* edit modal */}
@@ -394,7 +441,7 @@ const App: React.FC<AppProps> = () => {
                 submitEditBookmark={updateBookmark}
               />
             )}
-            {/* move modal */}
+            {/* move bookmark modal */}
             {showmovemodal && (
               <MoveBookmarkModal
                 folders={folders}
@@ -420,6 +467,17 @@ const App: React.FC<AppProps> = () => {
                   }
                   handleCreateFolder(folder, title);
                 }}
+              />
+            )}
+            {/* move folder modal */}
+            {showmovefoldermodal && (
+              <MoveFolderModal
+                folderToMove={selectedFolder}
+                folders={folders}
+                setisopen={(payload) => {
+                  setshowmovefoldermodal(payload);
+                }}
+                submitMoveFolder={handleMoveFolder}
               />
             )}
           </div>

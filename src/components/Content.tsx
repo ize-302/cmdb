@@ -26,6 +26,8 @@ interface ContentProps {
   trash: BookmarkProps[];
   restoreBookmarkFromTrash: (bookmarks: BookmarkProps[]) => void;
   createFolder: () => void;
+  renameFolder: () => void;
+  setshowmovefoldermodal: () => void;
 }
 
 export const Content: React.FC<ContentProps> = ({
@@ -41,7 +43,9 @@ export const Content: React.FC<ContentProps> = ({
   handleEmptyTrash,
   restoreBookmarkFromTrash,
   createFolder,
+  renameFolder,
   trash,
+  setshowmovefoldermodal,
 }) => {
   const [isopen, setisopen] = React.useState(false);
 
@@ -84,10 +88,10 @@ export const Content: React.FC<ContentProps> = ({
                 </button>
                 {selectedFolder.parentId !== "0" && (
                   <>
-                    <button onClick={() => {}}>
+                    <button onClick={() => renameFolder()}>
                       <PencilSquareIcon color="white" width="17" />
                     </button>
-                    <button onClick={() => setisopen(!isopen)}>
+                    <button onClick={() => setshowmovefoldermodal()}>
                       <ArrowsRightLeftIcon color="white" width="17" />
                     </button>
 
@@ -99,9 +103,9 @@ export const Content: React.FC<ContentProps> = ({
               </>
             ) : null}
             {selectedFolder?.id === CMDB_TRASH && trash.length > 0 && (
-              <span onClick={() => handleEmptyTrash()}>
+              <button onClick={() => handleEmptyTrash()}>
                 <TrashIcon color="red" width="17" />
-              </span>
+              </button>
             )}
           </div>
         </div>
