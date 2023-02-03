@@ -11,17 +11,19 @@ import { Tooltip } from "react-tooltip";
 import { CMDB_TRASH } from "../keys";
 
 interface TopNavProps {
-  handleSearch: (str: string) => void;
+  setsearchinput: (str: string) => void;
   handleSaveUrl: () => void;
   isbookmarked: boolean;
   selectedFolder: any;
+  searchinput: string;
 }
 
 export const TopNav: React.FC<TopNavProps> = ({
-  handleSearch,
+  setsearchinput,
   handleSaveUrl,
   isbookmarked,
   selectedFolder,
+  searchinput,
 }) => {
   return (
     <>
@@ -41,11 +43,15 @@ export const TopNav: React.FC<TopNavProps> = ({
           <span className="cmdb-version">v1.0</span>
         </div>
         <div className="cmdb-topnav-item">
-          <input
-            id="cmdb-search"
-            placeholder="Search..."
-            onChange={(e) => handleSearch(e.target.value)}
-          />
+          <form>
+            <input
+              value={searchinput}
+              id="cmdb-search"
+              placeholder="Search..."
+              onChange={(e) => setsearchinput(e.target.value)}
+              type="text"
+            />
+          </form>
         </div>
         <div className="cmdb-topnav-item cmdb-topnav-item_right">
           {selectedFolder.id !== CMDB_TRASH && (

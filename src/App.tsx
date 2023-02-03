@@ -64,6 +64,7 @@ const App: React.FC<AppProps> = () => {
   const [showcreatefoldermodal, setshowcreatefoldermodal] =
     React.useState(false);
   const [showmovefoldermodal, setshowmovefoldermodal] = React.useState(false);
+  const [searchinput, setsearchinput] = React.useState("");
 
   // Extract folders
   let newFolders: any[] = [];
@@ -104,7 +105,7 @@ const App: React.FC<AppProps> = () => {
         { string: str, command: CMDB_SEARCH },
         (result) => {
           setselectedFolder({ id: SEARCH_RESULT, title: "Search result" });
-          setbookmarksOnView(result);
+          setbookmarksOnView(result.filter((item: any) => item.url));
           setshowMain(true);
         }
       );
@@ -114,6 +115,8 @@ const App: React.FC<AppProps> = () => {
   // used for when a folder is clicked,
   // fetch the nodes relating to that folder and filter out non bookmarks
   const getBoomarksByFolder = (folder: any) => {
+    setselectedBookmarks([]);
+    setsearchinput("");
     if (folder.id === CMDB_RECENTLY_ADDED) {
       fetchRecentBookmarks();
     } else if (folder.id === CMDB_TRASH) {
@@ -392,6 +395,10 @@ const App: React.FC<AppProps> = () => {
     }
   }, [selectedFolder]);
 
+  React.useEffect(() => {
+    handleSearch(searchinput);
+  }, [searchinput]);
+
   // use effects
   React.useEffect(() => {
     fetchBookmarks();
@@ -411,7 +418,8 @@ const App: React.FC<AppProps> = () => {
           <div className="cmdb-container">
             <CustomToast />
             <TopNav
-              handleSearch={handleSearch}
+              searchinput={searchinput}
+              setsearchinput={setsearchinput}
               handleSaveUrl={handleSaveUrl}
               isbookmarked={isbookmarked}
               selectedFolder={selectedFolder}
