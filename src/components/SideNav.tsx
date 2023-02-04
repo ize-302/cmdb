@@ -1,14 +1,5 @@
 import * as React from "react";
 import { ChevronLeftIcon } from "@heroicons/react/24/solid";
-import {
-  FolderIcon,
-  BookmarkIcon,
-  TrashIcon,
-  ClockIcon,
-  FolderPlusIcon,
-  EllipsisVerticalIcon,
-} from "@heroicons/react/24/outline";
-import { DevicePhoneMobileIcon } from "@heroicons/react/24/solid";
 import { BookmarkProps } from "../types";
 import {
   CMDB_TRASH,
@@ -17,8 +8,9 @@ import {
   CMDB_FOLDER_CREATED_MSG,
   CMDB_UPDATE_ITEM,
   CMDB_MOVE_ITEM,
+  CMDB_FETCH_BOOKMARS_BY_FOLDER,
+  CMDB_DELETE_BOOKMARK,
 } from "../keys";
-import Menu from "./Menu";
 import FolderItem from "./FolderItem";
 import CreateFolderModal from "./CreateFolderModal";
 import toast from "react-hot-toast";
@@ -186,6 +178,34 @@ export const SideNav: React.FC<SideNavProps> = ({
     );
   };
 
+  const handleDeleteFolder = () => {
+    chrome.runtime.sendMessage(
+      { id: selectedFolder.id, command: CMDB_FETCH_BOOKMARS_BY_FOLDER },
+      (children) => {
+        if (children.length > 0) {
+          toast.error(`${selectedFolder.title} folder contains items`);
+        } else {
+          chrome.runtime.sendMessage(
+            {
+              bookmarks: [selectedFolder],
+              command: CMDB_DELETE_BOOKMARK,
+            },
+            (res) => {
+              if (res === "deleted") {
+                toast.success("Folder has been deleted");
+                setshowmovefoldermodal(false);
+                fetchBookmarks();
+                getFoldersByFolder(currentParent.id);
+                setselectedFolder(currentParent);
+                handleFolderNavigation(currentParent);
+              }
+            }
+          );
+        }
+      }
+    );
+  };
+
   React.useEffect(() => {
     if (folders) {
       const getFoldersToDisplay = fetchFoldersToDisplay("0");
@@ -258,6 +278,7 @@ export const SideNav: React.FC<SideNavProps> = ({
                   isCurrentParent
                   renameFolder={() => setshowrenamefoldermodal(true)}
                   moveFolder={() => setshowmovefoldermodal(true)}
+                  deleteFolder={() => handleDeleteFolder()}
                 />
               </>
               {/* subs */}
@@ -272,6 +293,7 @@ export const SideNav: React.FC<SideNavProps> = ({
                       createFolder={() => setshowcreatefoldermodal(true)}
                       renameFolder={() => setshowrenamefoldermodal(true)}
                       moveFolder={() => setshowmovefoldermodal(true)}
+                      deleteFolder={() => handleDeleteFolder()}
                     />
                   </div>
                 )
@@ -330,6 +352,7 @@ interface MenuChildrenProps {
   createFolder: () => void;
   renameFolder: () => void;
   moveFolder: () => void;
+  deleteFolder: () => void;
 }
 
 export const MenuChildren: React.FC<MenuChildrenProps> = ({
@@ -337,6 +360,7 @@ export const MenuChildren: React.FC<MenuChildrenProps> = ({
   createFolder,
   renameFolder,
   moveFolder,
+  deleteFolder,
 }) => {
   return (
     <>
@@ -372,6 +396,7 @@ export const MenuChildren: React.FC<MenuChildrenProps> = ({
       <li
         className="cmdb-menu-item delete"
         onClick={() => {
+          deleteFolder();
           setisopen(false);
         }}
       >

@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  ExclamationCircleIcon,
-  FolderPlusIcon,
-  PencilSquareIcon,
-  ArrowsRightLeftIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { ExclamationCircleIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { BookmarkItem } from "./BookmarkItem";
 import { BookmarkProps } from "../types";
 import {
@@ -15,7 +9,6 @@ import {
   CMDB_UPDATE_ITEM,
   CMDB_DELETE_BOOKMARK,
 } from "../keys";
-import Menu from "./Menu";
 import MoveBookmarkModal from "./MoveBookmarkModal";
 import toast from "react-hot-toast";
 import EditBookmarkModal from "./EditBookmarkModal";
@@ -29,7 +22,6 @@ interface ContentProps {
   handleEmptyTrash: () => void;
   trash: BookmarkProps[];
   restoreBookmarkFromTrash: (bookmarks: BookmarkProps[]) => void;
-  deleteFolder: () => void;
   folders: any[];
   getBoomarksByFolder: (payload: object) => void;
   getFoldersByFolder: (payload: string) => void;
@@ -49,7 +41,6 @@ export const Content: React.FC<ContentProps> = ({
   handleEmptyTrash,
   restoreBookmarkFromTrash,
   trash,
-  deleteFolder,
   folders,
   getBoomarksByFolder,
   getFoldersByFolder,
@@ -170,17 +161,6 @@ export const Content: React.FC<ContentProps> = ({
               {selectedFolder?.title || "Recently added"}
             </b>
             <div className="cmdb-page-heading-actions">
-              {selectedFolder.parentId ? (
-                <>
-                  {selectedFolder.parentId !== "0" && (
-                    <>
-                      <button onClick={() => deleteFolder()}>
-                        <TrashIcon color="red" width="17" />
-                      </button>
-                    </>
-                  )}
-                </>
-              ) : null}
               {selectedFolder?.id === CMDB_TRASH && trash.length > 0 && (
                 <button onClick={() => handleEmptyTrash()}>
                   <TrashIcon color="red" width="17" />

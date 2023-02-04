@@ -25,13 +25,11 @@ import {
   CMDB_REMOVED_BOOKMARK_MSG,
   CMDB_SAVED_BOOKMARK_MSG,
   CMDB_EMPTIED_TRASH_MSG,
-  CMDB_FOLDER_CREATED_MSG,
 } from "./keys";
 import toast from "react-hot-toast";
 import CustomToast from "./components/CustomToast";
 import { BookmarkProps } from "../src/types";
 import { CmdbWrapper } from "./components/Style";
-import MoveFolderModal from "./components/MoveFolderModal";
 
 interface AppProps {}
 
@@ -49,9 +47,6 @@ const App: React.FC<AppProps> = () => {
   const [selectedBookmarks, setselectedBookmarks] = React.useState<any[]>([]);
   const [trash, settrash] = React.useState([]);
   const [showMain, setshowMain] = React.useState(true);
-  const [showcreatefoldermodal, setshowcreatefoldermodal] =
-    React.useState(false);
-  const [showmovefoldermodal, setshowmovefoldermodal] = React.useState(false);
   const [searchinput, setsearchinput] = React.useState("");
 
   // Extract folders
@@ -225,35 +220,6 @@ const App: React.FC<AppProps> = () => {
     });
   };
 
-  const handleDeleteFolder = () => {
-    chrome.runtime.sendMessage(
-      { id: selectedFolder.id, command: CMDB_FETCH_BOOKMARS_BY_FOLDER },
-      (children) => {
-        if (children.length > 0) {
-          toast.error(`${selectedFolder.title} folder contains items`);
-        } else {
-          chrome.runtime.sendMessage(
-            {
-              bookmarks: [selectedFolder],
-              command: CMDB_DELETE_BOOKMARK,
-            },
-            (res) => {
-              if (res === "deleted") {
-                toast.success("Folder has been deleted");
-                setshowMain(true);
-                setselectedFolder({ id: CMDB_RECENTLY_ADDED });
-                fetchTrash();
-                getBoomarksByFolder(selectedFolder);
-                fetchBookmarks();
-                fetchRecentBookmarks();
-              }
-            }
-          );
-        }
-      }
-    );
-  };
-
   React.useEffect(() => {
     const currenturl = window.location.href;
     chrome.runtime.sendMessage(
@@ -335,7 +301,6 @@ const App: React.FC<AppProps> = () => {
                 handleEmptyTrash={handleEmptyTrash}
                 trash={trash}
                 restoreBookmarkFromTrash={restoreBookmarkFromTrash}
-                deleteFolder={handleDeleteFolder}
                 getBoomarksByFolder={getBoomarksByFolder}
                 currentParent={currentParent}
                 fetchBookmarks={fetchBookmarks}

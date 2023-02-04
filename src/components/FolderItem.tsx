@@ -7,11 +7,8 @@ import {
   TrashIcon,
   ClockIcon,
   FolderPlusIcon,
-  ArrowRightIcon,
-  FolderArrowDownIcon,
   EllipsisVerticalIcon,
   DevicePhoneMobileIcon,
-  BookmarkSquareIcon,
   ArrowUturnRightIcon,
 } from "@heroicons/react/24/outline";
 import { CMDB_TRASH, CMDB_RECENTLY_ADDED } from "../keys";
@@ -26,6 +23,7 @@ interface FolderItemProps {
   isCurrentParent?: boolean;
   renameFolder?: (payload: object) => void;
   moveFolder?: (payload: object) => void;
+  deleteFolder?: (payload: object) => void;
 }
 
 const FolderItem: React.FC<FolderItemProps> = ({
@@ -38,6 +36,7 @@ const FolderItem: React.FC<FolderItemProps> = ({
   isCurrentParent = false,
   renameFolder,
   moveFolder,
+  deleteFolder,
 }) => {
   const [isopen, setisopen] = React.useState(false);
 
@@ -172,6 +171,7 @@ const FolderItem: React.FC<FolderItemProps> = ({
                 createFolder={() => createFolder && createFolder(folder)}
                 renameFolder={() => renameFolder && renameFolder(folder)}
                 moveFolder={() => moveFolder && moveFolder(folder)}
+                deleteFolder={() => deleteFolder && deleteFolder(folder)}
               />
             </Menu>
           )}

@@ -494,22 +494,6 @@ export const CmdbWrapper = styled.div`
           opacity: 0;
           position: relative;
 
-          /* .cmdb-currentfolder-name {
-            margin-bottom: 5px;
-            margin-left: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            p {
-              cursor: pointer;
-              color: ${textcolor};
-              opacity: 0.4;
-              &:hover {
-                opacity: 1;
-                text-decoration: underline;
-              }
-            }
-          } */
           .cmdb-sidenav-item {
             cursor: pointer;
             padding-right: 10px;
