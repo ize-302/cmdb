@@ -207,6 +207,7 @@ const App: React.FC<AppProps> = () => {
               getBoomarksByFolder={getBoomarksByFolder}
               fetchTrash={fetchTrash}
               selectedFolder={selectedFolder}
+              folders={folders}
             />
             <div
               className="cmdb-body"

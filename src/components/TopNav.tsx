@@ -19,6 +19,7 @@ import {
 import cheerio from "cheerio";
 import axios from "axios";
 import toast from "react-hot-toast";
+import CreateBookmarkModal from "./CreateBookmarkModal";
 
 interface TopNavProps {
   setsearchinput: (str: string) => void;
@@ -26,6 +27,7 @@ interface TopNavProps {
   searchinput: string;
   getBoomarksByFolder: (payload: object) => void;
   fetchTrash: () => void;
+  folders: object[];
 }
 
 export const TopNav: React.FC<TopNavProps> = ({
@@ -34,8 +36,28 @@ export const TopNav: React.FC<TopNavProps> = ({
   searchinput,
   getBoomarksByFolder,
   fetchTrash,
+  folders,
 }) => {
   const [isbookmarked, setisbookmarked] = React.useState(false);
+  const [showModal, setshowModal] = React.useState(false);
+
+  const submitCreateBookmark = async (
+    title: string,
+    url: string,
+    folder: any
+  ) => {
+    console.log(title, url, folder);
+    await chrome.runtime.sendMessage(
+      { title, url, command: CMDB_CREATE_BOOKMARK, parentId: folder.id },
+      (response) => {
+        if (response) {
+          toast.success(CMDB_SAVED_BOOKMARK_MSG);
+          getBoomarksByFolder(selectedFolder);
+          setshowModal(false);
+        }
+      }
+    );
+  };
 
   // quick save and unsafe current tab
   const handleSaveUrl = async () => {
@@ -122,7 +144,7 @@ export const TopNav: React.FC<TopNavProps> = ({
             <>
               <button
                 className="cmdb-topnav-item_right-save-url"
-                onClick={() => {}}
+                onClick={() => setshowModal(true)}
                 id="manual-save-url"
               >
                 <LinkIcon color="white" width="16" />
@@ -142,6 +164,15 @@ export const TopNav: React.FC<TopNavProps> = ({
           )}
         </div>
       </div>
+      {/* manually add bookmark */}
+      {showModal && (
+        <CreateBookmarkModal
+          setisopen={setshowModal}
+          folders={folders}
+          submitCreateBookmark={submitCreateBookmark}
+          defaultSelectedFolder={selectedFolder}
+        />
+      )}
     </>
   );
 };
