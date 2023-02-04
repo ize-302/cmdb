@@ -25,6 +25,7 @@ interface FolderItemProps {
   createFolder?: (payload: object) => void;
   isCurrentParent?: boolean;
   renameFolder?: (payload: object) => void;
+  moveFolder?: (payload: object) => void;
 }
 
 const FolderItem: React.FC<FolderItemProps> = ({
@@ -36,6 +37,7 @@ const FolderItem: React.FC<FolderItemProps> = ({
   createFolder,
   isCurrentParent = false,
   renameFolder,
+  moveFolder,
 }) => {
   const [isopen, setisopen] = React.useState(false);
 
@@ -169,6 +171,7 @@ const FolderItem: React.FC<FolderItemProps> = ({
                 setisopen={setisopen}
                 createFolder={() => createFolder && createFolder(folder)}
                 renameFolder={() => renameFolder && renameFolder(folder)}
+                moveFolder={() => moveFolder && moveFolder(folder)}
               />
             </Menu>
           )}

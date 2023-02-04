@@ -16,12 +16,15 @@ import {
   CMDB_CREATE_BOOKMARK,
   CMDB_FOLDER_CREATED_MSG,
   CMDB_UPDATE_ITEM,
+  CMDB_MOVE_ITEM,
 } from "../keys";
 import Menu from "./Menu";
 import FolderItem from "./FolderItem";
 import CreateFolderModal from "./CreateFolderModal";
 import toast from "react-hot-toast";
 import RenameFolderModal from "./RenameFolderModal";
+import MoveFolderModal from "./MoveFolderModal";
+
 interface SideNavProps {
   folders: any[];
   setselectedFolder: (payload: any) => void;
@@ -35,6 +38,7 @@ interface SideNavProps {
   setshowMain: (value: boolean) => void;
   getFoldersByFolder: (payload: string) => void;
   fetchBookmarks: () => void;
+  getBoomarksByFolder: (payload: object) => void;
 }
 
 const displayGreeting = () => {
@@ -61,6 +65,7 @@ export const SideNav: React.FC<SideNavProps> = ({
   setshowMain,
   getFoldersByFolder,
   fetchBookmarks,
+  getBoomarksByFolder,
 }) => {
   const dragOverItem = React.useRef();
   const [mainFolders, setmainFolders]: any[] = React.useState([]);
@@ -69,6 +74,7 @@ export const SideNav: React.FC<SideNavProps> = ({
     React.useState(false);
   const [showrenamefoldermodal, setshowrenamefoldermodal] =
     React.useState(false);
+  const [showmovefoldermodal, setshowmovefoldermodal] = React.useState(false);
 
   const fetchFoldersToDisplay = (id: string) => {
     return folders?.filter((folder) => folder.parentId === id);
@@ -156,6 +162,30 @@ export const SideNav: React.FC<SideNavProps> = ({
     );
   };
 
+  const handleMoveFolder = (destinationFolder: any) => {
+    chrome.runtime.sendMessage(
+      {
+        bookmarks: [selectedFolder],
+        parentId: destinationFolder.id,
+        command: CMDB_MOVE_ITEM,
+      },
+      (res) => {
+        if (res) {
+          // NOTE (Need to fix): This works except that:
+          // if you move to an empty sibling folder,
+          // the newly updated sibling folder which now has a child folder isn't updated immediately unless navigated away and back
+          toast.success(`Folder moved to ${destinationFolder.title}`);
+          setshowmovefoldermodal(false);
+          fetchBookmarks();
+          getFoldersByFolder(currentParent.id);
+          // fetchFoldersToDisplay(currentParent.id);
+          setselectedFolder(currentParent);
+          handleFolderNavigation(currentParent);
+        }
+      }
+    );
+  };
+
   React.useEffect(() => {
     if (folders) {
       const getFoldersToDisplay = fetchFoldersToDisplay("0");
@@ -227,6 +257,7 @@ export const SideNav: React.FC<SideNavProps> = ({
                   createFolder={() => setshowcreatefoldermodal(true)}
                   isCurrentParent
                   renameFolder={() => setshowrenamefoldermodal(true)}
+                  moveFolder={() => setshowmovefoldermodal(true)}
                 />
               </>
               {/* subs */}
@@ -240,6 +271,7 @@ export const SideNav: React.FC<SideNavProps> = ({
                       onDragEnter={(e) => dragEnter(e, index)}
                       createFolder={() => setshowcreatefoldermodal(true)}
                       renameFolder={() => setshowrenamefoldermodal(true)}
+                      moveFolder={() => setshowmovefoldermodal(true)}
                     />
                   </div>
                 )
@@ -278,6 +310,17 @@ export const SideNav: React.FC<SideNavProps> = ({
           }}
         />
       )}
+      {/* move folder modal */}
+      {showmovefoldermodal && (
+        <MoveFolderModal
+          folderToMove={selectedFolder}
+          folders={folders}
+          setisopen={(payload) => {
+            setshowmovefoldermodal(payload);
+          }}
+          submitMoveFolder={handleMoveFolder}
+        />
+      )}
     </>
   );
 };
@@ -286,12 +329,14 @@ interface MenuChildrenProps {
   setisopen: (payload: boolean) => void;
   createFolder: () => void;
   renameFolder: () => void;
+  moveFolder: () => void;
 }
 
 export const MenuChildren: React.FC<MenuChildrenProps> = ({
   setisopen,
   createFolder,
   renameFolder,
+  moveFolder,
 }) => {
   return (
     <>
@@ -317,6 +362,7 @@ export const MenuChildren: React.FC<MenuChildrenProps> = ({
       <li
         className="cmdb-menu-item"
         onClick={() => {
+          moveFolder();
           setisopen(false);
         }}
       >

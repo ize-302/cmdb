@@ -225,26 +225,6 @@ const App: React.FC<AppProps> = () => {
     });
   };
 
-  const handleMoveFolder = (destinationFolder: any) => {
-    chrome.runtime.sendMessage(
-      {
-        bookmarks: [selectedFolder],
-        parentId: destinationFolder.id,
-        command: CMDB_MOVE_ITEM,
-      },
-      (res) => {
-        if (res) {
-          toast.success(`Folder moved to ${destinationFolder.title}`);
-          setshowmovefoldermodal(false);
-          fetchBookmarks();
-          getBoomarksByFolder(currentParent);
-          setselectedFolder({ id: CMDB_RECENTLY_ADDED });
-          setshowMain(true);
-        }
-      }
-    );
-  };
-
   const handleDeleteFolder = () => {
     chrome.runtime.sendMessage(
       { id: selectedFolder.id, command: CMDB_FETCH_BOOKMARS_BY_FOLDER },
@@ -343,6 +323,7 @@ const App: React.FC<AppProps> = () => {
                 setshowMain={setshowMain}
                 getFoldersByFolder={getFoldersByFolder}
                 fetchBookmarks={fetchBookmarks}
+                getBoomarksByFolder={getBoomarksByFolder}
               />
               <Content
                 folders={folders}
@@ -367,17 +348,6 @@ const App: React.FC<AppProps> = () => {
                 fetchTrash={fetchTrash}
               />
             </div>
-            {/* move folder modal */}
-            {showmovefoldermodal && (
-              <MoveFolderModal
-                folderToMove={selectedFolder}
-                folders={folders}
-                setisopen={(payload) => {
-                  setshowmovefoldermodal(payload);
-                }}
-                submitMoveFolder={handleMoveFolder}
-              />
-            )}
           </div>
         </div>
       </div>
