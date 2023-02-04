@@ -228,7 +228,8 @@ export const CmdbWrapper = styled.div`
         bottom: -10px;
       }
       100% {
-        bottom: 0;
+        /* bottom: 0; */
+        opacity: 1;
       }
     }
 
@@ -408,6 +409,10 @@ export const CmdbWrapper = styled.div`
       top: 4px;
       right: 10px;
       z-index: 4;
+      animation: SlideIn 0.2s linear forwards;
+      animation-fill-mode: both;
+      transition: 0.3s;
+      opacity: 1;
 
       .cmdb-menu-item {
         border-bottom: 1px solid ${itemborder};
@@ -443,7 +448,10 @@ export const CmdbWrapper = styled.div`
         border-bottom-left-radius: 9px;
         &_greetings {
           color: white;
-          margin: 20px 0 10px 10px;
+          padding-top: 20px;
+          padding-left: 6px;
+          /* padding-bottom: 10px; */
+          /* height: 40px; */
 
           outline: none;
           font-weight: 400;
@@ -451,7 +459,9 @@ export const CmdbWrapper = styled.div`
         }
         &_go-back {
           color: white;
-          margin: 20px 0 40px 6px;
+          padding-top: 20px;
+          padding-left: 6px;
+          /* padding-bottom: 20px; */
 
           display: flex;
           align-items: center;
@@ -487,25 +497,53 @@ export const CmdbWrapper = styled.div`
           .cmdb-currentfolder-name {
             margin-bottom: 5px;
             margin-left: 10px;
-            color: ${textcolor};
-            opacity: 0.4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            p {
+              cursor: pointer;
+              color: ${textcolor};
+              opacity: 0.4;
+              /* padding: 5px;
+              border-radius: 4px; */
+              &:hover {
+                opacity: 1;
+                text-decoration: underline;
+              }
+            }
           }
           .cmdb-sidenav-item {
             cursor: pointer;
-            padding: 10px;
+            padding-right: 10px;
             border-radius: 4px;
             color: ${textcolor};
-
+            width: 100%;
             display: flex;
             gap: 10px;
             align-items: center;
+            justify-content: space-between;
             transition-duration: 0.3s;
+            position: relative;
             &:hover {
               background: ${itembg};
               svg {
                 color: white;
                 opacity: 1;
               }
+            }
+            &_title_wrapper {
+              width: 100%;
+              display: flex;
+              gap: 10px;
+              overflow: hidden;
+              padding: 10px;
+              /* align-items: center; */
+            }
+            &_title {
+              width: 200px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
             }
           }
           input[type="radio"] {
@@ -523,13 +561,13 @@ export const CmdbWrapper = styled.div`
           }
         }
         .dot {
-          display: block;
+          display: inline-block;
           height: 6px;
           width: 6px;
           border-radius: 100px;
           background: orange;
           position: relative;
-          left: -5px;
+          left: 5px;
           top: 0px;
         }
       }
@@ -557,7 +595,7 @@ export const CmdbWrapper = styled.div`
       }
 
       .cmdb-list {
-        padding: 18px 10px 20px 10px;
+        padding: 0px 10px 20px 10px;
 
         display: flex;
         flex-direction: column;
@@ -565,8 +603,9 @@ export const CmdbWrapper = styled.div`
 
         .cmdb-page-heading {
           border-bottom: 1px solid ${itemborder};
-          padding: 0 10px 10px 10px;
-          margin-bottom: 4px;
+          padding: 0px;
+          margin: 0 10px 4px 10px;
+          height: 50px;
           display: flex;
           justify-content: space-between;
           align-items: center;
@@ -605,22 +644,33 @@ export const CmdbWrapper = styled.div`
           animation: SlideIn 0.3s linear forwards;
           animation-fill-mode: both;
           position: relative;
-          padding: 6px 12px;
+          padding: 5px 10px;
           border-radius: 4px;
+          bottom: 0;
+          img {
+            border-right: 1px solid ${itemborder};
+            padding-right: 5px;
+          }
           &:hover {
             .cmdb-list-item_title {
               color: white;
               cursor: pointer;
             }
           }
-          .cmdb-list-item_title {
+          .cmdb-list-item_title-wrapper {
             overflow: hidden;
             transition-duration: 0.3s;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            max-width: 630px;
             display: flex;
-            gap: 10px;
+            gap: 5px;
+            width: 100%;
+          }
+          .cmdb-list-item_title {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            width: 630px;
+            /* display: flex;
+            gap: 10px; */
             color: ${textcolor};
           }
         }

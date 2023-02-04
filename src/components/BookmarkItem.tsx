@@ -42,6 +42,13 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
       draggable
       onDragStart={(e) => dragStart(e, index)}
       id={bookmark.id}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        if (e.button === 2) {
+          setisopen(true);
+          handleSelectBookmark(e, bookmark);
+        }
+      }}
     >
       <input
         type="checkbox"
@@ -57,12 +64,14 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
         title="Double click to open"
         id={bookmark.id}
       >
-        <span className="cmdb-list-item_title">
-          <img
-            src={`http://www.google.com/s2/favicons?domain=${bookmark.url}`}
-            alt={bookmark.title}
-          />
-          {bookmark.title}
+        <span className="cmdb-list-item_title-wrapper">
+          <div>
+            <img
+              src={`http://www.google.com/s2/favicons?domain=${bookmark.url}`}
+              alt={bookmark.title}
+            />
+          </div>
+          <span className="cmdb-list-item_title">{bookmark.title}</span>
         </span>
         <span
           className="cmdb-list-item_kebab"

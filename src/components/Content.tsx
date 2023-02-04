@@ -89,7 +89,7 @@ export const Content: React.FC<ContentProps> = ({
         setselectedBookmarks(previouslyselected);
       }
     } else {
-      if (e.detail === 1) setselectedBookmarks([bookmark]);
+      if (e.detail === 1 || e.detail === 0) setselectedBookmarks([bookmark]);
       else if (e.detail === 2) window.open(bookmark.url, "_blank");
     }
   };

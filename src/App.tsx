@@ -340,7 +340,12 @@ const App: React.FC<AppProps> = () => {
               isbookmarked={isbookmarked}
               selectedFolder={selectedFolder}
             />
-            <div className="cmdb-body">
+            <div
+              className="cmdb-body"
+              onContextMenu={(e) => {
+                e.preventDefault();
+              }}
+            >
               <SideNav
                 folders={folders}
                 selectedFolder={selectedFolder}

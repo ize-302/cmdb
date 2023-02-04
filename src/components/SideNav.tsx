@@ -5,10 +5,14 @@ import {
   BookmarkIcon,
   TrashIcon,
   ClockIcon,
+  FolderPlusIcon,
+  EllipsisVerticalIcon,
 } from "@heroicons/react/24/outline";
 import { DevicePhoneMobileIcon } from "@heroicons/react/24/solid";
 import { BookmarkProps } from "../types";
 import { CMDB_TRASH, CMDB_RECENTLY_ADDED } from "../keys";
+import Menu from "./Menu";
+import FolderItem from "./FolderItem";
 
 interface SideNavProps {
   folders: any[];
@@ -48,6 +52,7 @@ export const SideNav: React.FC<SideNavProps> = ({
 }) => {
   const dragOverItem = React.useRef();
   const [mainFolders, setmainFolders]: any[] = React.useState([]);
+  const [isopen, setisopen] = React.useState(false);
 
   const fetchFoldersToDisplay = (id: string) => {
     return folders?.filter((folder) => folder.parentId === id);
@@ -109,91 +114,41 @@ export const SideNav: React.FC<SideNavProps> = ({
           <div className="cmdb-sidenav_greetings">{displayGreeting()}</div>
           <div className="cmdb-sidenav-items">
             {/* recently added */}
-            <div>
-              <input
-                type="radio"
-                name="items"
-                checked={selectedFolder?.id === CMDB_RECENTLY_ADDED}
-                id={CMDB_RECENTLY_ADDED}
-                value={CMDB_RECENTLY_ADDED}
-                readOnly
-              />
-              <label
-                htmlFor="Recently added"
-                className="cmdb-sidenav-item"
-                onClick={() =>
-                  handleFolderNavigation({
-                    id: CMDB_RECENTLY_ADDED,
-                    parentId: "",
-                    title: "Recently added",
-                  })
-                }
-              >
-                <ClockIcon opacity={0.4} width="14" />
-                Recently added
-              </label>
-            </div>
+            <FolderItem
+              folder={{
+                id: CMDB_RECENTLY_ADDED,
+                parentId: "",
+                title: "Recently added",
+              }}
+              selectedFolder={selectedFolder}
+              handleFolderNavigation={handleFolderNavigation}
+              onDragEnter={(e) => {}}
+            />
             {/* menus */}
             {mainFolders?.map(
               (folder: any, index: React.Key | null | undefined) => (
-                <div
+                <FolderItem
                   key={index}
+                  folder={folder}
+                  selectedFolder={selectedFolder}
+                  handleFolderNavigation={handleFolderNavigation}
                   onDragEnter={(e) => dragEnter(e, index)}
-                  onDragCapture={() => console.log("capture")}
-                  onDragExit={() => console.log("exit")}
-                  onDragLeave={() => console.log("leave")}
-                >
-                  <input
-                    type="radio"
-                    name="items"
-                    checked={folder.id === selectedFolder.id}
-                    id={folder.id}
-                    value={folder.id}
-                    readOnly
-                  />
-                  <label
-                    htmlFor={folder.title}
-                    className="cmdb-sidenav-item"
-                    onClick={() => folder && handleFolderNavigation(folder)}
-                    id={folder.id}
-                  >
-                    {folder.id === "3" ? (
-                      <DevicePhoneMobileIcon opacity={0.4} width="14" />
-                    ) : (
-                      <BookmarkIcon opacity={0.4} width="14" />
-                    )}
-
-                    {folder.title}
-                  </label>
-                </div>
+                />
               )
             )}
             {/* trash */}
             <br />
-            <div>
-              <input
-                type="radio"
-                name="items"
-                checked={selectedFolder?.id === CMDB_TRASH}
-                id={CMDB_TRASH}
-                value={CMDB_TRASH}
-                readOnly
-              />
-              <label
-                htmlFor="Trash"
-                className="cmdb-sidenav-item"
-                onClick={() =>
-                  handleFolderNavigation({
-                    id: CMDB_TRASH,
-                    parentId: "",
-                    title: "Trash",
-                  })
-                }
-              >
-                <TrashIcon opacity={0.4} width="14" />
-                Trash {trash?.length > 0 && <span className="dot" />}
-              </label>
-            </div>
+            <FolderItem
+              folder={{
+                id: CMDB_TRASH,
+                parentId: "",
+                title: "Trash",
+              }}
+              selectedFolder={selectedFolder}
+              handleFolderNavigation={handleFolderNavigation}
+              onDragEnter={() => {}}
+              trash={trash}
+            />
           </div>
         </>
       ) : (
@@ -204,35 +159,40 @@ export const SideNav: React.FC<SideNavProps> = ({
           </div>
           <div className="cmdb-sidenav-items">
             <div className="cmdb-currentfolder-name">
-              in: {currentParent?.title}
+              <p onClick={() => handleFolderNavigation(currentParent)}>
+                {currentParent?.title}
+              </p>
+              {["1", "2", "3"].includes(currentParent.id) ? (
+                <button>
+                  <FolderPlusIcon color="white" width="17" />
+                </button>
+              ) : (
+                <button
+                  className="cmdb-list-item_kebab"
+                  onClick={() => {
+                    setisopen(!isopen);
+                    handleFolderNavigation(currentParent);
+                  }}
+                >
+                  <EllipsisVerticalIcon color="white" width="18" />
+                </button>
+              )}
+              {isopen && (
+                <Menu setisopen={setisopen}>
+                  <MenuChildren setisopen={setisopen} />
+                </Menu>
+              )}
             </div>
             {/* subs */}
             {foldersToDisplay?.map(
               (folder: any, index: React.Key | null | undefined) => (
-                <div
-                  key={index}
-                  onDragEnter={(e) => dragEnter(e, index)}
-                  onDragCapture={() => console.log("capture")}
-                  onDragExit={() => console.log("exit")}
-                  onDragLeave={() => console.log("leave")}
-                >
-                  <input
-                    type="radio"
-                    name="items"
-                    checked={folder.id === selectedFolder.id}
-                    id={folder.id}
-                    value={folder.id}
-                    readOnly
+                <div style={{ marginLeft: "5px" }} key={index}>
+                  <FolderItem
+                    folder={folder}
+                    selectedFolder={selectedFolder}
+                    handleFolderNavigation={handleFolderNavigation}
+                    onDragEnter={(e) => dragEnter(e, index)}
                   />
-                  <label
-                    htmlFor={folder.title}
-                    className="cmdb-sidenav-item"
-                    onClick={() => folder && handleFolderNavigation(folder)}
-                    id={folder.id}
-                  >
-                    <FolderIcon opacity={0.4} width="14" />
-                    {folder.title}
-                  </label>
                 </div>
               )
             )}
@@ -240,5 +200,50 @@ export const SideNav: React.FC<SideNavProps> = ({
         </>
       )}
     </div>
+  );
+};
+
+interface MenuChildrenProps {
+  setisopen: (payload: boolean) => void;
+}
+
+export const MenuChildren: React.FC<MenuChildrenProps> = ({ setisopen }) => {
+  return (
+    <>
+      <li
+        className="cmdb-menu-item"
+        onClick={() => {
+          setisopen(false);
+        }}
+      >
+        Add a folder
+      </li>
+      <li
+        className="cmdb-menu-item"
+        onClick={() => {
+          setisopen(false);
+        }}
+      >
+        Rename
+      </li>
+
+      <li
+        className="cmdb-menu-item"
+        onClick={() => {
+          setisopen(false);
+        }}
+      >
+        Move
+      </li>
+
+      <li
+        className="cmdb-menu-item delete"
+        onClick={() => {
+          setisopen(false);
+        }}
+      >
+        Delete
+      </li>
+    </>
   );
 };
