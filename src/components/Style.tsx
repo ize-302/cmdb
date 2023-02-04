@@ -442,7 +442,8 @@ export const CmdbWrapper = styled.div`
       .cmdb-sidenav {
         margin-right: 1px;
         background: ${bgdark};
-        min-width: 240px;
+        max-width: 240px;
+        width: 100%;
         padding: 0px 10px;
         overflow-y: auto;
         border-bottom-left-radius: 9px;
