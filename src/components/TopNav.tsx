@@ -8,23 +8,87 @@ import {
   StarIcon as StarIconOutline,
 } from "@heroicons/react/24/outline";
 import { Tooltip } from "react-tooltip";
-import { CMDB_TRASH } from "../keys";
+import {
+  CMDB_TRASH,
+  CMDB_CREATE_BOOKMARK,
+  CMDB_SAVED_BOOKMARK_MSG,
+  CMDB_SEARCH,
+  CMDB_DELETE_BOOKMARK,
+  CMDB_REMOVED_BOOKMARK_MSG,
+} from "../keys";
+import cheerio from "cheerio";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 interface TopNavProps {
   setsearchinput: (str: string) => void;
-  handleSaveUrl: () => void;
-  isbookmarked: boolean;
   selectedFolder: any;
   searchinput: string;
+  getBoomarksByFolder: (payload: object) => void;
+  fetchTrash: () => void;
 }
 
 export const TopNav: React.FC<TopNavProps> = ({
   setsearchinput,
-  handleSaveUrl,
-  isbookmarked,
   selectedFolder,
   searchinput,
+  getBoomarksByFolder,
+  fetchTrash,
 }) => {
+  const [isbookmarked, setisbookmarked] = React.useState(false);
+
+  // quick save and unsafe current tab
+  const handleSaveUrl = async () => {
+    const url = window.location.href;
+    if (!isbookmarked) {
+      const parentId = selectedFolder.title ? selectedFolder?.id : null;
+      const command = CMDB_CREATE_BOOKMARK;
+      try {
+        const response = axios.get(url);
+        var $ = cheerio.load((await response).data);
+        var title = $("title").text();
+        chrome.runtime.sendMessage(
+          { title, url, command, parentId },
+          (response) => {
+            if (response) {
+              toast.success(CMDB_SAVED_BOOKMARK_MSG);
+              getBoomarksByFolder(selectedFolder);
+            }
+          }
+        );
+      } catch (error) {
+        console.log("error => ", error);
+      }
+    } else {
+      const currenturl = window.location.href;
+      chrome.runtime.sendMessage(
+        { string: currenturl, command: CMDB_SEARCH },
+        (result) => {
+          chrome.runtime.sendMessage(
+            { bookmarks: [...result], command: CMDB_DELETE_BOOKMARK },
+            (result) => {
+              if (result === "deleted") {
+                toast.success(CMDB_REMOVED_BOOKMARK_MSG);
+                getBoomarksByFolder(selectedFolder);
+                fetchTrash();
+              }
+            }
+          );
+        }
+      );
+    }
+  };
+
+  React.useEffect(() => {
+    const currenturl = window.location.href;
+    chrome.runtime.sendMessage(
+      { string: currenturl, command: CMDB_SEARCH },
+      (result) => {
+        result.length > 0 ? setisbookmarked(true) : setisbookmarked(false);
+      }
+    );
+  }, [window, handleSaveUrl]);
+
   return (
     <>
       <Tooltip

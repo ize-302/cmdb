@@ -5,17 +5,12 @@ import "react-tooltip/dist/react-tooltip.css";
 import { Content } from "./components/Content";
 import { SideNav } from "./components/SideNav";
 import { TopNav } from "./components/TopNav";
-import cheerio from "cheerio";
-import axios from "axios";
 import {
   CMDB_RECENTLY_ADDED,
   CMDB_FETCH_BOOKMARKS,
   CMDB_FETCH_RECENT_BOOKMARKS,
   SEARCH_RESULT,
-  CMDB_CREATE_BOOKMARK,
   CMDB_SEARCH,
-  CMDB_DELETE_BOOKMARK,
-  CMDB_MOVE_ITEM,
   CMDB_GET_TRASHED_BOOKMARK,
   CMDB_TRASH,
   CMDB_EMTPY_TRASH,
@@ -23,7 +18,6 @@ import {
   CMDB_RESTORE_TRASHED_BOOKMARK,
   CMDB_FETCH_BOOKMARS_BY_FOLDER,
   CMDB_REMOVED_BOOKMARK_MSG,
-  CMDB_SAVED_BOOKMARK_MSG,
   CMDB_EMPTIED_TRASH_MSG,
 } from "./keys";
 import toast from "react-hot-toast";
@@ -43,7 +37,6 @@ const App: React.FC<AppProps> = () => {
   const [bookmarksOnView, setbookmarksOnView] = React.useState<any>([]);
   const [foldersToDisplay, setfoldersToDisplay] = React.useState<any>(null);
   const [currentParent, setcurrentParent] = React.useState<any>(null);
-  const [isbookmarked, setisbookmarked] = React.useState(false);
   const [selectedBookmarks, setselectedBookmarks] = React.useState<any[]>([]);
   const [trash, settrash] = React.useState([]);
   const [showMain, setshowMain] = React.useState(true);
@@ -127,48 +120,6 @@ const App: React.FC<AppProps> = () => {
     );
   };
 
-  // quick save and unsafe current tab
-  const handleSaveUrl = async () => {
-    const url = window.location.href;
-    if (!isbookmarked) {
-      const parentId = selectedFolder.title ? selectedFolder?.id : null;
-      const command = CMDB_CREATE_BOOKMARK;
-      try {
-        const response = axios.get(url);
-        var $ = cheerio.load((await response).data);
-        var title = $("title").text();
-        chrome.runtime.sendMessage(
-          { title, url, command, parentId },
-          (response) => {
-            if (response) {
-              toast.success(CMDB_SAVED_BOOKMARK_MSG);
-              getBoomarksByFolder(selectedFolder);
-            }
-          }
-        );
-      } catch (error) {
-        console.log("error => ", error);
-      }
-    } else {
-      const currenturl = window.location.href;
-      chrome.runtime.sendMessage(
-        { string: currenturl, command: CMDB_SEARCH },
-        (result) => {
-          chrome.runtime.sendMessage(
-            { bookmarks: [...result], command: CMDB_DELETE_BOOKMARK },
-            (result) => {
-              if (result === "deleted") {
-                toast.success(CMDB_REMOVED_BOOKMARK_MSG);
-                getBoomarksByFolder(selectedFolder);
-                fetchTrash();
-              }
-            }
-          );
-        }
-      );
-    }
-  };
-
   const fetchRecentBookmarks = () => {
     chrome.runtime.sendMessage(CMDB_FETCH_RECENT_BOOKMARKS, (result) => {
       setrecentBookmarks(result);
@@ -221,16 +172,6 @@ const App: React.FC<AppProps> = () => {
   };
 
   React.useEffect(() => {
-    const currenturl = window.location.href;
-    chrome.runtime.sendMessage(
-      { string: currenturl, command: CMDB_SEARCH },
-      (result) => {
-        result.length > 0 ? setisbookmarked(true) : setisbookmarked(false);
-      }
-    );
-  }, [window, handleSaveUrl]);
-
-  React.useEffect(() => {
     if (selectedFolder.id === CMDB_RECENTLY_ADDED) {
       setbookmarksOnView(recentBookmarks);
     } else if (selectedFolder.id === CMDB_TRASH) {
@@ -263,8 +204,8 @@ const App: React.FC<AppProps> = () => {
             <TopNav
               searchinput={searchinput}
               setsearchinput={setsearchinput}
-              handleSaveUrl={handleSaveUrl}
-              isbookmarked={isbookmarked}
+              getBoomarksByFolder={getBoomarksByFolder}
+              fetchTrash={fetchTrash}
               selectedFolder={selectedFolder}
             />
             <div
