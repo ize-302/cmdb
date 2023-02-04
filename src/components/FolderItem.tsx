@@ -141,7 +141,7 @@ const FolderItem: React.FC<FolderItemProps> = ({
                       className="cmdb-list-item_kebab"
                       onClick={() => folder && handleFolderNavigation(folder)}
                     >
-                      <ArrowUturnRightIcon color="white" width="14" />
+                      <ArrowUturnRightIcon color="white" width="12" />
                     </span>
                   ) : (
                     <>
@@ -153,7 +153,7 @@ const FolderItem: React.FC<FolderItemProps> = ({
                             handleFolderNavigation(folder);
                           }}
                         >
-                          <EllipsisVerticalIcon color="white" width="18" />
+                          <EllipsisVerticalIcon color="white" width="14" />
                         </span>
                       )}
                     </>
