@@ -397,6 +397,37 @@ export const CmdbWrapper = styled.div`
       }
     }
 
+    .cmdb-menu {
+      min-width: 150px;
+      border-radius: 4px;
+      background: #1d2230;
+      border-width: 1px;
+      border-style: solid;
+      border-color: ${itemborder};
+      position: absolute;
+      top: 4px;
+      right: 10px;
+      z-index: 4;
+
+      .cmdb-menu-item {
+        border-bottom: 1px solid ${itemborder};
+        padding: 8px 12px;
+        color: ${textcolor};
+
+        margin: 0;
+        &.delete {
+          color: red;
+        }
+        &:hover {
+          cursor: pointer;
+          opacity: 0.7;
+        }
+        &:last-child {
+          border: none;
+        }
+      }
+    }
+
     /* body starts here  */
     .cmdb-body {
       display: flex;
@@ -614,37 +645,6 @@ export const CmdbWrapper = styled.div`
           place-items: center;
           &:hover {
             background: #ececec11;
-          }
-        }
-
-        .cmdb-menu {
-          min-width: 150px;
-          border-radius: 4px;
-          background: #1d2230;
-          border-width: 1px;
-          border-style: solid;
-          border-color: ${itemborder};
-          position: absolute;
-          top: 4px;
-          right: 10px;
-          z-index: 4;
-
-          .cmdb-menu-item {
-            border-bottom: 1px solid ${itemborder};
-            padding: 8px 12px;
-            color: ${textcolor};
-
-            margin: 0;
-            &.delete {
-              color: red;
-            }
-            &:hover {
-              cursor: pointer;
-              opacity: 0.7;
-            }
-            &:last-child {
-              border: none;
-            }
           }
         }
       }

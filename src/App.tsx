@@ -15,7 +15,6 @@ import {
   CMDB_CREATE_BOOKMARK,
   CMDB_SEARCH,
   CMDB_DELETE_BOOKMARK,
-  CMDB_UPDATE_ITEM,
   CMDB_MOVE_ITEM,
   CMDB_GET_TRASHED_BOOKMARK,
   CMDB_TRASH,
@@ -25,18 +24,12 @@ import {
   CMDB_FETCH_BOOKMARS_BY_FOLDER,
   CMDB_REMOVED_BOOKMARK_MSG,
   CMDB_SAVED_BOOKMARK_MSG,
-  CMDB_UPDATED_BOOKMARK_MSG,
-  CMDB_REMOVED_BOOKMARKS_MSG,
-  CMDB_MOVED_BOOKMARK_MSG,
   CMDB_EMPTIED_TRASH_MSG,
-  CMDB_RESTORED_BOOKMARK_MSG,
   CMDB_FOLDER_CREATED_MSG,
 } from "./keys";
-import EditBookmarkModal from "./components/EditBookmarkModal";
 import toast from "react-hot-toast";
 import CustomToast from "./components/CustomToast";
 import { BookmarkProps } from "../src/types";
-import MoveBookmarkModal from "./components/MoveBookmarkModal";
 import { CmdbWrapper } from "./components/Style";
 import CreateFolderModal from "./components/CreateFolderModal";
 import MoveFolderModal from "./components/MoveFolderModal";
@@ -53,10 +46,6 @@ const App: React.FC<AppProps> = () => {
   const [bookmarksOnView, setbookmarksOnView] = React.useState<any>([]);
   const [foldersToDisplay, setfoldersToDisplay] = React.useState<any>(null);
   const [currentParent, setcurrentParent] = React.useState<any>(null);
-  const [showeditmodal, setshoweditmodal] = React.useState(false);
-  const [bookmarkToEdit, setbookmarkToEdit] = React.useState({});
-  const [showmovemodal, setshowmovemodal] = React.useState(false);
-  const [bookmarksToMove, setbookmarksToMove] = React.useState([]);
   const [isbookmarked, setisbookmarked] = React.useState(false);
   const [selectedBookmarks, setselectedBookmarks] = React.useState<any[]>([]);
   const [trash, settrash] = React.useState([]);
@@ -229,79 +218,6 @@ const App: React.FC<AppProps> = () => {
     );
   };
 
-  const deleteBookmarks = () => {
-    chrome.runtime.sendMessage(
-      {
-        bookmarks: selectedBookmarks,
-        command: CMDB_DELETE_BOOKMARK,
-      },
-      (res) => {
-        if (res === "deleted") {
-          toast.success("Bookmark has been trashed");
-          getBoomarksByFolder(selectedFolder);
-          setselectedBookmarks([]);
-          fetchTrash();
-          return;
-        }
-      }
-    );
-  };
-
-  const handleMoveBookmark = (bookmarks: string[], parentId: string) => {
-    chrome.runtime.sendMessage(
-      {
-        bookmarks,
-        parentId,
-        command: CMDB_MOVE_ITEM,
-      },
-      (res) => {
-        if (res) {
-          toast.success(CMDB_MOVED_BOOKMARK_MSG);
-          getBoomarksByFolder(selectedFolder);
-          setbookmarksToMove([]);
-          setselectedBookmarks([]);
-          setshowmovemodal(false);
-        }
-      }
-    );
-  };
-
-  const moveBookmarks = () => {
-    setshowmovemodal(true);
-    const merged: any = [...selectedBookmarks];
-    setbookmarksToMove(merged);
-  };
-
-  const updateBookmark = (bookmark: BookmarkProps) => {
-    const { id, title, url } = bookmark;
-    if (!title) {
-      return toast.error("Name is required");
-    }
-    chrome.runtime.sendMessage(
-      { id, title, url, command: CMDB_UPDATE_ITEM },
-      (result) => {
-        if (result) {
-          setshoweditmodal(false);
-          setbookmarkToEdit({});
-          if (url) {
-            // for bookmarks
-            toast.success("Bookmark updated");
-            getBoomarksByFolder(selectedFolder);
-          } else {
-            // for folders
-            toast.success("Folder renamed");
-            getFoldersByFolder(currentParent.id);
-            fetchBookmarks();
-            if (currentParent.id === selectedFolder.id) {
-              setcurrentParent(result);
-            }
-            setselectedFolder(result);
-          }
-        }
-      }
-    );
-  };
-
   const handleEmptyTrash = () => {
     chrome.runtime.sendMessage({ command: CMDB_EMTPY_TRASH }, (response) => {
       toast.success(CMDB_EMPTIED_TRASH_MSG);
@@ -441,16 +357,11 @@ const App: React.FC<AppProps> = () => {
                 setshowMain={setshowMain}
               />
               <Content
+                folders={folders}
                 selectedFolder={selectedFolder}
                 bookmarksOnView={bookmarksOnView}
-                editBookmark={(bookmark: BookmarkProps) => {
-                  setshoweditmodal(true);
-                  setbookmarkToEdit(bookmark);
-                }}
                 selectedBookmarks={selectedBookmarks}
                 setselectedBookmarks={setselectedBookmarks}
-                deleteBookmarks={deleteBookmarks}
-                moveBookmarks={moveBookmarks}
                 deleteBookmarkFromTrash={deleteBookmarkFromTrash}
                 handleEmptyTrash={handleEmptyTrash}
                 trash={trash}
@@ -459,38 +370,22 @@ const App: React.FC<AppProps> = () => {
                   setshowcreatefoldermodal(true);
                 }}
                 renameFolder={() => {
-                  setshoweditmodal(true);
-                  setbookmarkToEdit(selectedFolder);
+                  // setshoweditmodal(true);
+                  // setbookmarkToEdit(selectedFolder);
                 }}
                 setshowmovefoldermodal={() => {
                   setshowmovefoldermodal(true);
                 }}
                 deleteFolder={handleDeleteFolder}
+                getBoomarksByFolder={getBoomarksByFolder}
+                currentParent={currentParent}
+                fetchBookmarks={fetchBookmarks}
+                getFoldersByFolder={getFoldersByFolder}
+                setcurrentParent={setcurrentParent}
+                setselectedFolder={setselectedFolder}
+                fetchTrash={fetchTrash}
               />
             </div>
-            {/* edit modal */}
-            {showeditmodal && (
-              <EditBookmarkModal
-                bookmark={bookmarkToEdit}
-                setisopen={(payload) => {
-                  setshoweditmodal(payload);
-                  setbookmarkToEdit({});
-                }}
-                submitEditBookmark={updateBookmark}
-              />
-            )}
-            {/* move bookmark modal */}
-            {showmovemodal && (
-              <MoveBookmarkModal
-                folders={folders}
-                bookmarks={bookmarksToMove}
-                setisopen={(payload) => {
-                  setshowmovemodal(payload);
-                  setbookmarksToMove([]);
-                }}
-                submitMoveBookmark={handleMoveBookmark}
-              />
-            )}
             {/* create folder modal */}
             {showcreatefoldermodal && (
               <CreateFolderModal
