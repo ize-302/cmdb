@@ -11,6 +11,8 @@ import {
   FolderArrowDownIcon,
   EllipsisVerticalIcon,
   DevicePhoneMobileIcon,
+  BookmarkSquareIcon,
+  ArrowUturnRightIcon,
 } from "@heroicons/react/24/outline";
 import { CMDB_TRASH, CMDB_RECENTLY_ADDED } from "../keys";
 
@@ -20,6 +22,8 @@ interface FolderItemProps {
   handleFolderNavigation: (payload: object) => void;
   onDragEnter: (e: any) => void;
   trash?: any;
+  createFolder: (payload: object) => void;
+  isCurrentParent?: boolean;
 }
 
 const FolderItem: React.FC<FolderItemProps> = ({
@@ -28,20 +32,26 @@ const FolderItem: React.FC<FolderItemProps> = ({
   handleFolderNavigation,
   onDragEnter,
   trash,
+  createFolder,
+  isCurrentParent = false,
 }) => {
   const [isopen, setisopen] = React.useState(false);
 
   const handleIconType = () => {
-    if (["1", "2"].includes(folder.id)) {
-      return <FolderIcon opacity={0.4} width="14" />;
-    } else if (folder.id === "3") {
-      return <DevicePhoneMobileIcon opacity={0.4} width="14" />;
-    } else if (folder.id === CMDB_TRASH) {
-      return <TrashIcon opacity={0.4} width="14" />;
-    } else if (folder.id === CMDB_RECENTLY_ADDED) {
-      return <ClockIcon opacity={0.4} width="14" />;
+    if (isCurrentParent) {
+      return <ArrowUturnRightIcon opacity={0.4} width="14" />;
     } else {
-      return <BookmarkIcon opacity={0.4} width="14" />;
+      if (["1", "2"].includes(folder.id)) {
+        return <BookmarkIcon opacity={0.4} width="14" />;
+      } else if (folder.id === "3") {
+        return <DevicePhoneMobileIcon opacity={0.4} width="14" />;
+      } else if (folder.id === CMDB_TRASH) {
+        return <TrashIcon opacity={0.4} width="14" />;
+      } else if (folder.id === CMDB_RECENTLY_ADDED) {
+        return <ClockIcon opacity={0.4} width="14" />;
+      } else {
+        return <FolderIcon opacity={0.4} width="14" />;
+      }
     }
   };
 
@@ -56,11 +66,15 @@ const FolderItem: React.FC<FolderItemProps> = ({
           e.preventDefault();
           if (
             e.button === 2 &&
-            ![CMDB_RECENTLY_ADDED, CMDB_TRASH].includes(folder.id)
+            ![CMDB_RECENTLY_ADDED, CMDB_TRASH, "1", "2", "3"].includes(
+              folder.id
+            )
           ) {
             if (!folder.hasFolders) {
               setisopen(true);
               handleFolderNavigation(folder);
+            } else {
+              setisopen(true);
             }
           }
         }}
@@ -92,35 +106,67 @@ const FolderItem: React.FC<FolderItemProps> = ({
               )}
             </span>
           </span>
-          {folder.id !== CMDB_TRASH && (
+
+          {isCurrentParent && (
             <>
-              {folder.hasFolders ? (
-                <span
-                  className="cmdb-list-item_kebab"
-                  onClick={() => folder && handleFolderNavigation(folder)}
+              {["1", "2", "3"].includes(folder.id) ? (
+                <button
+                  onClick={() => {
+                    createFolder(folder);
+                  }}
                 >
-                  <ArrowRightIcon color="white" width="14" />
-                </span>
+                  <FolderPlusIcon color="white" width="17" />
+                </button>
               ) : (
+                <button
+                  className="cmdb-list-item_kebab"
+                  onClick={() => {
+                    setisopen(!isopen);
+                    handleFolderNavigation(folder);
+                  }}
+                >
+                  <EllipsisVerticalIcon color="white" width="18" />
+                </button>
+              )}
+            </>
+          )}
+          {!isCurrentParent && (
+            <>
+              {![CMDB_TRASH, "1", "2", "3"].includes(folder.id) && (
                 <>
-                  {folder.id !== CMDB_RECENTLY_ADDED && (
+                  {folder.hasFolders ? (
                     <span
                       className="cmdb-list-item_kebab"
-                      onClick={() => {
-                        setisopen(!isopen);
-                        handleFolderNavigation(folder);
-                      }}
+                      onClick={() => folder && handleFolderNavigation(folder)}
                     >
-                      <EllipsisVerticalIcon color="white" width="18" />
+                      <ArrowRightIcon color="white" width="14" />
                     </span>
+                  ) : (
+                    <>
+                      {folder.id !== CMDB_RECENTLY_ADDED && (
+                        <span
+                          className="cmdb-list-item_kebab"
+                          onClick={() => {
+                            setisopen(!isopen);
+                            handleFolderNavigation(folder);
+                          }}
+                        >
+                          <EllipsisVerticalIcon color="white" width="18" />
+                        </span>
+                      )}
+                    </>
                   )}
                 </>
               )}
             </>
           )}
+
           {isopen && (
             <Menu setisopen={setisopen}>
-              <MenuChildren setisopen={setisopen} />
+              <MenuChildren
+                setisopen={setisopen}
+                createFolder={() => createFolder(folder)}
+              />
             </Menu>
           )}
         </label>

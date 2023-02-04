@@ -494,7 +494,7 @@ export const CmdbWrapper = styled.div`
           opacity: 0;
           position: relative;
 
-          .cmdb-currentfolder-name {
+          /* .cmdb-currentfolder-name {
             margin-bottom: 5px;
             margin-left: 10px;
             display: flex;
@@ -504,14 +504,12 @@ export const CmdbWrapper = styled.div`
               cursor: pointer;
               color: ${textcolor};
               opacity: 0.4;
-              /* padding: 5px;
-              border-radius: 4px; */
               &:hover {
                 opacity: 1;
                 text-decoration: underline;
               }
             }
-          }
+          } */
           .cmdb-sidenav-item {
             cursor: pointer;
             padding-right: 10px;
@@ -726,7 +724,6 @@ export const CmdbWrapper = styled.div`
       }
     }
 
-    //
     .cmdb-modal {
       position: fixed;
       height: 100%;
@@ -736,6 +733,7 @@ export const CmdbWrapper = styled.div`
       display: flex;
       justify-content: center;
       align-items: center;
+      z-index: 1;
       .cmdb-modal-backdrop {
         position: absolute;
         top: 0;

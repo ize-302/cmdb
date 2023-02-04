@@ -10,10 +10,16 @@ import {
 } from "@heroicons/react/24/outline";
 import { DevicePhoneMobileIcon } from "@heroicons/react/24/solid";
 import { BookmarkProps } from "../types";
-import { CMDB_TRASH, CMDB_RECENTLY_ADDED } from "../keys";
+import {
+  CMDB_TRASH,
+  CMDB_RECENTLY_ADDED,
+  CMDB_CREATE_BOOKMARK,
+  CMDB_FOLDER_CREATED_MSG,
+} from "../keys";
 import Menu from "./Menu";
 import FolderItem from "./FolderItem";
-
+import CreateFolderModal from "./CreateFolderModal";
+import toast from "react-hot-toast";
 interface SideNavProps {
   folders: any[];
   setselectedFolder: (payload: any) => void;
@@ -25,6 +31,8 @@ interface SideNavProps {
   trash: BookmarkProps[];
   showMain: boolean;
   setshowMain: (value: boolean) => void;
+  getFoldersByFolder: (payload: string) => void;
+  fetchBookmarks: () => void;
 }
 
 const displayGreeting = () => {
@@ -49,10 +57,14 @@ export const SideNav: React.FC<SideNavProps> = ({
   trash,
   showMain,
   setshowMain,
+  getFoldersByFolder,
+  fetchBookmarks,
 }) => {
   const dragOverItem = React.useRef();
   const [mainFolders, setmainFolders]: any[] = React.useState([]);
   const [isopen, setisopen] = React.useState(false);
+  const [showcreatefoldermodal, setshowcreatefoldermodal] =
+    React.useState(false);
 
   const fetchFoldersToDisplay = (id: string) => {
     return folders?.filter((folder) => folder.parentId === id);
@@ -95,6 +107,29 @@ export const SideNav: React.FC<SideNavProps> = ({
     }
   };
 
+  const dragEnter = (e: any, position: any) => {
+    dragOverItem.current = position;
+    console.log(e.target);
+  };
+
+  const handleCreateFolder = (folderId: string, title: string) => {
+    chrome.runtime.sendMessage(
+      { title, command: CMDB_CREATE_BOOKMARK, parentId: folderId },
+      (response) => {
+        toast.success(CMDB_FOLDER_CREATED_MSG);
+        setshowcreatefoldermodal(false);
+        getFoldersByFolder(folderId);
+        fetchBookmarks();
+        // setselectedFolder(response);
+        // setbookmarksOnView([]);
+        setcurrentParent(selectedFolder);
+        if (["1", "2", "3"].includes(selectedFolder.id)) {
+          setshowMain(false);
+        }
+      }
+    );
+  };
+
   React.useEffect(() => {
     if (folders) {
       const getFoldersToDisplay = fetchFoldersToDisplay("0");
@@ -102,117 +137,136 @@ export const SideNav: React.FC<SideNavProps> = ({
     }
   }, [folders]);
 
-  const dragEnter = (e: any, position: any) => {
-    dragOverItem.current = position;
-    console.log(e.target);
-  };
-
   return (
-    <div className="cmdb-sidenav">
-      {showMain ? (
-        <>
-          <div className="cmdb-sidenav_greetings">{displayGreeting()}</div>
-          <div className="cmdb-sidenav-items">
-            {/* recently added */}
-            <FolderItem
-              folder={{
-                id: CMDB_RECENTLY_ADDED,
-                parentId: "",
-                title: "Recently added",
-              }}
-              selectedFolder={selectedFolder}
-              handleFolderNavigation={handleFolderNavigation}
-              onDragEnter={(e) => {}}
-            />
-            {/* menus */}
-            {mainFolders?.map(
-              (folder: any, index: React.Key | null | undefined) => (
-                <FolderItem
-                  key={index}
-                  folder={folder}
-                  selectedFolder={selectedFolder}
-                  handleFolderNavigation={handleFolderNavigation}
-                  onDragEnter={(e) => dragEnter(e, index)}
-                />
-              )
-            )}
-            {/* trash */}
-            <br />
-            <FolderItem
-              folder={{
-                id: CMDB_TRASH,
-                parentId: "",
-                title: "Trash",
-              }}
-              selectedFolder={selectedFolder}
-              handleFolderNavigation={handleFolderNavigation}
-              onDragEnter={() => {}}
-              trash={trash}
-            />
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="cmdb-sidenav_go-back" onClick={() => handleGoback()}>
-            <ChevronLeftIcon width="14" />
-            Go back
-          </div>
-          <div className="cmdb-sidenav-items">
-            <div className="cmdb-currentfolder-name">
-              <p onClick={() => handleFolderNavigation(currentParent)}>
-                {currentParent?.title}
-              </p>
-              {["1", "2", "3"].includes(currentParent.id) ? (
-                <button>
-                  <FolderPlusIcon color="white" width="17" />
-                </button>
-              ) : (
-                <button
-                  className="cmdb-list-item_kebab"
-                  onClick={() => {
-                    setisopen(!isopen);
-                    handleFolderNavigation(currentParent);
-                  }}
-                >
-                  <EllipsisVerticalIcon color="white" width="18" />
-                </button>
-              )}
-              {isopen && (
-                <Menu setisopen={setisopen}>
-                  <MenuChildren setisopen={setisopen} />
-                </Menu>
-              )}
-            </div>
-            {/* subs */}
-            {foldersToDisplay?.map(
-              (folder: any, index: React.Key | null | undefined) => (
-                <div style={{ marginLeft: "5px" }} key={index}>
+    <>
+      <div className="cmdb-sidenav">
+        {showMain ? (
+          <>
+            <div className="cmdb-sidenav_greetings">{displayGreeting()}</div>
+            <div className="cmdb-sidenav-items">
+              {/* recently added */}
+              <FolderItem
+                folder={{
+                  id: CMDB_RECENTLY_ADDED,
+                  parentId: "",
+                  title: "Recently added",
+                }}
+                selectedFolder={selectedFolder}
+                handleFolderNavigation={handleFolderNavigation}
+                onDragEnter={(e) => {}}
+                createFolder={() => setshowcreatefoldermodal(true)}
+              />
+              {/* menus */}
+              {mainFolders?.map(
+                (folder: any, index: React.Key | null | undefined) => (
                   <FolderItem
+                    key={index}
                     folder={folder}
                     selectedFolder={selectedFolder}
                     handleFolderNavigation={handleFolderNavigation}
                     onDragEnter={(e) => dragEnter(e, index)}
+                    createFolder={() => setshowcreatefoldermodal(true)}
                   />
-                </div>
-              )
-            )}
-          </div>
-        </>
+                )
+              )}
+              {/* trash */}
+              <br />
+              <FolderItem
+                folder={{
+                  id: CMDB_TRASH,
+                  parentId: "",
+                  title: "Trash",
+                }}
+                selectedFolder={selectedFolder}
+                handleFolderNavigation={handleFolderNavigation}
+                onDragEnter={() => {}}
+                trash={trash}
+                createFolder={() => setshowcreatefoldermodal(true)}
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <div
+              className="cmdb-sidenav_go-back"
+              onClick={() => handleGoback()}
+            >
+              <ChevronLeftIcon width="14" />
+              Go back
+            </div>
+            <div className="cmdb-sidenav-items">
+              <>
+                <FolderItem
+                  folder={currentParent}
+                  selectedFolder={selectedFolder}
+                  handleFolderNavigation={handleFolderNavigation}
+                  onDragEnter={(e) => {}}
+                  createFolder={() => setshowcreatefoldermodal(true)}
+                  isCurrentParent
+                />
+                {isopen && (
+                  <Menu setisopen={setisopen}>
+                    <MenuChildren
+                      setisopen={setisopen}
+                      createFolder={() => {
+                        setshowcreatefoldermodal(true);
+                      }}
+                    />
+                  </Menu>
+                )}
+              </>
+              {/* subs */}
+              {foldersToDisplay?.map(
+                (folder: any, index: React.Key | null | undefined) => (
+                  <div style={{ marginLeft: "5px" }} key={index}>
+                    <FolderItem
+                      folder={folder}
+                      selectedFolder={selectedFolder}
+                      handleFolderNavigation={handleFolderNavigation}
+                      onDragEnter={(e) => dragEnter(e, index)}
+                      createFolder={() => setshowcreatefoldermodal(true)}
+                    />
+                  </div>
+                )
+              )}
+            </div>
+          </>
+        )}
+      </div>
+      {/* create folder modal */}
+      {showcreatefoldermodal && (
+        <CreateFolderModal
+          defaultSelectedFolder={selectedFolder}
+          setisopen={(payload) => {
+            setshowcreatefoldermodal(payload);
+          }}
+          submit={(folder, title) => {
+            if (!title) {
+              return toast.error("Folder should have a title");
+            }
+            handleCreateFolder(folder, title);
+          }}
+        />
       )}
-    </div>
+    </>
   );
 };
 
 interface MenuChildrenProps {
   setisopen: (payload: boolean) => void;
+  createFolder: () => void;
 }
 
-export const MenuChildren: React.FC<MenuChildrenProps> = ({ setisopen }) => {
+export const MenuChildren: React.FC<MenuChildrenProps> = ({
+  setisopen,
+  createFolder,
+}) => {
   return (
     <>
       <li
         className="cmdb-menu-item"
         onClick={() => {
+          createFolder();
           setisopen(false);
         }}
       >

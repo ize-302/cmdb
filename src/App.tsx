@@ -360,6 +360,8 @@ const App: React.FC<AppProps> = () => {
                 trash={trash}
                 showMain={showMain}
                 setshowMain={setshowMain}
+                getFoldersByFolder={getFoldersByFolder}
+                fetchBookmarks={fetchBookmarks}
               />
               <Content
                 folders={folders}
