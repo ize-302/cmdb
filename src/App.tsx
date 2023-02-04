@@ -335,9 +335,6 @@ const App: React.FC<AppProps> = () => {
                 handleEmptyTrash={handleEmptyTrash}
                 trash={trash}
                 restoreBookmarkFromTrash={restoreBookmarkFromTrash}
-                setshowmovefoldermodal={() => {
-                  setshowmovefoldermodal(true);
-                }}
                 deleteFolder={handleDeleteFolder}
                 getBoomarksByFolder={getBoomarksByFolder}
                 currentParent={currentParent}

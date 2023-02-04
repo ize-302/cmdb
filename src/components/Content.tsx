@@ -29,7 +29,6 @@ interface ContentProps {
   handleEmptyTrash: () => void;
   trash: BookmarkProps[];
   restoreBookmarkFromTrash: (bookmarks: BookmarkProps[]) => void;
-  setshowmovefoldermodal: () => void;
   deleteFolder: () => void;
   folders: any[];
   getBoomarksByFolder: (payload: object) => void;
@@ -50,7 +49,6 @@ export const Content: React.FC<ContentProps> = ({
   handleEmptyTrash,
   restoreBookmarkFromTrash,
   trash,
-  setshowmovefoldermodal,
   deleteFolder,
   folders,
   getBoomarksByFolder,
@@ -176,10 +174,6 @@ export const Content: React.FC<ContentProps> = ({
                 <>
                   {selectedFolder.parentId !== "0" && (
                     <>
-                      <button onClick={() => setshowmovefoldermodal()}>
-                        <ArrowsRightLeftIcon color="white" width="17" />
-                      </button>
-
                       <button onClick={() => deleteFolder()}>
                         <TrashIcon color="red" width="17" />
                       </button>
