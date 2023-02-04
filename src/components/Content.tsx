@@ -29,8 +29,6 @@ interface ContentProps {
   handleEmptyTrash: () => void;
   trash: BookmarkProps[];
   restoreBookmarkFromTrash: (bookmarks: BookmarkProps[]) => void;
-  createFolder: () => void;
-  renameFolder: () => void;
   setshowmovefoldermodal: () => void;
   deleteFolder: () => void;
   folders: any[];
@@ -51,8 +49,6 @@ export const Content: React.FC<ContentProps> = ({
   deleteBookmarkFromTrash,
   handleEmptyTrash,
   restoreBookmarkFromTrash,
-  createFolder,
-  renameFolder,
   trash,
   setshowmovefoldermodal,
   deleteFolder,
@@ -178,14 +174,8 @@ export const Content: React.FC<ContentProps> = ({
             <div className="cmdb-page-heading-actions">
               {selectedFolder.parentId ? (
                 <>
-                  <button onClick={() => createFolder()}>
-                    <FolderPlusIcon color="white" width="17" />
-                  </button>
                   {selectedFolder.parentId !== "0" && (
                     <>
-                      <button onClick={() => renameFolder()}>
-                        <PencilSquareIcon color="white" width="17" />
-                      </button>
                       <button onClick={() => setshowmovefoldermodal()}>
                         <ArrowsRightLeftIcon color="white" width="17" />
                       </button>

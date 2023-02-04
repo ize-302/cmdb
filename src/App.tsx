@@ -31,7 +31,6 @@ import toast from "react-hot-toast";
 import CustomToast from "./components/CustomToast";
 import { BookmarkProps } from "../src/types";
 import { CmdbWrapper } from "./components/Style";
-import CreateFolderModal from "./components/CreateFolderModal";
 import MoveFolderModal from "./components/MoveFolderModal";
 
 interface AppProps {}
@@ -226,24 +225,6 @@ const App: React.FC<AppProps> = () => {
     });
   };
 
-  const handleCreateFolder = (folderId: string, title: string) => {
-    chrome.runtime.sendMessage(
-      { title, command: CMDB_CREATE_BOOKMARK, parentId: folderId },
-      (response) => {
-        toast.success(CMDB_FOLDER_CREATED_MSG);
-        setshowcreatefoldermodal(false);
-        getFoldersByFolder(folderId);
-        fetchBookmarks();
-        setselectedFolder(response);
-        setbookmarksOnView([]);
-        setcurrentParent(selectedFolder);
-        if (["1", "2", "3"].includes(selectedFolder.id)) {
-          setshowMain(false);
-        }
-      }
-    );
-  };
-
   const handleMoveFolder = (destinationFolder: any) => {
     chrome.runtime.sendMessage(
       {
@@ -373,13 +354,6 @@ const App: React.FC<AppProps> = () => {
                 handleEmptyTrash={handleEmptyTrash}
                 trash={trash}
                 restoreBookmarkFromTrash={restoreBookmarkFromTrash}
-                createFolder={() => {
-                  setshowcreatefoldermodal(true);
-                }}
-                renameFolder={() => {
-                  // setshoweditmodal(true);
-                  // setbookmarkToEdit(selectedFolder);
-                }}
                 setshowmovefoldermodal={() => {
                   setshowmovefoldermodal(true);
                 }}
@@ -393,22 +367,6 @@ const App: React.FC<AppProps> = () => {
                 fetchTrash={fetchTrash}
               />
             </div>
-            {/* create folder modal */}
-            {showcreatefoldermodal && (
-              <CreateFolderModal
-                defaultSelectedFolder={selectedFolder}
-                folders={folders}
-                setisopen={(payload) => {
-                  setshowcreatefoldermodal(payload);
-                }}
-                submit={(folder, title) => {
-                  if (!title) {
-                    return toast.error("Folder should have a title");
-                  }
-                  handleCreateFolder(folder, title);
-                }}
-              />
-            )}
             {/* move folder modal */}
             {showmovefoldermodal && (
               <MoveFolderModal

@@ -22,8 +22,9 @@ interface FolderItemProps {
   handleFolderNavigation: (payload: object) => void;
   onDragEnter: (e: any) => void;
   trash?: any;
-  createFolder: (payload: object) => void;
+  createFolder?: (payload: object) => void;
   isCurrentParent?: boolean;
+  renameFolder?: (payload: object) => void;
 }
 
 const FolderItem: React.FC<FolderItemProps> = ({
@@ -34,6 +35,7 @@ const FolderItem: React.FC<FolderItemProps> = ({
   trash,
   createFolder,
   isCurrentParent = false,
+  renameFolder,
 }) => {
   const [isopen, setisopen] = React.useState(false);
 
@@ -112,7 +114,7 @@ const FolderItem: React.FC<FolderItemProps> = ({
               {["1", "2", "3"].includes(folder.id) ? (
                 <button
                   onClick={() => {
-                    createFolder(folder);
+                    createFolder && createFolder(folder);
                   }}
                 >
                   <FolderPlusIcon color="white" width="17" />
@@ -139,7 +141,7 @@ const FolderItem: React.FC<FolderItemProps> = ({
                       className="cmdb-list-item_kebab"
                       onClick={() => folder && handleFolderNavigation(folder)}
                     >
-                      <ArrowRightIcon color="white" width="14" />
+                      <ArrowUturnRightIcon color="white" width="14" />
                     </span>
                   ) : (
                     <>
@@ -165,7 +167,8 @@ const FolderItem: React.FC<FolderItemProps> = ({
             <Menu setisopen={setisopen}>
               <MenuChildren
                 setisopen={setisopen}
-                createFolder={() => createFolder(folder)}
+                createFolder={() => createFolder && createFolder(folder)}
+                renameFolder={() => renameFolder && renameFolder(folder)}
               />
             </Menu>
           )}

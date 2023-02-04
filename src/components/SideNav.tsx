@@ -15,11 +15,13 @@ import {
   CMDB_RECENTLY_ADDED,
   CMDB_CREATE_BOOKMARK,
   CMDB_FOLDER_CREATED_MSG,
+  CMDB_UPDATE_ITEM,
 } from "../keys";
 import Menu from "./Menu";
 import FolderItem from "./FolderItem";
 import CreateFolderModal from "./CreateFolderModal";
 import toast from "react-hot-toast";
+import RenameFolderModal from "./RenameFolderModal";
 interface SideNavProps {
   folders: any[];
   setselectedFolder: (payload: any) => void;
@@ -64,6 +66,8 @@ export const SideNav: React.FC<SideNavProps> = ({
   const [mainFolders, setmainFolders]: any[] = React.useState([]);
   const [isopen, setisopen] = React.useState(false);
   const [showcreatefoldermodal, setshowcreatefoldermodal] =
+    React.useState(false);
+  const [showrenamefoldermodal, setshowrenamefoldermodal] =
     React.useState(false);
 
   const fetchFoldersToDisplay = (id: string) => {
@@ -130,6 +134,28 @@ export const SideNav: React.FC<SideNavProps> = ({
     );
   };
 
+  const handleRenameFolder = (folderId: string, title: string) => {
+    chrome.runtime.sendMessage(
+      {
+        id: folderId,
+        title,
+        command: CMDB_UPDATE_ITEM,
+      },
+      (result) => {
+        if (result) {
+          setshowrenamefoldermodal(false);
+          toast.success("Folder renamed");
+          getFoldersByFolder(currentParent.id);
+          fetchBookmarks();
+          if (currentParent.id === selectedFolder.id) {
+            setcurrentParent(result);
+          }
+          setselectedFolder(result);
+        }
+      }
+    );
+  };
+
   React.useEffect(() => {
     if (folders) {
       const getFoldersToDisplay = fetchFoldersToDisplay("0");
@@ -154,7 +180,6 @@ export const SideNav: React.FC<SideNavProps> = ({
                 selectedFolder={selectedFolder}
                 handleFolderNavigation={handleFolderNavigation}
                 onDragEnter={(e) => {}}
-                createFolder={() => setshowcreatefoldermodal(true)}
               />
               {/* menus */}
               {mainFolders?.map(
@@ -165,7 +190,6 @@ export const SideNav: React.FC<SideNavProps> = ({
                     selectedFolder={selectedFolder}
                     handleFolderNavigation={handleFolderNavigation}
                     onDragEnter={(e) => dragEnter(e, index)}
-                    createFolder={() => setshowcreatefoldermodal(true)}
                   />
                 )
               )}
@@ -181,7 +205,6 @@ export const SideNav: React.FC<SideNavProps> = ({
                 handleFolderNavigation={handleFolderNavigation}
                 onDragEnter={() => {}}
                 trash={trash}
-                createFolder={() => setshowcreatefoldermodal(true)}
               />
             </div>
           </>
@@ -203,17 +226,8 @@ export const SideNav: React.FC<SideNavProps> = ({
                   onDragEnter={(e) => {}}
                   createFolder={() => setshowcreatefoldermodal(true)}
                   isCurrentParent
+                  renameFolder={() => setshowrenamefoldermodal(true)}
                 />
-                {isopen && (
-                  <Menu setisopen={setisopen}>
-                    <MenuChildren
-                      setisopen={setisopen}
-                      createFolder={() => {
-                        setshowcreatefoldermodal(true);
-                      }}
-                    />
-                  </Menu>
-                )}
               </>
               {/* subs */}
               {foldersToDisplay?.map(
@@ -225,6 +239,7 @@ export const SideNav: React.FC<SideNavProps> = ({
                       handleFolderNavigation={handleFolderNavigation}
                       onDragEnter={(e) => dragEnter(e, index)}
                       createFolder={() => setshowcreatefoldermodal(true)}
+                      renameFolder={() => setshowrenamefoldermodal(true)}
                     />
                   </div>
                 )
@@ -248,6 +263,21 @@ export const SideNav: React.FC<SideNavProps> = ({
           }}
         />
       )}
+      {/* rename folder modal */}
+      {showrenamefoldermodal && (
+        <RenameFolderModal
+          defaultSelectedFolder={selectedFolder}
+          setisopen={(payload) => {
+            setshowrenamefoldermodal(payload);
+          }}
+          submit={(folder, title) => {
+            if (!title) {
+              return toast.error("Folder should have a title");
+            }
+            handleRenameFolder(folder, title);
+          }}
+        />
+      )}
     </>
   );
 };
@@ -255,11 +285,13 @@ export const SideNav: React.FC<SideNavProps> = ({
 interface MenuChildrenProps {
   setisopen: (payload: boolean) => void;
   createFolder: () => void;
+  renameFolder: () => void;
 }
 
 export const MenuChildren: React.FC<MenuChildrenProps> = ({
   setisopen,
   createFolder,
+  renameFolder,
 }) => {
   return (
     <>
@@ -275,6 +307,7 @@ export const MenuChildren: React.FC<MenuChildrenProps> = ({
       <li
         className="cmdb-menu-item"
         onClick={() => {
+          renameFolder();
           setisopen(false);
         }}
       >
