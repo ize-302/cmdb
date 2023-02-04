@@ -127,7 +127,7 @@ const FolderItem: React.FC<FolderItemProps> = ({
                     handleFolderNavigation(folder);
                   }}
                 >
-                  <EllipsisVerticalIcon color="white" width="18" />
+                  <EllipsisVerticalIcon color="white" width="14" />
                 </button>
               )}
             </>
