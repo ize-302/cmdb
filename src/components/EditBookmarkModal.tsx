@@ -28,27 +28,33 @@ const EditBookmarkModal: React.FC<EditBookmarkModalProps> = ({
     <div className="cmdb-modal">
       <div className="cmdb-modal-backdrop" />
       <div ref={wrapperRef} className="cmdb-modal-content">
-        <div className="cmdb-modal-title">Edit bookmark</div>
+        <div className="cmdb-modal-title">
+          {bookmark.url ? "Edit bookmark" : "Rename folder"}
+        </div>
         <form>
-          <label className="cmdb-label">Title</label>
+          <label className="cmdb-label">Name</label>
           <input
             className="cmdb-input"
             value={title}
             onChange={(e) => settitle(e.target.value)}
           />
-          <label className="cmdb-label">URL</label>
-          <input
-            className="cmdb-input"
-            value={url}
-            onChange={(e) => seturl(e.target.value)}
-          />
+          {bookmark.url && (
+            <>
+              <label className="cmdb-label">URL</label>
+              <input
+                className="cmdb-input"
+                value={url}
+                onChange={(e) => seturl(e.target.value)}
+              />
+            </>
+          )}
         </form>
         <div className="cmdb-modal-footer">
           <button onClick={() => setisopen(false)} className="cmdb-secondary">
             Cancel
           </button>
           <button onClick={() => handleSubmit()} className="cmdb-primary">
-            Update
+            {bookmark.url ? "Update" : "Rename"}
           </button>
         </div>
       </div>

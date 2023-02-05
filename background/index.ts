@@ -10,15 +10,6 @@ const trashBookmark = (trash) => {
   return chrome.storage.local.set({ cmdb_trashed_bookmarks: trash });
 };
 
-// create bookmark / folder item
-// https://developer.chrome.com/docs/extensions/reference/bookmarks/#method-create
-const createItem = async (value) => {
-  await chrome.bookmarks.create(
-    { title: value.title, url: value.url, parentId: value.parentId },
-    (response) => response
-  );
-};
-
 // toggle extension when extension icon is clicked
 chrome.action.onClicked.addListener(function (tab) {
   toggleExtension(tab.id);
@@ -27,20 +18,6 @@ chrome.action.onClicked.addListener(function (tab) {
 //  toggle extension when Cmd+B is pressed
 chrome.commands.onCommand.addListener((command, tab) => {
   toggleExtension(tab.id);
-});
-
-// first time isntlalation
-chrome.runtime.onInstalled.addListener(function () {
-  alert(
-    "You just made the best decision of today, by installing GMass!\n\nWe will now redirect you to your Gmail account so you can get started sending email campaigns inside Gmail."
-  );
-
-  chrome.tabs.create({
-    url: "https://mail.google.com",
-    active: true,
-  });
-
-  return false;
 });
 
 // Receive messages
@@ -52,7 +29,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   }
 
   if (message.command === "CMDB_FETCH_BOOKMARS_BY_FOLDER") {
-    chrome.bookmarks.getChildren(message.id, (result: any) => {
+    chrome.bookmarks.getSubTree(message.id, (result: any) => {
       sendResponse(result);
     });
   }
@@ -71,12 +48,15 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   }
 
   // delete a bookmark
-  if (message.command === "CMDB_DELETE_ITEM") {
+  if (message.command === "CMDB_DELETE_BOOKMARK") {
     getTrashedBookmarks().then((response) => {
       const trash = response.cmdb_trashed_bookmarks || []; // retrieve trash
       for (let i = 0; i < message.bookmarks.length; i++) {
-        trash.push(message.bookmarks[i]);
-        trashBookmark(trash); // update trash
+        // only save urls
+        if (message.bookmarks[i].url) {
+          trash.push(message.bookmarks[i]);
+          trashBookmark(trash); // update trash
+        }
         chrome.bookmarks.remove(message.bookmarks[i].id, () => {
           if (i === message.bookmarks.length - 1) {
             sendResponse("deleted");
@@ -87,10 +67,16 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   }
 
   // handle create
-  if (message.command === "CMDB_CREATE_ITEM") {
-    createItem(message).then((response) => {
-      sendResponse(response);
-    });
+  if (message.command === "CMDB_CREATE_BOOKMARK") {
+    chrome.bookmarks.create(
+      {
+        title: message.title,
+        url: message.url,
+        parentId: message.parentId,
+        index: message.index,
+      },
+      (response) => sendResponse(response)
+    );
   }
 
   // handle update
@@ -144,11 +130,26 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
   // restore trashed bookmark
   if (message.command === "CMDB_RESTORE_TRASHED_BOOKMARK") {
+    // determine where to create restored bookmark
+    const checkParent = (parentId) => {
+      const findParent = message.folders.find(
+        (folder) => folder.id === parentId
+      );
+      return findParent ? findParent.id : null;
+    };
+    // create bookmark
     for (let i = 0; i < message.bookmarks.length; i++) {
-      createItem(message.bookmarks[i]);
-    }
-    // sendResponse(message.bookmarks);
-    for (let i = 0; i < message.bookmarks.length; i++) {
+      chrome.bookmarks.create(
+        {
+          title: message.bookmarks[i].title,
+          url: message.bookmarks[i].url,
+          parentId: checkParent(message.bookmarks[i].parentId),
+          index: message.bookmarks[i].index,
+        },
+        (response) => response
+      );
+
+      // update trash
       getTrashedBookmarks().then((response) => {
         const trash = response.cmdb_trashed_bookmarks || []; // retrieve trash
         const results = trash.filter(
