@@ -24,7 +24,12 @@ const MoveFolderModal: React.FC<MoveFolderModalProps> = ({
         <div className="cmdb-modal-title">
           Move <b style={{ color: "#fff" }}>{folderToMove.title}</b> Folder
         </div>
-        <form>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            submitMoveFolder(destinationFolder);
+          }}
+        >
           <label className="cmdb-label">Select destination folder</label>
           <select
             value={destinationFolder.id}
@@ -45,18 +50,19 @@ const MoveFolderModal: React.FC<MoveFolderModalProps> = ({
                 </option>
               ))}
           </select>
+          <div className="cmdb-modal-footer">
+            <button
+              type="button"
+              onClick={() => setisopen(false)}
+              className="cmdb-secondary"
+            >
+              Cancel
+            </button>
+            <button type="submit" className="cmdb-primary">
+              Move
+            </button>
+          </div>
         </form>
-        <div className="cmdb-modal-footer">
-          <button onClick={() => setisopen(false)} className="cmdb-secondary">
-            Cancel
-          </button>
-          <button
-            onClick={() => submitMoveFolder(destinationFolder)}
-            className="cmdb-primary"
-          >
-            Move
-          </button>
-        </div>
       </div>
     </div>
   );
