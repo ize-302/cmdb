@@ -110,6 +110,7 @@ const FolderItem: React.FC<FolderItemProps> = ({
             </span>
           </span>
 
+          {/* for current parent folder */}
           {isCurrentParent && (
             <>
               {["1", "2", "3"].includes(folder.id) ? (
@@ -133,31 +134,53 @@ const FolderItem: React.FC<FolderItemProps> = ({
               )}
             </>
           )}
+
+          {/* for regular folders */}
           {!isCurrentParent && (
             <>
-              {![CMDB_TRASH, "1", "2", "3"].includes(folder.id) && (
+              {["1", "2", "3"].includes(folder.id) && (
                 <>
                   {folder.hasFolders ? (
-                    <span
+                    <button
                       className="cmdb-list-item_kebab"
                       onClick={() => folder && handleFolderNavigation(folder)}
                     >
                       <ArrowUturnRightIcon color="white" width="12" />
-                    </span>
+                    </button>
                   ) : (
-                    <>
-                      {folder.id !== CMDB_RECENTLY_ADDED && (
-                        <span
-                          className="cmdb-list-item_kebab"
-                          onClick={() => {
-                            setisopen(!isopen);
-                            handleFolderNavigation(folder);
-                          }}
-                        >
-                          <EllipsisVerticalIcon color="white" width="14" />
-                        </span>
-                      )}
-                    </>
+                    <button
+                      onClick={() => {
+                        createFolder && createFolder(folder);
+                      }}
+                    >
+                      <FolderPlusIcon color="white" width="17" />
+                    </button>
+                  )}
+                </>
+              )}
+
+              {/* current parent folder's children (regular) */}
+              {![CMDB_TRASH, CMDB_RECENTLY_ADDED, "1", "2", "3"].includes(
+                folder.id
+              ) && (
+                <>
+                  {folder.hasFolders ? (
+                    <button
+                      className="cmdb-list-item_kebab"
+                      onClick={() => folder && handleFolderNavigation(folder)}
+                    >
+                      <ArrowUturnRightIcon color="white" width="12" />
+                    </button>
+                  ) : (
+                    <button
+                      className="cmdb-list-item_kebab"
+                      onClick={() => {
+                        setisopen(!isopen);
+                        handleFolderNavigation(folder);
+                      }}
+                    >
+                      <EllipsisVerticalIcon color="white" width="14" />
+                    </button>
                   )}
                 </>
               )}

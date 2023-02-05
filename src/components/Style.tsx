@@ -447,6 +447,12 @@ export const CmdbWrapper = styled.div`
         padding: 0px 10px;
         overflow-y: auto;
         border-bottom-left-radius: 9px;
+        button {
+          padding: 1px 2px;
+          &:hover {
+            background: ${bgdark};
+          }
+        }
         &_greetings {
           color: white;
           padding-top: 20px;

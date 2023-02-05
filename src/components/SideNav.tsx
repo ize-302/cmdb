@@ -240,6 +240,7 @@ export const SideNav: React.FC<SideNavProps> = ({
                     selectedFolder={selectedFolder}
                     handleFolderNavigation={handleFolderNavigation}
                     onDragEnter={(e) => dragEnter(e, index)}
+                    createFolder={() => setshowcreatefoldermodal(true)}
                   />
                 )
               )}
