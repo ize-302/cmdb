@@ -35,7 +35,6 @@ const App: React.FC<AppProps> = () => {
   );
   const [selectedFolder, setselectedFolder] = React.useState<any>({});
   const [bookmarksOnView, setbookmarksOnView] = React.useState<any>([]);
-  const [foldersToDisplay, setfoldersToDisplay] = React.useState<any>(null);
   const [currentParent, setcurrentParent] = React.useState<any>(null);
   const [selectedBookmarks, setselectedBookmarks] = React.useState<any[]>([]);
   const [trash, settrash] = React.useState([]);
@@ -101,23 +100,11 @@ const App: React.FC<AppProps> = () => {
       chrome.runtime.sendMessage(
         { id: folder.id, command: CMDB_FETCH_BOOKMARS_BY_FOLDER },
         (response) => {
-          const filter = response.filter((item: any) => item.url);
+          const filter = response[0].children.filter((item: any) => item.url);
           setbookmarksOnView(filter);
         }
       );
     }
-  };
-
-  const getFoldersByFolder = (folderId: any) => {
-    chrome.runtime.sendMessage(
-      { id: folderId, command: CMDB_FETCH_BOOKMARS_BY_FOLDER },
-      (response) => {
-        const filter = response.filter(
-          (item: any) => !item.url && item.parentId === folderId
-        );
-        setfoldersToDisplay(filter);
-      }
-    );
   };
 
   const fetchRecentBookmarks = () => {
@@ -218,8 +205,6 @@ const App: React.FC<AppProps> = () => {
               <SideNav
                 folders={folders}
                 selectedFolder={selectedFolder}
-                foldersToDisplay={foldersToDisplay}
-                setfoldersToDisplay={setfoldersToDisplay}
                 currentParent={currentParent}
                 setcurrentParent={setcurrentParent}
                 setselectedFolder={(val) => {
@@ -229,9 +214,7 @@ const App: React.FC<AppProps> = () => {
                 trash={trash}
                 showMain={showMain}
                 setshowMain={setshowMain}
-                getFoldersByFolder={getFoldersByFolder}
                 fetchBookmarks={fetchBookmarks}
-                getBoomarksByFolder={getBoomarksByFolder}
               />
               <Content
                 folders={folders}
@@ -246,7 +229,6 @@ const App: React.FC<AppProps> = () => {
                 getBoomarksByFolder={getBoomarksByFolder}
                 currentParent={currentParent}
                 fetchBookmarks={fetchBookmarks}
-                getFoldersByFolder={getFoldersByFolder}
                 setcurrentParent={setcurrentParent}
                 setselectedFolder={setselectedFolder}
                 fetchTrash={fetchTrash}

@@ -43,7 +43,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   }
 
   if (message.command === "CMDB_FETCH_BOOKMARS_BY_FOLDER") {
-    chrome.bookmarks.getChildren(message.id, (result: any) => {
+    chrome.bookmarks.getSubTree(message.id, (result: any) => {
       sendResponse(result);
     });
   }

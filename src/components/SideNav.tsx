@@ -21,16 +21,12 @@ interface SideNavProps {
   folders: any[];
   setselectedFolder: (payload: any) => void;
   selectedFolder: any;
-  foldersToDisplay: any[];
-  setfoldersToDisplay: (payload: any) => void;
   setcurrentParent: (payload: any) => void;
   currentParent: any;
   trash: BookmarkProps[];
   showMain: boolean;
   setshowMain: (value: boolean) => void;
-  getFoldersByFolder: (payload: string) => void;
   fetchBookmarks: () => void;
-  getBoomarksByFolder: (payload: object) => void;
 }
 
 const displayGreeting = () => {
@@ -48,25 +44,21 @@ export const SideNav: React.FC<SideNavProps> = ({
   folders,
   setselectedFolder,
   selectedFolder,
-  foldersToDisplay,
-  setfoldersToDisplay,
   currentParent,
   setcurrentParent,
   trash,
   showMain,
   setshowMain,
-  getFoldersByFolder,
   fetchBookmarks,
-  getBoomarksByFolder,
 }) => {
   const dragOverItem = React.useRef();
   const [mainFolders, setmainFolders]: any[] = React.useState([]);
-  const [isopen, setisopen] = React.useState(false);
   const [showcreatefoldermodal, setshowcreatefoldermodal] =
     React.useState(false);
   const [showrenamefoldermodal, setshowrenamefoldermodal] =
     React.useState(false);
   const [showmovefoldermodal, setshowmovefoldermodal] = React.useState(false);
+  const [foldersToDisplay, setfoldersToDisplay] = React.useState<any>([]);
 
   const fetchFoldersToDisplay = (id: string) => {
     return folders?.filter((folder) => folder.parentId === id);
@@ -74,6 +66,28 @@ export const SideNav: React.FC<SideNavProps> = ({
 
   const findParent = (id: string) => {
     return folders.find((folder) => folder.id === id);
+  };
+
+  const getFoldersByFolder = (folderId: any) => {
+    chrome.runtime.sendMessage(
+      { id: folderId, command: CMDB_FETCH_BOOKMARS_BY_FOLDER },
+      (response) => {
+        // filter out not folders, also filter out not children by folderid
+        const filtered = response[0].children.filter(
+          (item: any) => item.parentId === folderId && !item.url
+        );
+        // iterate over folders to modify
+        const modified_folders: any[] = [];
+        filtered.forEach((folder: any) => {
+          const hasFolders = folder.children?.some((child: any) => !child.url);
+          modified_folders.push({
+            ...folder,
+            hasFolders: hasFolders ? true : false,
+          });
+        });
+        setfoldersToDisplay(modified_folders);
+      }
+    );
   };
 
   const handleFolderNavigation = (clickedfolder: any) => {
@@ -122,8 +136,6 @@ export const SideNav: React.FC<SideNavProps> = ({
         setshowcreatefoldermodal(false);
         getFoldersByFolder(folderId);
         fetchBookmarks();
-        // setselectedFolder(response);
-        // setbookmarksOnView([]);
         setcurrentParent(selectedFolder);
         if (["1", "2", "3"].includes(selectedFolder.id)) {
           setshowMain(false);
@@ -163,14 +175,10 @@ export const SideNav: React.FC<SideNavProps> = ({
       },
       (res) => {
         if (res) {
-          // NOTE (Need to fix): This works except that:
-          // if you move to an empty sibling folder,
-          // the newly updated sibling folder which now has a child folder isn't updated immediately unless navigated away and back
           toast.success(`Folder moved to ${destinationFolder.title}`);
           setshowmovefoldermodal(false);
           fetchBookmarks();
           getFoldersByFolder(currentParent.id);
-          // fetchFoldersToDisplay(currentParent.id);
           setselectedFolder(currentParent);
           handleFolderNavigation(currentParent);
         }
@@ -181,8 +189,8 @@ export const SideNav: React.FC<SideNavProps> = ({
   const handleDeleteFolder = () => {
     chrome.runtime.sendMessage(
       { id: selectedFolder.id, command: CMDB_FETCH_BOOKMARS_BY_FOLDER },
-      (children) => {
-        if (children.length > 0) {
+      (response) => {
+        if (response[0].children.length > 0) {
           toast.error(`${selectedFolder.title} folder contains items`);
         } else {
           chrome.runtime.sendMessage(
@@ -193,11 +201,23 @@ export const SideNav: React.FC<SideNavProps> = ({
             (res) => {
               if (res === "deleted") {
                 toast.success("Folder has been deleted");
-                setshowmovefoldermodal(false);
                 fetchBookmarks();
                 getFoldersByFolder(currentParent.id);
                 setselectedFolder(currentParent);
                 handleFolderNavigation(currentParent);
+
+                const getFoldersToDisplay = fetchFoldersToDisplay(
+                  currentParent.id
+                );
+                if (getFoldersToDisplay.length <= 1) {
+                  if (["1", "2", "3"].includes(currentParent.id)) {
+                    setshowMain(true);
+                    setselectedFolder(currentParent);
+                  } else {
+                    handleGoback();
+                    getFoldersByFolder(currentParent.parentId);
+                  }
+                }
               }
             }
           );

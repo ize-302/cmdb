@@ -24,7 +24,6 @@ interface ContentProps {
   restoreBookmarkFromTrash: (bookmarks: BookmarkProps[]) => void;
   folders: any[];
   getBoomarksByFolder: (payload: object) => void;
-  getFoldersByFolder: (payload: string) => void;
   currentParent: any;
   setcurrentParent: (payload: object) => void;
   setselectedFolder: (payload: object) => void;
@@ -43,7 +42,6 @@ export const Content: React.FC<ContentProps> = ({
   trash,
   folders,
   getBoomarksByFolder,
-  getFoldersByFolder,
   currentParent,
   setcurrentParent,
   setselectedFolder,
@@ -97,7 +95,6 @@ export const Content: React.FC<ContentProps> = ({
           } else {
             // for folders
             toast.success("Folder renamed");
-            getFoldersByFolder(currentParent.id);
             fetchBookmarks();
             if (currentParent.id === selectedFolder.id) {
               setcurrentParent(result);
