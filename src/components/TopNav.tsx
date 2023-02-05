@@ -15,6 +15,7 @@ import {
   CMDB_SEARCH,
   CMDB_DELETE_BOOKMARK,
   CMDB_REMOVED_BOOKMARK_MSG,
+  CMDB_RECENTLY_ADDED,
 } from "../keys";
 import cheerio from "cheerio";
 import axios from "axios";
@@ -41,21 +42,44 @@ export const TopNav: React.FC<TopNavProps> = ({
   const [isbookmarked, setisbookmarked] = React.useState(false);
   const [showModal, setshowModal] = React.useState(false);
 
+  const isValidUrl = (urlString: string) => {
+    try {
+      return Boolean(new URL(urlString));
+    } catch (e) {
+      return false;
+    }
+  };
+
   const submitCreateBookmark = async (
     title: string,
     url: string,
     folder: any
   ) => {
-    await chrome.runtime.sendMessage(
-      { title, url, command: CMDB_CREATE_BOOKMARK, parentId: folder.id },
-      (response) => {
-        if (response) {
-          toast.success(CMDB_SAVED_BOOKMARK_MSG);
-          getBoomarksByFolder(selectedFolder);
-          setshowModal(false);
+    if (!title || !url) {
+      toast.error("Name and URL are required");
+    } else if (!isValidUrl(url)) {
+      toast.error("URL is invalid");
+    } else {
+      console.log(title, url, folder);
+      await chrome.runtime.sendMessage(
+        {
+          title,
+          url,
+          command: CMDB_CREATE_BOOKMARK,
+          parentId:
+            folder.id === CMDB_RECENTLY_ADDED || folder.id === CMDB_TRASH
+              ? "2"
+              : folder.id,
+        },
+        (response) => {
+          if (response) {
+            toast.success(CMDB_SAVED_BOOKMARK_MSG);
+            getBoomarksByFolder(selectedFolder);
+            setshowModal(false);
+          }
         }
-      }
-    );
+      );
+    }
   };
 
   // quick save and unsafe current tab
@@ -69,7 +93,15 @@ export const TopNav: React.FC<TopNavProps> = ({
         var $ = cheerio.load((await response).data);
         var title = $("title").text();
         chrome.runtime.sendMessage(
-          { title, url, command, parentId },
+          {
+            title,
+            url,
+            command,
+            parentId:
+              parentId === CMDB_RECENTLY_ADDED || parentId === CMDB_TRASH
+                ? "2"
+                : parentId,
+          },
           (response) => {
             if (response) {
               toast.success(CMDB_SAVED_BOOKMARK_MSG);
@@ -139,28 +171,26 @@ export const TopNav: React.FC<TopNavProps> = ({
           </form>
         </div>
         <div className="cmdb-topnav-item cmdb-topnav-item_right">
-          {selectedFolder.id !== CMDB_TRASH && (
-            <>
-              <button
-                className="cmdb-topnav-item_right-save-url"
-                onClick={() => setshowModal(true)}
-                id="manual-save-url"
-              >
-                <LinkIcon color="white" width="16" />
-              </button>
-              <button
-                className="cmdb-topnav-item_right-save-url"
-                onClick={() => handleSaveUrl()}
-                id="auto-save-url"
-              >
-                {isbookmarked ? (
-                  <StarIconSolid color="orange" width="16" />
-                ) : (
-                  <StarIconOutline color="white" width="16" />
-                )}
-              </button>
-            </>
-          )}
+          <>
+            <button
+              className="cmdb-topnav-item_right-save-url"
+              onClick={() => setshowModal(true)}
+              id="manual-save-url"
+            >
+              <LinkIcon color="white" width="16" />
+            </button>
+            <button
+              className="cmdb-topnav-item_right-save-url"
+              onClick={() => handleSaveUrl()}
+              id="auto-save-url"
+            >
+              {isbookmarked ? (
+                <StarIconSolid color="orange" width="16" />
+              ) : (
+                <StarIconOutline color="white" width="16" />
+              )}
+            </button>
+          </>
         </div>
       </div>
       {/* manually add bookmark */}

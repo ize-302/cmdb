@@ -146,7 +146,7 @@ export const CmdbWrapper = styled.div`
         color: white;
         margin-bottom: 10px;
         &:focus {
-          outline: none !important;
+          /* outline: none !important; */
         }
       }
     }
@@ -163,7 +163,7 @@ export const CmdbWrapper = styled.div`
         color: white;
         margin-bottom: 10px;
         &:focus {
-          outline: none !important;
+          /* outline: none !important; */
         }
       }
     }

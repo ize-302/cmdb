@@ -53,6 +53,14 @@ export const Content: React.FC<ContentProps> = ({
   const [showeditmodal, setshoweditmodal] = React.useState(false);
   const [bookmarkToEdit, setbookmarkToEdit] = React.useState({});
 
+  const contentToShow = () => {
+    if (selectedFolder.id === CMDB_TRASH) {
+      return trash;
+    } else {
+      bookmarksOnView;
+    }
+  };
+
   const handleSelectBookmark = (e: any, bookmark: any, index: number) => {
     if (e.shiftKey) {
       const previouslyselected = [...selectedBookmarks];
