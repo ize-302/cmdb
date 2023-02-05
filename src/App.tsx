@@ -184,7 +184,7 @@ const App: React.FC<AppProps> = () => {
   return (
     <CmdbWrapper>
       <div id="cmdb">
-        <div className="cmdb-dropshadow" />
+        {/* <div className="cmdb-dropshadow" /> */}
         <div className="cmdb-animated-bg cmdb-show">
           <div className="cmdb-container">
             <CustomToast />
