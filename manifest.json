@@ -3,7 +3,7 @@
   "name": "cmdb",
   "version": "1.0.0",
   "action": {
-    "default_title": "Popup",
+    "default_title": "Cmd+B",
     "default_icon": "logo192.png"
   },
   "icons": {},
