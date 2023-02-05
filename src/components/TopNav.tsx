@@ -20,7 +20,7 @@ import {
 import cheerio from "cheerio";
 import axios from "axios";
 import toast from "react-hot-toast";
-import CreateBookmarkModal from "./CreateBookmarkModal";
+import CreateBookmarkModal from "./modals/CreateBookmarkModal";
 
 interface TopNavProps {
   setsearchinput: (str: string) => void;

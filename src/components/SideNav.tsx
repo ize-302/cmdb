@@ -12,10 +12,10 @@ import {
   CMDB_DELETE_BOOKMARK,
 } from "../keys";
 import FolderItem from "./FolderItem";
-import CreateFolderModal from "./CreateFolderModal";
+import CreateFolderModal from "./modals/CreateFolderModal";
 import toast from "react-hot-toast";
-import RenameFolderModal from "./RenameFolderModal";
-import MoveFolderModal from "./MoveFolderModal";
+import RenameFolderModal from "./modals/RenameFolderModal";
+import MoveFolderModal from "./modals/MoveFolderModal";
 
 interface SideNavProps {
   folders: any[];

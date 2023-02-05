@@ -9,9 +9,9 @@ import {
   CMDB_UPDATE_ITEM,
   CMDB_DELETE_BOOKMARK,
 } from "../keys";
-import MoveBookmarkModal from "./MoveBookmarkModal";
+import MoveBookmarkModal from "./modals/MoveBookmarkModal";
 import toast from "react-hot-toast";
-import EditBookmarkModal from "./EditBookmarkModal";
+import EditBookmarkModal from "./modals/EditBookmarkModal";
 
 interface ContentProps {
   bookmarksOnView: BookmarkProps[];

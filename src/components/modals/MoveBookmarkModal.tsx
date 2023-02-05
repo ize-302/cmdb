@@ -1,6 +1,6 @@
 import * as React from "react";
-import { useOutsideAlerter } from "./Menu";
-import { BookmarkProps } from "../types";
+import { useOutsideAlerter } from "../Menu";
+import { BookmarkProps } from "../../types";
 
 interface MoveBookmarkModalProps {
   folders: any;
