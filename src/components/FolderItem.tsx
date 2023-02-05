@@ -79,6 +79,9 @@ const FolderItem: React.FC<FolderItemProps> = ({
             } else {
               setisopen(true);
             }
+          } else if (["1", "2", "3"].includes(folder.id)) {
+            handleFolderNavigation(folder);
+            createFolder && createFolder(folder);
           }
         }}
       >
