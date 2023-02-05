@@ -68,7 +68,6 @@ export const Content: React.FC<ContentProps> = ({
       }
       if (!hasPreviouslyBeenSelected) {
         previouslyselected.push(bookmark);
-        console.log(previouslyselected);
         setselectedBookmarks(previouslyselected);
       }
     } else {

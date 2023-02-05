@@ -162,9 +162,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         },
         (response) => response
       );
-    }
-    // update trash
-    for (let i = 0; i < message.bookmarks.length; i++) {
+
+      // update trash
       getTrashedBookmarks().then((response) => {
         const trash = response.cmdb_trashed_bookmarks || []; // retrieve trash
         const results = trash.filter(

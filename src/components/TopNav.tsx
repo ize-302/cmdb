@@ -46,7 +46,6 @@ export const TopNav: React.FC<TopNavProps> = ({
     url: string,
     folder: any
   ) => {
-    console.log(title, url, folder);
     await chrome.runtime.sendMessage(
       { title, url, command: CMDB_CREATE_BOOKMARK, parentId: folder.id },
       (response) => {
@@ -135,7 +134,7 @@ export const TopNav: React.FC<TopNavProps> = ({
               id="cmdb-search"
               placeholder="Search..."
               onChange={(e) => setsearchinput(e.target.value)}
-              type="text"
+              type="search"
             />
           </form>
         </div>
