@@ -7,6 +7,9 @@ const textcolor = "rgb(210, 211, 224)";
 const blue = "#366FEB";
 
 export const CmdbWrapper = styled.div`
+  svg {
+    fill: none; // disbale icon filing
+  }
   #cmdb {
     *,
     ::after,
@@ -238,8 +241,9 @@ export const CmdbWrapper = styled.div`
       top: 0;
       width: 100vw;
       height: 100%;
-      opacity: 0.4;
-      background: conic-gradient(
+      opacity: 0.2;
+      background: #000;
+      /* background: conic-gradient(
         from 230.29deg at 51.63% 52.16%,
         rgb(36, 0, 255) 0deg,
         rgb(0, 135, 255) 67.5deg,
@@ -249,7 +253,7 @@ export const CmdbWrapper = styled.div`
         rgb(105, 30, 255) 360deg
       );
       filter: blur(160px);
-      transform: translateZ(0px);
+      transform: translateZ(0px); */
       overflow: hidden;
     }
 
@@ -407,7 +411,7 @@ export const CmdbWrapper = styled.div`
     }
 
     .cmdb-menu {
-      min-width: 150px;
+      max-width: 150px;
       border-radius: 4px;
       background: #1d2230;
       border-width: 1px;

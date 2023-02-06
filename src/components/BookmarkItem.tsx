@@ -36,6 +36,18 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
     console.log(e.target);
   };
 
+  React.useEffect(() => {
+    document.addEventListener("contextmenu", (e: any) => {
+      let menu: any = document.querySelector(
+        ".cmdb-content-section .cmdb-menu"
+      );
+
+      menu.style.position = "absolute";
+      menu.style.left = e.layerX + "px";
+      menu.style.top = e.layerY + "px";
+    });
+  }, []);
+
   return (
     <div
       style={{ position: "relative" }}
