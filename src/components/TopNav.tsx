@@ -157,7 +157,7 @@ export const TopNav: React.FC<TopNavProps> = ({
       <div className="cmdb-topnav">
         <div className="cmdb-topnav-item">
           <span className="cmdb-logo">⌘B</span>
-          <span className="cmdb-version">v1.0</span>
+          {/* <span className="cmdb-version">v1.0</span> */}
         </div>
         <div className="cmdb-topnav-item">
           <form>

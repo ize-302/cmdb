@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const bgdark = "#000212";
-const itembg = "#1d2230";
+export const itembg = "#1d2230";
 const itemborder = "rgba(255, 255, 255, 0.05)";
 const textcolor = "rgb(210, 211, 224)";
 const blue = "#366FEB";
@@ -370,6 +370,14 @@ export const CmdbWrapper = styled.div`
             display: flex;
             max-width: 30px;
             align-items: center;
+            &.close {
+              padding: 5px;
+              background: #dc3535;
+              border-radius: 100%;
+              min-height: 16px;
+              min-width: 16px;
+              position: relative;
+            }
           }
         }
       }
