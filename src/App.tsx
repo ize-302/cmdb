@@ -19,6 +19,7 @@ import {
   CMDB_FETCH_BOOKMARS_BY_FOLDER,
   CMDB_REMOVED_BOOKMARK_MSG,
   CMDB_EMPTIED_TRASH_MSG,
+  CMDB_CLOSE_APP,
 } from "./keys";
 import toast from "react-hot-toast";
 import CustomToast from "./components/CustomToast";
@@ -184,7 +185,12 @@ const App: React.FC<AppProps> = () => {
   return (
     <CmdbWrapper>
       <div id="cmdb">
-        {/* <div className="cmdb-dropshadow" /> */}
+        <div
+          className="cmdb-dropshadow"
+          onClick={() =>
+            chrome.runtime.sendMessage({ command: CMDB_CLOSE_APP })
+          }
+        />
         <div className="cmdb-animated-bg cmdb-show">
           <div className="cmdb-container">
             <CustomToast />

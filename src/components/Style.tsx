@@ -236,7 +236,7 @@ export const CmdbWrapper = styled.div`
     .cmdb-dropshadow {
       position: fixed;
       top: 0;
-      width: 50vw;
+      width: 100vw;
       height: 100%;
       opacity: 0.4;
       background: conic-gradient(

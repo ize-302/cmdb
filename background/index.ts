@@ -22,6 +22,11 @@ chrome.commands.onCommand.addListener((command, tab) => {
 
 // Receive messages
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  if (message.command === "CMDB_CLOSE_APP") {
+    const { tab } = sender;
+    toggleExtension(tab?.id);
+  }
+
   if (message === "CMDB_FETCH_BOOKMARKS") {
     chrome.bookmarks.getTree((result: any) => {
       sendResponse(result[0]);
