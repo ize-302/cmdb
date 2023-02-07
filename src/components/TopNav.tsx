@@ -60,14 +60,14 @@ export const TopNav: React.FC<TopNavProps> = ({
     } else if (!isValidUrl(url)) {
       toast.error("URL is invalid");
     } else {
-      console.log(title, url, folder);
       await chrome.runtime.sendMessage(
         {
           title,
           url,
           command: CMDB_CREATE_BOOKMARK,
           parentId:
-            folder.id === CMDB_RECENTLY_ADDED || folder.id === CMDB_TRASH
+            selectedFolder.id === CMDB_RECENTLY_ADDED ||
+            selectedFolder.id === CMDB_TRASH
               ? "2"
               : folder.id,
         },

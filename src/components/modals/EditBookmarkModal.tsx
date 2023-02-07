@@ -14,7 +14,7 @@ const EditBookmarkModal: React.FC<EditBookmarkModalProps> = ({
   submitEditBookmark,
 }) => {
   const wrapperRef = React.useRef(null);
-  // useOutsideAlerter(wrapperRef, setisopen);
+  useOutsideAlerter(wrapperRef, setisopen);
   const [title, settitle] = React.useState(bookmark?.title);
   const [url, seturl] = React.useState(bookmark?.url);
 

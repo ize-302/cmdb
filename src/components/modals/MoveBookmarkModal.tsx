@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useOutsideAlerter } from "../Menu";
-import { BookmarkProps } from "../../types";
 
 interface MoveBookmarkModalProps {
   folders: any;
@@ -17,7 +16,7 @@ const MoveBookmarkModal: React.FC<MoveBookmarkModalProps> = ({
 }) => {
   const wrapperRef = React.useRef(null);
   const [selectedFolder, setselectedFolder] = React.useState("");
-  // useOutsideAlerter(wrapperRef, setisopen);
+  useOutsideAlerter(wrapperRef, setisopen);
 
   const handleSubmit = () => {
     submitMoveBookmark(bookmarks, selectedFolder);

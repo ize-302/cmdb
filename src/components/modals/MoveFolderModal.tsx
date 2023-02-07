@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useOutsideAlerter } from "../Menu";
 
 interface MoveFolderModalProps {
   folders: any;
@@ -15,7 +16,7 @@ const MoveFolderModal: React.FC<MoveFolderModalProps> = ({
 }) => {
   const wrapperRef = React.useRef(null);
   const [destinationFolder, setdestinationFolder] = React.useState<any>({});
-  // useOutsideAlerter(wrapperRef, setisopen);
+  useOutsideAlerter(wrapperRef, setisopen);
 
   return (
     <div className="cmdb-modal">

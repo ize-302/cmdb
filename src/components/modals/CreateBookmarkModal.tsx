@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useOutsideAlerter } from "../Menu";
-import { BookmarkProps } from "../../types";
 
 interface CreateBookmarkModalProps {
   folders: any;
@@ -23,7 +22,7 @@ const CreateBookmarkModal: React.FC<CreateBookmarkModalProps> = ({
   const [selectedFolder, setselectedFolder] = React.useState(
     defaultSelectedFolder
   );
-  // useOutsideAlerter(wrapperRef, setisopen);
+  useOutsideAlerter(wrapperRef, setisopen);
   const [title, settitle] = React.useState("");
   const [url, seturl] = React.useState("");
 

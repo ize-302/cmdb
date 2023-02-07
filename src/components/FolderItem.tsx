@@ -62,9 +62,9 @@ const FolderItem: React.FC<FolderItemProps> = ({
     <>
       <div
         onDragEnter={(e) => onDragEnter(e)}
-        onDragCapture={() => console.log("capture")}
-        onDragExit={() => console.log("exit")}
-        onDragLeave={() => console.log("leave")}
+        onDragCapture={() => {}}
+        onDragExit={() => {}}
+        onDragLeave={() => {}}
         onContextMenu={(e) => {
           e.preventDefault();
           if (

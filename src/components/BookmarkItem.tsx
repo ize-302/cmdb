@@ -33,7 +33,6 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
 
   const dragStart = (e: any, position: any) => {
     dragItem.current = position;
-    console.log(e.target);
   };
 
   React.useEffect(() => {

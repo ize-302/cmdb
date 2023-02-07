@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useOutsideAlerter } from "../Menu";
 
 interface CreateFolderModalProps {
   setisopen: (value: boolean) => void;
@@ -13,6 +14,7 @@ const CreateFolderModal: React.FC<CreateFolderModalProps> = ({
   defaultSelectedFolder,
 }) => {
   const wrapperRef = React.useRef(null);
+  useOutsideAlerter(wrapperRef, setisopen);
   const [title, settitle] = React.useState("");
 
   return (
