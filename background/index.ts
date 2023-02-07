@@ -17,7 +17,9 @@ chrome.action.onClicked.addListener(function (tab) {
 
 //  toggle extension when Cmd+B is pressed
 chrome.commands.onCommand.addListener((command, tab) => {
-  toggleExtension(tab.id);
+  if (command === "open-cmdb") {
+    chrome.tabs.sendMessage(tab.id, {});
+  }
 });
 
 // Receive messages
