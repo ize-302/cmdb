@@ -7,8 +7,18 @@ const textcolor = "rgb(210, 211, 224)";
 const blue = "#366FEB";
 
 export const CmdbWrapper = styled.div`
-  svg {
-    fill: none; // disbale icon filing
+  div::-webkit-scrollbar {
+    width: 10px;
+  }
+  div::-webkit-scrollbar-track {
+    background: ${bgdark};
+  }
+  div::-webkit-scrollbar-thumb {
+    background: ${itembg};
+    border: 1px solid ${itemborder};
+  }
+  div::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
   }
   #cmdb {
     *,
@@ -51,7 +61,7 @@ export const CmdbWrapper = styled.div`
     line-height: 100%;
     color: ${textcolor};
 
-    ::-webkit-scrollbar {
+    /* ::-webkit-scrollbar {
       width: 10px;
     }
     ::-webkit-scrollbar-track {
@@ -63,7 +73,7 @@ export const CmdbWrapper = styled.div`
     }
     ::-webkit-scrollbar-thumb:hover {
       background: rgba(255, 255, 255, 0.2);
-    }
+    } */
 
     /* http://meyerweb.com/eric/tools/css/reset/ 
    v2.0 | 20110126
