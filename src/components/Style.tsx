@@ -100,7 +100,8 @@ export const CmdbWrapper = styled.div`
     }
     ol,
     ul,
-    li {
+    li,
+    form {
       list-style: none;
       padding: 0;
       margin: 0;

@@ -1,12 +1,6 @@
 import React from "react";
-import {
-  Bars2Icon,
-  StarIcon as StarIconSolid,
-} from "@heroicons/react/24/solid";
-import {
-  LinkIcon,
-  StarIcon as StarIconOutline,
-} from "@heroicons/react/24/outline";
+import { StarIcon as StarIconSolid } from "@heroicons/react/24/solid";
+import { StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
 import { Tooltip } from "react-tooltip";
 import {
   CMDB_TRASH,
@@ -17,8 +11,6 @@ import {
   CMDB_REMOVED_BOOKMARK_MSG,
   CMDB_RECENTLY_ADDED,
 } from "../keys";
-import cheerio from "cheerio";
-import axios from "axios";
 import toast from "react-hot-toast";
 import CreateBookmarkModal from "./modals/CreateBookmarkModal";
 
@@ -86,32 +78,7 @@ export const TopNav: React.FC<TopNavProps> = ({
   const handleSaveUrl = async () => {
     const url = window.location.href;
     if (!isbookmarked) {
-      const parentId = selectedFolder.title ? selectedFolder?.id : null;
-      const command = CMDB_CREATE_BOOKMARK;
-      try {
-        const response = axios.get(url);
-        var $ = cheerio.load((await response).data);
-        var title = $("title").text();
-        chrome.runtime.sendMessage(
-          {
-            title,
-            url,
-            command,
-            parentId:
-              parentId === CMDB_RECENTLY_ADDED || parentId === CMDB_TRASH
-                ? "2"
-                : parentId,
-          },
-          (response) => {
-            if (response) {
-              toast.success(CMDB_SAVED_BOOKMARK_MSG);
-              getBoomarksByFolder(selectedFolder);
-            }
-          }
-        );
-      } catch (error) {
-        console.log("error => ", error);
-      }
+      setshowModal(true);
     } else {
       const currenturl = window.location.href;
       chrome.runtime.sendMessage(
@@ -172,13 +139,6 @@ export const TopNav: React.FC<TopNavProps> = ({
         </div>
         <div className="cmdb-topnav-item cmdb-topnav-item_right">
           <>
-            <button
-              className="cmdb-topnav-item_right-save-url"
-              onClick={() => setshowModal(true)}
-              id="manual-save-url"
-            >
-              <LinkIcon color="white" width="16" />
-            </button>
             <button
               className="cmdb-topnav-item_right-save-url"
               onClick={() => handleSaveUrl()}

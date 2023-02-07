@@ -1,5 +1,7 @@
 import * as React from "react";
 import { useOutsideAlerter } from "../Menu";
+import cheerio from "cheerio";
+import axios from "axios";
 
 interface CreateBookmarkModalProps {
   folders: any;
@@ -25,6 +27,21 @@ const CreateBookmarkModal: React.FC<CreateBookmarkModalProps> = ({
   useOutsideAlerter(wrapperRef, setisopen);
   const [title, settitle] = React.useState("");
   const [url, seturl] = React.useState("");
+
+  React.useEffect(() => {
+    const url = window.location.href;
+    seturl(url);
+  }, []);
+
+  React.useEffect(() => {
+    const fetchtitle = async () => {
+      const response = axios.get(url);
+      var $ = cheerio.load((await response).data);
+      var title = $("title").text();
+      settitle(title);
+    };
+    url && fetchtitle();
+  }, [url]);
 
   return (
     <div className="cmdb-modal">
