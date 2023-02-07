@@ -22,6 +22,11 @@ chrome.commands.onCommand.addListener((command, tab) => {
   }
 });
 
+// Open on install
+chrome.runtime.onInstalled.addListener((object) => {
+  chrome.tabs.create({ url: "https://cmdb.ize-302.dev/intro" });
+});
+
 // Receive messages
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.command === "CMDB_CLOSE_APP") {
