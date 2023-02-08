@@ -134,6 +134,7 @@ export const TopNav: React.FC<TopNavProps> = ({
               placeholder="Search..."
               onChange={(e) => setsearchinput(e.target.value)}
               type="search"
+              autoComplete="off"
             />
           </form>
         </div>
