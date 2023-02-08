@@ -16,7 +16,6 @@ import CreateFolderModal from "./modals/CreateFolderModal";
 import toast from "react-hot-toast";
 import RenameFolderModal from "./modals/RenameFolderModal";
 import MoveFolderModal from "./modals/MoveFolderModal";
-import { Coffee } from "./Coffee";
 
 interface SideNavProps {
   folders: any[];
@@ -323,8 +322,6 @@ export const SideNav: React.FC<SideNavProps> = ({
             </div>
           </>
         )}
-
-        <Coffee />
       </div>
       {/* create folder modal */}
       {showcreatefoldermodal && (
