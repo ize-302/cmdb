@@ -61,20 +61,6 @@ export const CmdbWrapper = styled.div`
     line-height: 100%;
     color: ${textcolor};
 
-    /* ::-webkit-scrollbar {
-      width: 10px;
-    }
-    ::-webkit-scrollbar-track {
-      background: ${bgdark};
-    }
-    ::-webkit-scrollbar-thumb {
-      background: ${itembg};
-      border: 1px solid ${itemborder};
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.2);
-    } */
-
     /* http://meyerweb.com/eric/tools/css/reset/ 
    v2.0 | 20110126
    License: none (public domain)
@@ -441,6 +427,9 @@ export const CmdbWrapper = styled.div`
         border-bottom: 1px solid ${itemborder};
         padding: 8px 12px;
         color: ${textcolor};
+        &:before {
+          content: "";
+        }
 
         margin: 0;
         &.delete {
@@ -470,6 +459,9 @@ export const CmdbWrapper = styled.div`
         padding: 0px 10px;
         overflow-y: auto;
         border-bottom-left-radius: 9px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         button {
           padding: 1px 2px;
           &:hover {
@@ -581,6 +573,17 @@ export const CmdbWrapper = styled.div`
           position: relative;
           left: 5px;
           top: 0px;
+        }
+
+        .footer {
+          text-align: center;
+          font-size: 10px;
+          color: #666;
+          padding-bottom: 5px;
+          a {
+            font-size: 10px;
+            color: inherit;
+          }
         }
       }
     }

@@ -202,7 +202,7 @@ const MenuChildren: React.FC<MenuChildrenProps> = ({
               setisopen(false);
             }}
           >
-            Permanently delete
+            Delete
           </li>
         </>
       )}
