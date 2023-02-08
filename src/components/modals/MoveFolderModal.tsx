@@ -44,7 +44,9 @@ const MoveFolderModal: React.FC<MoveFolderModalProps> = ({
           >
             <option>Select folder</option>
             {folders
-              .filter((folder: any) => folder.title)
+              .filter(
+                (folder: any) => folder.title && folder.id !== folderToMove.id
+              )
               .map((folder: any) => (
                 <option value={folder.id} key={folder.id}>
                   {folder?.title}
