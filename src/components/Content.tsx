@@ -53,6 +53,8 @@ export const Content: React.FC<ContentProps> = ({
   const [showeditmodal, setshoweditmodal] = React.useState(false);
   const [bookmarkToEdit, setbookmarkToEdit] = React.useState({});
 
+  console.log(bookmarksOnView);
+
   const contentToShow = () => {
     if (selectedFolder.id === CMDB_TRASH) {
       return trash;
@@ -179,26 +181,28 @@ export const Content: React.FC<ContentProps> = ({
             </div>
           ) : (
             <>
-              {bookmarksOnView?.map((bookmark, index) => (
-                <BookmarkItem
-                  key={index}
-                  index={index}
-                  bookmark={bookmark}
-                  handleSelectBookmark={(e, bookmark) =>
-                    handleSelectBookmark(e, bookmark, index)
-                  }
-                  selectedBookmarks={selectedBookmarks}
-                  deleteBookmark={() => deleteBookmarks()}
-                  editBookmark={() => {
-                    setshoweditmodal(true);
-                    setbookmarkToEdit(bookmark);
-                  }}
-                  moveBookmark={moveBookmarks}
-                  deleteBookmarkFromTrash={deleteBookmarkFromTrash}
-                  selectedFolder={selectedFolder}
-                  restoreBookmarkFromTrash={restoreBookmarkFromTrash}
-                />
-              ))}
+              {bookmarksOnView
+                ?.sort((a: any, b: any) => b.dateAdded - a.dateAdded)
+                ?.map((bookmark, index) => (
+                  <BookmarkItem
+                    key={index}
+                    index={index}
+                    bookmark={bookmark}
+                    handleSelectBookmark={(e, bookmark) =>
+                      handleSelectBookmark(e, bookmark, index)
+                    }
+                    selectedBookmarks={selectedBookmarks}
+                    deleteBookmark={() => deleteBookmarks()}
+                    editBookmark={() => {
+                      setshoweditmodal(true);
+                      setbookmarkToEdit(bookmark);
+                    }}
+                    moveBookmark={moveBookmarks}
+                    deleteBookmarkFromTrash={deleteBookmarkFromTrash}
+                    selectedFolder={selectedFolder}
+                    restoreBookmarkFromTrash={restoreBookmarkFromTrash}
+                  />
+                ))}
             </>
           )}
         </div>
