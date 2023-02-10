@@ -579,7 +579,8 @@ export const CmdbWrapper = styled.div`
           text-align: center;
           font-size: 10px;
           color: #666;
-          padding-bottom: 5px;
+          padding-bottom: 10px;
+          margin: 0;
           a {
             font-size: 10px;
             color: inherit;
