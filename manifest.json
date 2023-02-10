@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "cmdb",
+  "name": "Cmd+B",
   "description": "A more delightful bookmarking experience",
   "version": "1.0.0",
   "offline_enabled": true,
