@@ -324,7 +324,7 @@ export const SideNav: React.FC<SideNavProps> = ({
             </>
           )}
         </div>
-        <p className="footer">
+        <p className="cmdb-footer">
           Crafted with 💛 by <a href="https://ize-302.dev">Adavize</a>
         </p>
       </div>

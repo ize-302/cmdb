@@ -108,7 +108,7 @@ const FolderItem: React.FC<FolderItemProps> = ({
             <span className="cmdb-sidenav-item_title">
               {folder.title}
               {folder.id === CMDB_TRASH && trash?.length > 0 && (
-                <span className="dot" />
+                <span className="cmdb-trash-dot" />
               )}
             </span>
           </span>

@@ -564,7 +564,7 @@ export const CmdbWrapper = styled.div`
             }
           }
         }
-        .dot {
+        .cmdb-trash-dot {
           display: inline-block;
           height: 6px;
           width: 6px;
@@ -575,7 +575,7 @@ export const CmdbWrapper = styled.div`
           top: 0px;
         }
 
-        .footer {
+        .cmdb-footer {
           text-align: center;
           font-size: 10px;
           color: #666;
