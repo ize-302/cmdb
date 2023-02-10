@@ -1,6 +1,5 @@
 import * as React from "react";
-import { useOutsideAlerter } from "./Menu";
-import { BookmarkProps } from "../types";
+import { useOutsideAlerter } from "../Menu";
 
 interface MoveBookmarkModalProps {
   folders: any;
@@ -17,7 +16,7 @@ const MoveBookmarkModal: React.FC<MoveBookmarkModalProps> = ({
 }) => {
   const wrapperRef = React.useRef(null);
   const [selectedFolder, setselectedFolder] = React.useState("");
-  // useOutsideAlerter(wrapperRef, setisopen);
+  useOutsideAlerter(wrapperRef, setisopen);
 
   const handleSubmit = () => {
     submitMoveBookmark(bookmarks, selectedFolder);
@@ -30,7 +29,12 @@ const MoveBookmarkModal: React.FC<MoveBookmarkModalProps> = ({
         <div className="cmdb-modal-title">
           Move bookmark {bookmarks.length > 1 && `(${bookmarks.length})`}
         </div>
-        <form>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+        >
           <label className="cmdb-label">Select destination folder</label>
           <select
             value={selectedFolder}
@@ -46,15 +50,19 @@ const MoveBookmarkModal: React.FC<MoveBookmarkModalProps> = ({
                 </option>
               ))}
           </select>
+          <div className="cmdb-modal-footer">
+            <button
+              type="button"
+              onClick={() => setisopen(false)}
+              className="cmdb-secondary"
+            >
+              Cancel
+            </button>
+            <button type="submit" className="cmdb-primary">
+              Move
+            </button>
+          </div>
         </form>
-        <div className="cmdb-modal-footer">
-          <button onClick={() => setisopen(false)} className="cmdb-secondary">
-            Cancel
-          </button>
-          <button onClick={() => handleSubmit()} className="cmdb-primary">
-            Move
-          </button>
-        </div>
       </div>
     </div>
   );

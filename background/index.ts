@@ -17,11 +17,23 @@ chrome.action.onClicked.addListener(function (tab) {
 
 //  toggle extension when Cmd+B is pressed
 chrome.commands.onCommand.addListener((command, tab) => {
-  toggleExtension(tab.id);
+  if (command === "open-cmdb") {
+    toggleExtension(tab.id);
+  }
+});
+
+// Open on install
+chrome.runtime.onInstalled.addListener((object) => {
+  chrome.tabs.create({ url: "https://cmdb.ize-302.dev/welcome.html" });
 });
 
 // Receive messages
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  if (message.command === "CMDB_CLOSE_APP") {
+    const { tab } = sender;
+    toggleExtension(tab?.id);
+  }
+
   if (message === "CMDB_FETCH_BOOKMARKS") {
     chrome.bookmarks.getTree((result: any) => {
       sendResponse(result[0]);

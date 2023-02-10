@@ -62,9 +62,9 @@ const FolderItem: React.FC<FolderItemProps> = ({
     <>
       <div
         onDragEnter={(e) => onDragEnter(e)}
-        onDragCapture={() => console.log("capture")}
-        onDragExit={() => console.log("exit")}
-        onDragLeave={() => console.log("leave")}
+        onDragCapture={() => {}}
+        onDragExit={() => {}}
+        onDragLeave={() => {}}
         onContextMenu={(e) => {
           e.preventDefault();
           if (
@@ -108,7 +108,7 @@ const FolderItem: React.FC<FolderItemProps> = ({
             <span className="cmdb-sidenav-item_title">
               {folder.title}
               {folder.id === CMDB_TRASH && trash?.length > 0 && (
-                <span className="dot" />
+                <span className="cmdb-trash-dot" />
               )}
             </span>
           </span>

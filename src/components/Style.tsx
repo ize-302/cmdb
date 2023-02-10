@@ -1,12 +1,25 @@
 import styled from "styled-components";
 
 const bgdark = "#000212";
-const itembg = "#1d2230";
+export const itembg = "#1d2230";
 const itemborder = "rgba(255, 255, 255, 0.05)";
 const textcolor = "rgb(210, 211, 224)";
 const blue = "#366FEB";
 
 export const CmdbWrapper = styled.div`
+  div::-webkit-scrollbar {
+    width: 10px;
+  }
+  div::-webkit-scrollbar-track {
+    background: ${bgdark};
+  }
+  div::-webkit-scrollbar-thumb {
+    background: ${itembg};
+    border: 1px solid ${itemborder};
+  }
+  div::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
   #cmdb {
     *,
     ::after,
@@ -48,20 +61,6 @@ export const CmdbWrapper = styled.div`
     line-height: 100%;
     color: ${textcolor};
 
-    ::-webkit-scrollbar {
-      width: 10px;
-    }
-    ::-webkit-scrollbar-track {
-      background: ${bgdark};
-    }
-    ::-webkit-scrollbar-thumb {
-      background: ${itembg};
-      border: 1px solid ${itemborder};
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-
     /* http://meyerweb.com/eric/tools/css/reset/ 
    v2.0 | 20110126
    License: none (public domain)
@@ -87,7 +86,8 @@ export const CmdbWrapper = styled.div`
     }
     ol,
     ul,
-    li {
+    li,
+    form {
       list-style: none;
       padding: 0;
       margin: 0;
@@ -146,7 +146,7 @@ export const CmdbWrapper = styled.div`
         color: white;
         margin-bottom: 10px;
         &:focus {
-          outline: none !important;
+          /* outline: none !important; */
         }
       }
     }
@@ -163,7 +163,7 @@ export const CmdbWrapper = styled.div`
         color: white;
         margin-bottom: 10px;
         &:focus {
-          outline: none !important;
+          /* outline: none !important; */
         }
       }
     }
@@ -236,10 +236,11 @@ export const CmdbWrapper = styled.div`
     .cmdb-dropshadow {
       position: fixed;
       top: 0;
-      width: 50vw;
+      width: 100vw;
       height: 100%;
-      opacity: 0.4;
-      background: conic-gradient(
+      opacity: 0.2;
+      background: #000;
+      /* background: conic-gradient(
         from 230.29deg at 51.63% 52.16%,
         rgb(36, 0, 255) 0deg,
         rgb(0, 135, 255) 67.5deg,
@@ -249,7 +250,7 @@ export const CmdbWrapper = styled.div`
         rgb(105, 30, 255) 360deg
       );
       filter: blur(160px);
-      transform: translateZ(0px);
+      transform: translateZ(0px); */
       overflow: hidden;
     }
 
@@ -370,6 +371,14 @@ export const CmdbWrapper = styled.div`
             display: flex;
             max-width: 30px;
             align-items: center;
+            &.close {
+              padding: 5px;
+              background: #dc3535;
+              border-radius: 100%;
+              min-height: 16px;
+              min-width: 16px;
+              position: relative;
+            }
           }
         }
       }
@@ -399,7 +408,7 @@ export const CmdbWrapper = styled.div`
     }
 
     .cmdb-menu {
-      min-width: 150px;
+      max-width: 150px;
       border-radius: 4px;
       background: #1d2230;
       border-width: 1px;
@@ -418,6 +427,9 @@ export const CmdbWrapper = styled.div`
         border-bottom: 1px solid ${itemborder};
         padding: 8px 12px;
         color: ${textcolor};
+        &:before {
+          content: "";
+        }
 
         margin: 0;
         &.delete {
@@ -447,6 +459,9 @@ export const CmdbWrapper = styled.div`
         padding: 0px 10px;
         overflow-y: auto;
         border-bottom-left-radius: 9px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         button {
           padding: 1px 2px;
           &:hover {
@@ -549,7 +564,7 @@ export const CmdbWrapper = styled.div`
             }
           }
         }
-        .dot {
+        .cmdb-trash-dot {
           display: inline-block;
           height: 6px;
           width: 6px;
@@ -558,6 +573,18 @@ export const CmdbWrapper = styled.div`
           position: relative;
           left: 5px;
           top: 0px;
+        }
+
+        .cmdb-footer {
+          text-align: center;
+          font-size: 10px;
+          color: #666;
+          padding-bottom: 10px;
+          margin: 0;
+          a {
+            font-size: 10px;
+            color: inherit;
+          }
         }
       }
     }

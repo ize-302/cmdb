@@ -9,9 +9,9 @@ import {
   CMDB_UPDATE_ITEM,
   CMDB_DELETE_BOOKMARK,
 } from "../keys";
-import MoveBookmarkModal from "./MoveBookmarkModal";
+import MoveBookmarkModal from "./modals/MoveBookmarkModal";
 import toast from "react-hot-toast";
-import EditBookmarkModal from "./EditBookmarkModal";
+import EditBookmarkModal from "./modals/EditBookmarkModal";
 
 interface ContentProps {
   bookmarksOnView: BookmarkProps[];
@@ -52,6 +52,16 @@ export const Content: React.FC<ContentProps> = ({
   const [bookmarksToMove, setbookmarksToMove] = React.useState([]);
   const [showeditmodal, setshoweditmodal] = React.useState(false);
   const [bookmarkToEdit, setbookmarkToEdit] = React.useState({});
+
+  console.log(bookmarksOnView);
+
+  const contentToShow = () => {
+    if (selectedFolder.id === CMDB_TRASH) {
+      return trash;
+    } else {
+      bookmarksOnView;
+    }
+  };
 
   const handleSelectBookmark = (e: any, bookmark: any, index: number) => {
     if (e.shiftKey) {
@@ -171,26 +181,28 @@ export const Content: React.FC<ContentProps> = ({
             </div>
           ) : (
             <>
-              {bookmarksOnView?.map((bookmark, index) => (
-                <BookmarkItem
-                  key={index}
-                  index={index}
-                  bookmark={bookmark}
-                  handleSelectBookmark={(e, bookmark) =>
-                    handleSelectBookmark(e, bookmark, index)
-                  }
-                  selectedBookmarks={selectedBookmarks}
-                  deleteBookmark={() => deleteBookmarks()}
-                  editBookmark={() => {
-                    setshoweditmodal(true);
-                    setbookmarkToEdit(bookmark);
-                  }}
-                  moveBookmark={moveBookmarks}
-                  deleteBookmarkFromTrash={deleteBookmarkFromTrash}
-                  selectedFolder={selectedFolder}
-                  restoreBookmarkFromTrash={restoreBookmarkFromTrash}
-                />
-              ))}
+              {bookmarksOnView
+                ?.sort((a: any, b: any) => b.dateAdded - a.dateAdded)
+                ?.map((bookmark, index) => (
+                  <BookmarkItem
+                    key={index}
+                    index={index}
+                    bookmark={bookmark}
+                    handleSelectBookmark={(e, bookmark) =>
+                      handleSelectBookmark(e, bookmark, index)
+                    }
+                    selectedBookmarks={selectedBookmarks}
+                    deleteBookmark={() => deleteBookmarks()}
+                    editBookmark={() => {
+                      setshoweditmodal(true);
+                      setbookmarkToEdit(bookmark);
+                    }}
+                    moveBookmark={moveBookmarks}
+                    deleteBookmarkFromTrash={deleteBookmarkFromTrash}
+                    selectedFolder={selectedFolder}
+                    restoreBookmarkFromTrash={restoreBookmarkFromTrash}
+                  />
+                ))}
             </>
           )}
         </div>

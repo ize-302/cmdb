@@ -12,10 +12,10 @@ import {
   CMDB_DELETE_BOOKMARK,
 } from "../keys";
 import FolderItem from "./FolderItem";
-import CreateFolderModal from "./CreateFolderModal";
+import CreateFolderModal from "./modals/CreateFolderModal";
 import toast from "react-hot-toast";
-import RenameFolderModal from "./RenameFolderModal";
-import MoveFolderModal from "./MoveFolderModal";
+import RenameFolderModal from "./modals/RenameFolderModal";
+import MoveFolderModal from "./modals/MoveFolderModal";
 
 interface SideNavProps {
   folders: any[];
@@ -236,92 +236,97 @@ export const SideNav: React.FC<SideNavProps> = ({
   return (
     <>
       <div className="cmdb-sidenav">
-        {showMain ? (
-          <>
-            <div className="cmdb-sidenav_greetings">{displayGreeting()}</div>
-            <div className="cmdb-sidenav-items">
-              {/* recently added */}
-              <FolderItem
-                folder={{
-                  id: CMDB_RECENTLY_ADDED,
-                  parentId: "",
-                  title: "Recently added",
-                }}
-                selectedFolder={selectedFolder}
-                handleFolderNavigation={handleFolderNavigation}
-                onDragEnter={(e) => {}}
-              />
-              {/* menus */}
-              {mainFolders?.map(
-                (folder: any, index: React.Key | null | undefined) => (
-                  <FolderItem
-                    key={index}
-                    folder={folder}
-                    selectedFolder={selectedFolder}
-                    handleFolderNavigation={handleFolderNavigation}
-                    onDragEnter={(e) => dragEnter(e, index)}
-                    createFolder={() => setshowcreatefoldermodal(true)}
-                  />
-                )
-              )}
-              {/* trash */}
-              <br />
-              <FolderItem
-                folder={{
-                  id: CMDB_TRASH,
-                  parentId: "",
-                  title: "Trash",
-                }}
-                selectedFolder={selectedFolder}
-                handleFolderNavigation={handleFolderNavigation}
-                onDragEnter={() => {}}
-                trash={trash}
-              />
-            </div>
-          </>
-        ) : (
-          <>
-            <div
-              className="cmdb-sidenav_go-back"
-              onClick={() => handleGoback()}
-            >
-              <ChevronLeftIcon width="14" />
-              Go back
-            </div>
-            <div className="cmdb-sidenav-items">
-              <>
+        <div>
+          {showMain ? (
+            <>
+              <div className="cmdb-sidenav_greetings">{displayGreeting()}</div>
+              <div className="cmdb-sidenav-items">
+                {/* recently added */}
                 <FolderItem
-                  folder={currentParent}
+                  folder={{
+                    id: CMDB_RECENTLY_ADDED,
+                    parentId: "",
+                    title: "Recently added",
+                  }}
                   selectedFolder={selectedFolder}
                   handleFolderNavigation={handleFolderNavigation}
                   onDragEnter={(e) => {}}
-                  createFolder={() => setshowcreatefoldermodal(true)}
-                  isCurrentParent
-                  renameFolder={() => setshowrenamefoldermodal(true)}
-                  moveFolder={() => setshowmovefoldermodal(true)}
-                  deleteFolder={() => handleDeleteFolder()}
                 />
-              </>
-              {/* subs */}
-              {foldersToDisplay?.map(
-                (folder: any, index: React.Key | null | undefined) => (
-                  <div style={{ marginLeft: "5px" }} key={index}>
+                {/* menus */}
+                {mainFolders?.map(
+                  (folder: any, index: React.Key | null | undefined) => (
                     <FolderItem
+                      key={index}
                       folder={folder}
                       selectedFolder={selectedFolder}
                       handleFolderNavigation={handleFolderNavigation}
                       onDragEnter={(e) => dragEnter(e, index)}
                       createFolder={() => setshowcreatefoldermodal(true)}
-                      renameFolder={() => setshowrenamefoldermodal(true)}
-                      moveFolder={() => setshowmovefoldermodal(true)}
-                      deleteFolder={() => handleDeleteFolder()}
                     />
-                  </div>
-                )
-              )}
-            </div>
-          </>
-        )}
+                  )
+                )}
+                {/* trash */}
+                <br />
+                <FolderItem
+                  folder={{
+                    id: CMDB_TRASH,
+                    parentId: "",
+                    title: "Trash",
+                  }}
+                  selectedFolder={selectedFolder}
+                  handleFolderNavigation={handleFolderNavigation}
+                  onDragEnter={() => {}}
+                  trash={trash}
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div
+                className="cmdb-sidenav_go-back"
+                onClick={() => handleGoback()}
+              >
+                <ChevronLeftIcon width="14" />
+                Go back
+              </div>
+              <div className="cmdb-sidenav-items">
+                <>
+                  <FolderItem
+                    folder={currentParent}
+                    selectedFolder={selectedFolder}
+                    handleFolderNavigation={handleFolderNavigation}
+                    onDragEnter={(e) => {}}
+                    createFolder={() => setshowcreatefoldermodal(true)}
+                    isCurrentParent
+                    renameFolder={() => setshowrenamefoldermodal(true)}
+                    moveFolder={() => setshowmovefoldermodal(true)}
+                    deleteFolder={() => handleDeleteFolder()}
+                  />
+                </>
+                {/* subs */}
+                {foldersToDisplay?.map(
+                  (folder: any, index: React.Key | null | undefined) => (
+                    <div style={{ marginLeft: "5px" }} key={index}>
+                      <FolderItem
+                        folder={folder}
+                        selectedFolder={selectedFolder}
+                        handleFolderNavigation={handleFolderNavigation}
+                        onDragEnter={(e) => dragEnter(e, index)}
+                        createFolder={() => setshowcreatefoldermodal(true)}
+                        renameFolder={() => setshowrenamefoldermodal(true)}
+                        moveFolder={() => setshowmovefoldermodal(true)}
+                        deleteFolder={() => handleDeleteFolder()}
+                      />
+                    </div>
+                  )
+                )}
+              </div>
+            </>
+          )}
+        </div>
+        <p className="cmdb-footer">
+          Crafted with 💛 by <a href="https://ize-302.dev">Adavize</a>
+        </p>
       </div>
       {/* create folder modal */}
       {showcreatefoldermodal && (

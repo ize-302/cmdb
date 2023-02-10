@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useOutsideAlerter } from "../Menu";
 
 interface CreateFolderModalProps {
   setisopen: (value: boolean) => void;
@@ -13,6 +14,7 @@ const CreateFolderModal: React.FC<CreateFolderModalProps> = ({
   defaultSelectedFolder,
 }) => {
   const wrapperRef = React.useRef(null);
+  useOutsideAlerter(wrapperRef, setisopen);
   const [title, settitle] = React.useState("");
 
   return (
@@ -23,25 +25,31 @@ const CreateFolderModal: React.FC<CreateFolderModalProps> = ({
           Create Folder in{" "}
           <b style={{ opacity: 0.7 }}>{defaultSelectedFolder.title}</b>
         </div>
-        <form>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            submit(defaultSelectedFolder.id, title);
+          }}
+        >
           <label className="cmdb-label">Folder name</label>
           <input
             className="cmdb-input"
             value={title}
             onChange={(e) => settitle(e.target.value)}
           />
+          <div className="cmdb-modal-footer">
+            <button
+              type="button"
+              onClick={() => setisopen(false)}
+              className="cmdb-secondary"
+            >
+              Cancel
+            </button>
+            <button type="submit" className="cmdb-primary">
+              Create
+            </button>
+          </div>
         </form>
-        <div className="cmdb-modal-footer">
-          <button onClick={() => setisopen(false)} className="cmdb-secondary">
-            Cancel
-          </button>
-          <button
-            onClick={() => submit(defaultSelectedFolder.id, title)}
-            className="cmdb-primary"
-          >
-            Create
-          </button>
-        </div>
       </div>
     </div>
   );

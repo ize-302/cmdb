@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useOutsideAlerter } from "../Menu";
 
 interface MoveFolderModalProps {
   folders: any;
@@ -15,7 +16,7 @@ const MoveFolderModal: React.FC<MoveFolderModalProps> = ({
 }) => {
   const wrapperRef = React.useRef(null);
   const [destinationFolder, setdestinationFolder] = React.useState<any>({});
-  // useOutsideAlerter(wrapperRef, setisopen);
+  useOutsideAlerter(wrapperRef, setisopen);
 
   return (
     <div className="cmdb-modal">
@@ -24,7 +25,12 @@ const MoveFolderModal: React.FC<MoveFolderModalProps> = ({
         <div className="cmdb-modal-title">
           Move <b style={{ color: "#fff" }}>{folderToMove.title}</b> Folder
         </div>
-        <form>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            submitMoveFolder(destinationFolder);
+          }}
+        >
           <label className="cmdb-label">Select destination folder</label>
           <select
             value={destinationFolder.id}
@@ -38,25 +44,28 @@ const MoveFolderModal: React.FC<MoveFolderModalProps> = ({
           >
             <option>Select folder</option>
             {folders
-              .filter((folder: any) => folder.title)
+              .filter(
+                (folder: any) => folder.title && folder.id !== folderToMove.id
+              )
               .map((folder: any) => (
                 <option value={folder.id} key={folder.id}>
                   {folder?.title}
                 </option>
               ))}
           </select>
+          <div className="cmdb-modal-footer">
+            <button
+              type="button"
+              onClick={() => setisopen(false)}
+              className="cmdb-secondary"
+            >
+              Cancel
+            </button>
+            <button type="submit" className="cmdb-primary">
+              Move
+            </button>
+          </div>
         </form>
-        <div className="cmdb-modal-footer">
-          <button onClick={() => setisopen(false)} className="cmdb-secondary">
-            Cancel
-          </button>
-          <button
-            onClick={() => submitMoveFolder(destinationFolder)}
-            className="cmdb-primary"
-          >
-            Move
-          </button>
-        </div>
       </div>
     </div>
   );

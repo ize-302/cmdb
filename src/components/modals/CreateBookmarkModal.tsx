@@ -1,6 +1,7 @@
 import * as React from "react";
-import { useOutsideAlerter } from "./Menu";
-import { BookmarkProps } from "../types";
+import { useOutsideAlerter } from "../Menu";
+import cheerio from "cheerio";
+import axios from "axios";
 
 interface CreateBookmarkModalProps {
   folders: any;
@@ -23,28 +24,48 @@ const CreateBookmarkModal: React.FC<CreateBookmarkModalProps> = ({
   const [selectedFolder, setselectedFolder] = React.useState(
     defaultSelectedFolder
   );
-  // useOutsideAlerter(wrapperRef, setisopen);
+  useOutsideAlerter(wrapperRef, setisopen);
   const [title, settitle] = React.useState("");
   const [url, seturl] = React.useState("");
+
+  React.useEffect(() => {
+    const url = window.location.href;
+    seturl(url);
+  }, []);
+
+  React.useEffect(() => {
+    const fetchtitle = async () => {
+      const response = axios.get(url);
+      var $ = cheerio.load((await response).data);
+      var title = $("title").text();
+      settitle(title);
+    };
+    url && fetchtitle();
+  }, [url]);
 
   return (
     <div className="cmdb-modal">
       <div className="cmdb-modal-backdrop" />
       <div ref={wrapperRef} className="cmdb-modal-content">
         <div className="cmdb-modal-title">Add new bookmark</div>
-        <form>
-          <label className="cmdb-label">Name</label>
-          <input
-            className="cmdb-input"
-            value={title}
-            onChange={(e) => settitle(e.target.value)}
-          />
-
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            submitCreateBookmark(title, url, selectedFolder);
+          }}
+        >
           <label className="cmdb-label">URL</label>
           <input
             className="cmdb-input"
             value={url}
             onChange={(e) => seturl(e.target.value)}
+          />
+
+          <label className="cmdb-label">Name</label>
+          <input
+            className="cmdb-input"
+            value={title}
+            onChange={(e) => settitle(e.target.value)}
           />
 
           <label className="cmdb-label">Select parent folder</label>
@@ -62,18 +83,19 @@ const CreateBookmarkModal: React.FC<CreateBookmarkModalProps> = ({
                 </option>
               ))}
           </select>
+          <div className="cmdb-modal-footer">
+            <button
+              type="button"
+              onClick={() => setisopen(false)}
+              className="cmdb-secondary"
+            >
+              Cancel
+            </button>
+            <button type="submit" className="cmdb-primary">
+              Add
+            </button>
+          </div>
         </form>
-        <div className="cmdb-modal-footer">
-          <button onClick={() => setisopen(false)} className="cmdb-secondary">
-            Cancel
-          </button>
-          <button
-            onClick={() => submitCreateBookmark(title, url, selectedFolder)}
-            className="cmdb-primary"
-          >
-            Add
-          </button>
-        </div>
       </div>
     </div>
   );
