@@ -1,13 +1,23 @@
 {
   "manifest_version": 3,
   "name": "cmdb",
+  "description": "A more delightful bookmarking experience",
   "version": "1.0.0",
   "offline_enabled": true,
   "action": {
     "default_title": "Cmd+B",
-    "default_icon": "logo192.png"
+    "default_icon": "logo192.png",
+    "icons": {
+      "16": "logo-16.png",
+      "48": "logo-48.png",
+      "128": "logo-128.png"
+    }
   },
-  "icons": {},
+  "icons": {
+    "16": "logo-16.png",
+    "48": "logo-48.png",
+    "128": "logo-128.png"
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
